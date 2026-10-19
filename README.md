@@ -53,17 +53,26 @@ It's the missing bridge between a lecture on cyclic groups and a real link-budge
 
 ## Features
 
-### Implemented (M0 + M1)
+### Baseline implementation (M0 + M1)
 
 | Category | What's available |
 |---|---|
 | **Modulation** | BPSK, QPSK, 16-QAM, 64-QAM (Gray-mapped, unit-power normalized) |
 | **FEC** | Hamming(7,4) as a *cyclic* code with generator `g(x) = x³ + x + 1` |
-| **Channel** | AWGN with correct Eb/N0 normalization (`σ² = 1/(2·k·(Eb/N0))`) |
+| **Channel** | AWGN with information-bit Eb/N0 normalization |
 | **Metrics** | Bit error rate (BER) as a function of Eb/N0 |
 | **Visualization** | Constellation diagrams with bit labels, BER-vs-Eb/N0 plots |
 | **Tests** | pytest suite verifying Gray adjacency, Hamming syndrome table, BER monotonicity |
 | **CI** | GitHub Actions on Python 3.10 / 3.11 / 3.12 |
+
+### Experimental research prototypes
+
+| Area | Prototype |
+|---|---|
+| **Cyclic geometry** | APSK rings with explicit cyclic phase actions |
+| **Trellis coding** | Tail-biting rate-2/3 8-PSK example with pair-rotation equivariance |
+| **Probabilistic shaping** | Maxwell-Boltzmann probabilities and periodic autocorrelation |
+| **Structured FEC** | QC-LDPC base-matrix lifting and Polar coding over the BEC |
 
 ### Planned
 
@@ -219,9 +228,42 @@ An APSK constellation is arranged on concentric rings. The equally spaced
 phase positions on one ring can be indexed by the cyclic group `C_n`, but a
 multi-ring APSK constellation is not itself generally a group under complex
 multiplication: ring radii and the union of ring points need not be closed
-under that operation. Ring geometry alone also does not guarantee better
-noise or nonlinear-distortion performance than QAM; performance depends on
-ring radii, point labeling, coding, channel, and amplifier constraints.
+under that operation. `modcode.modulation.APSK` exposes this precisely as a
+rotation action on each ring and tests 16-APSK with four inner and twelve
+outer points. Ring geometry alone also does not guarantee better noise or
+nonlinear-distortion performance than QAM; performance depends on ring radii,
+point labeling, coding, channel, and amplifier constraints.
+
+### Tail-biting trellis coding and cyclic shifts
+
+`TailBitingTCM8PSK` is a compact rate-2/3 trellis-coded example mapped to
+8-PSK. Its four-state trellis is initialized with its final input pair
+(tail-biting), and its transition rule uses the preceding pair cyclically.
+Tests check both Viterbi recovery and equivariance: rotating the input-pair
+sequence rotates its encoded symbol sequence. This is a specific constructed
+example—not a claim that all trellis-coded modulation is cyclically closed,
+that any arbitrary symbol rotation remains a valid path, or that cyclicity
+automatically reduces decoder complexity.
+
+### Probabilistic shaping and sequence symmetry
+
+`modcode.shaping` computes Maxwell-Boltzmann symbol probabilities, samples a
+shaped sequence, and computes periodic autocorrelation. Shaping changes
+symbol probabilities; it does not by itself impose invariance on codewords,
+FEC, or sequence correlations. A cyclic shift preserves periodic
+autocorrelation, while an arbitrary permutation generally does not, as the
+tests illustrate. The linked 2026 preprint is titled
+[“How Does Probabilistic Constellation Shaping Control Ranging Sidelobe Levels
+in ISAC?”](https://arxiv.org/abs/2610.21653); its topic is shaping and
+ambiguity/ranging sidelobes, not a general theorem that FEC requires
+permutation invariance. PAS systems need compatible distribution matching,
+coding, and bit-metric decoding, but there is no universal cyclic-balance
+condition that guarantees error-free correction.
+
+Run `python examples/explore_cyclic_structures.py` to see the 16-APSK
+constellation and a sample of its shaped symbol distribution. APSK's rings
+are not a standard 5G NR modulation format; the project treats this as an
+independent research experiment.
 
 5G NR uses CP-OFDM with QPSK and specified QAM orders for the modulation
 formats in its radio interface; APSK is not a standard NR modulation format.
@@ -234,6 +276,53 @@ one without those conditions. NR uses LDPC for shared-channel data and Polar
 codes for specified control channels; quasi-cyclic parity-check structures
 are an implementation technique, distinct from every codeword being closed
 under arbitrary cyclic shifts.
+
+### Quasi-cyclic LDPC matrix structure
+
+`modcode.fec.qc_ldpc.expand_qc_base_matrix` expands a compact shift-value
+matrix into a binary parity-check matrix. Each `-1` becomes a zero block;
+each shift `s` becomes `I` rotated right by `s` columns modulo lifting factor
+`Z`. For example, `[[0, 1], [2, -1]]` at `Z=3` expands into 6-by-6 blocks
+containing `I`, `P`, `P²`, and a zero block. The tests verify the exact block
+entries and the one-`1`-per-row-and-column permutation property. This is a
+generic QC-LDPC construction for studying the matrix pattern, not a complete
+5G NR LDPC encoder or the standardized NR base graphs and shift tables.
+Run `python examples/qc_ldpc_shift_demo.py` for a 5-by-5 shift-by-2 block and
+an illustrative lifted base matrix. The example is not a standardized 5G
+base-graph fragment.
+
+### Polar codes and the Shannon limit
+
+`modcode.fec.polar.PolarBEC` implements an Arikan polar transform, selects
+information positions using exact binary-erasure-channel (BEC) synthetic
+channel probabilities, and decodes with successive cancellation (SC). For
+BEC erasure probability `epsilon`, one polarization step produces
+`epsilon_minus = 2*epsilon - epsilon**2` and `epsilon_plus = epsilon**2`.
+Their average capacity is preserved:
+
+```text
+((1 - epsilon_minus) + (1 - epsilon_plus)) / 2 = 1 - epsilon
+```
+
+As the block length grows, the synthetic BEC channels polarize toward
+nearly-perfect and nearly-useless channels. For the BEC, the fraction of
+nearly-perfect channels approaches capacity `1 - epsilon`; selecting those
+channels is the asymptotic reason Polar codes can approach Shannon capacity
+with SC decoding. "Frozen" means the encoder sets selected source-bit
+positions to known values, usually zero; it does not mean a physical channel
+has become noiseless. SC estimates information bits sequentially using
+previous decisions, and those decisions can be wrong. No finite blocklength
+reaches capacity with zero error: the code has a finite-length rate/reliability
+tradeoff. The included code is
+an educational BEC implementation, not a 5G NR Polar encoder: it omits
+rate-matching, CRC-aided list decoding, and construction for general channels.
+
+Run `python examples/explore_qc_polar.py` to print an expanded lifted matrix,
+the exact finite-length BEC synthetic erasure probabilities, the selected
+information indices, and the capacity identity. For example, at erasure
+probability `0.4`, the Shannon capacity is `0.6` bits/use; the example selects
+9 of 16 bit-channels (rate `0.5625`) using their BEC reliability estimates,
+then runs a seeded example frame through the encoder, BEC, and SC decoder.
 
 `modcode.cryptography.toy_dh` demonstrates Diffie–Hellman in the cyclic
 multiplicative group modulo a small prime and tests that both participants
@@ -248,17 +337,18 @@ hard problem and cryptanalysis, not just a different group structure.
 
 ```text
 src/modcode/
-├── modulation/       # BPSK, QPSK, square Gray-mapped QAM
-├── fec/              # FEC interface and cyclic Hamming(7,4)
+├── modulation/       # BPSK, QPSK, QAM, APSK, tail-biting 8-PSK TCM
+├── fec/              # Hamming, QC-LDPC matrix, Polar BEC, and FEC interface
 ├── channel/          # Channel interface and Eb/N0-normalized AWGN
 ├── pipeline/         # Link and run_link
 ├── metrics/          # BER sweeps
 ├── viz/              # Constellation and BER plotting
 ├── number_theory/    # Multiplicative orders and full-reptend exploration
 ├── optical/          # IM/DD modulation and impairment experiments
-└── cryptography/     # Insecure educational Diffie-Hellman demonstration
-examples/              # Hamming correction and BER comparison demos
-tests/                 # Signal, coding, number-theory, and toy-DH tests
+├── cryptography/     # Insecure educational Diffie-Hellman demonstration
+└── shaping.py        # Probabilistic symbol shaping and periodic autocorrelation
+examples/              # BER, coding, cyclicity, QC-LDPC, and Polar demos
+tests/                 # Signal, coding, matrix, polarization, and cyclicity tests
 ```
 
 ## Extending modcode-lab

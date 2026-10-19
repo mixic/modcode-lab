@@ -11,5 +11,6 @@
 
 from modcode.fec.base import FEC
 from modcode.fec.hamming import Hamming74
+from modcode.fec.polar import PolarBEC
 
-__all__ = ["FEC", "Hamming74"]
+__all__ = ["FEC", "Hamming74", "PolarBEC"]
