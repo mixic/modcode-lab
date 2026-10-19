@@ -11,5 +11,32 @@
 
 from modcode.viz.ber_plot import plot_ber
 from modcode.viz.constellation import plot_constellation
+from modcode.viz.phasedarray import (
+    plot_pattern,
+    plot_pattern_family,
+    plot_phase_ramp,
+    plot_squint,
+    plot_wavefront,
+)
+from modcode.viz.qfc import (
+    plot_noise_budget,
+    plot_squeezing_survival,
+    plot_thermal_occupation,
+    plot_transport_budget,
+    plot_wigner,
+)
 
-__all__ = ["plot_ber", "plot_constellation"]
+__all__ = [
+    "plot_ber",
+    "plot_constellation",
+    "plot_noise_budget",
+    "plot_pattern",
+    "plot_pattern_family",
+    "plot_phase_ramp",
+    "plot_squeezing_survival",
+    "plot_squint",
+    "plot_thermal_occupation",
+    "plot_transport_budget",
+    "plot_wavefront",
+    "plot_wigner",
+]

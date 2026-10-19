@@ -23,7 +23,11 @@
 - [Quickstart](#quickstart)
 - [How it works](#how-it-works)
 - [The math behind it](#the-math-behind-it)
+- [Figures](#figures)
+- [Module reference](#module-reference)
+- [Documentation](#documentation)
 - [Project structure](#project-structure)
+- [Testing and reproducibility](#testing-and-reproducibility)
 - [Extending modcode-lab](#extending-modcode-lab)
 - [Roadmap](#roadmap)
 - [Contributing](#contributing)
@@ -61,8 +65,8 @@ It's the missing bridge between a lecture on cyclic groups and a real link-budge
 | **FEC** | Hamming(7,4) as a *cyclic* code with generator `g(x) = x³ + x + 1` |
 | **Channel** | AWGN with information-bit Eb/N0 normalization |
 | **Metrics** | Bit error rate (BER) as a function of Eb/N0 |
-| **Visualization** | Constellation diagrams with bit labels, BER-vs-Eb/N0 plots |
-| **Tests** | pytest suite verifying Gray adjacency, Hamming syndrome table, BER monotonicity |
+| **Visualization** | Constellation diagrams, BER sweeps, wavefront/beam maps, and QFC trade-off plots |
+| **Tests** | pytest suite covering modulation, FEC, channels, optics, arrays, QFC, and waveforms |
 | **CI** | GitHub Actions on Python 3.10 / 3.11 / 3.12 |
 
 ### Experimental research prototypes
@@ -73,6 +77,13 @@ It's the missing bridge between a lecture on cyclic groups and a real link-budge
 | **Trellis coding** | Tail-biting rate-2/3 8-PSK example with pair-rotation equivariance |
 | **Probabilistic shaping** | Maxwell-Boltzmann probabilities and periodic autocorrelation |
 | **Structured FEC** | QC-LDPC base-matrix lifting and Polar coding over the BEC |
+| **Phased arrays** | Linear-array wavefront synthesis with cyclic phase quantisation |
+| **Quantum transduction** | Photon/thermal budgets, QFC noise, transport-loss comparison |
+| **Waveforms** | PSK constellations, Zadoff–Chu generation, periodic autocorrelation |
+| **Number theory** | Full-reptend primes, cyclic multiples, multiplicative orders |
+| **Cryptography** | Toy Diffie–Hellman in a prime field |
+| **Optical IM/DD** | OOK, nonnegative PAM, impairment experiments |
+| **Cyclic-5g lab** | Standalone QKD/phased-array scratch scripts and generated figures |
 
 ### Planned
 
@@ -112,6 +123,25 @@ Run the examples from the repository root:
 ```bash
 python examples/hamming_demo.py
 python examples/run_ber_sweep.py
+python examples/explore_cyclic_structures.py
+python examples/explore_qc_polar.py
+python examples/qc_ldpc_shift_demo.py
+python examples/wavefront_qfc_lab.py
+```
+
+| Script | What it demonstrates |
+|---|---|
+| `hamming_demo.py` | Encode `1010`, inject one bit error, and correct it with Hamming(7,4) |
+| `run_ber_sweep.py` | BER versus Eb/N0 for BPSK, QPSK, and QAM |
+| `explore_cyclic_structures.py` | 16-APSK ring actions, shaped symbols, and the tail-biting 8-PSK TCM |
+| `explore_qc_polar.py` | QC-LDPC lifting and exact BEC Polar construction |
+| `qc_ldpc_shift_demo.py` | A small shift-value base matrix and its lifted parity-check matrix |
+| `wavefront_qfc_lab.py` | Wavefront steering, cyclic phase quantisation, and QFC transport/noise figures |
+
+Run the test suite with:
+
+```bash
+python -m pytest
 ```
 
 The Hamming example encodes `1010` as `1010011`, introduces a one-bit error,
@@ -180,6 +210,25 @@ universal property; shortened Reed–Solomon constructions require a precise
 definition and separate algebraic tests, so this observation should not be
 generalized to every shortened code.
 
+A longer, status-aware treatment of cyclic numbers, Artin's conjecture, GRH,
+cyclic codes, and discrete-logarithm cryptography is in
+[`docs/cyclic-numbers-rh-fec-cryptography.md`](docs/cyclic-numbers-rh-fec-cryptography.md).
+A companion note on radio modulation — PSK as a cyclic group, space–time group
+codes, and Zadoff–Chu sequences — is in
+[`docs/cyclic-groups-radio-modulation.md`](docs/cyclic-groups-radio-modulation.md).
+
+### PSK and Zadoff–Chu waveforms
+
+`modcode.waveforms` exposes `psk_constellation(order, phase_offset=0)`,
+`zadoff_chu(length, root=1)`, `periodic_autocorrelation`, and
+`cyclic_cross_correlation`. With zero phase offset, the `M` PSK points are the
+`M`-th roots of unity and form the cyclic group `C_M`; a global offset gives a
+coset, not a subgroup. ZC sequences use the quadratic phase
+`exp(-j*pi*root*n*(n+1)/length)` and, for odd length with a coprime root, have
+zero periodic autocorrelation at every nonzero shift. The ZC root index is a
+phase coefficient, not a primitive root. The checks live in
+`tests/test_waveforms.py`.
+
 ### Optical IM/DD experiments
 
 `modcode.optical` provides OOK, conventional nonnegative PAM, a small
@@ -233,6 +282,57 @@ rotation action on each ring and tests 16-APSK with four inner and twelve
 outer points. Ring geometry alone also does not guarantee better noise or
 nonlinear-distortion performance than QAM; performance depends on ring radii,
 point labeling, coding, channel, and amplifier constraints.
+
+### Phased arrays, cyclic phase resolution, and quantum frequency conversion
+
+`modcode.phasedarray` synthesises the scalar field of a uniform linear array
+from the cylindrical-wave sum, not just the array-factor approximation, so the
+near-field wavefront curvature is real. A phase ramp can be applied exactly, or
+spent on a cyclic group `C_n` in two different ways:
+
+- **Per-element rounding** keeps the average ramp slope, so the beam stays near
+  the commanded angle, but the aperture acquires a staircase aberration. The
+  Marechal estimate `exp(-rms^2)` predicts the resulting scan loss.
+- **Step rounding** quantises the inter-element step once, keeping a perfectly
+  flat wavefront but aiming the beam at the quantised angle. At 17 degrees a
+  `C4` array keeps full gain and points at 30 degrees, 13 degrees off.
+
+Those are separate hardware choices, not one error, and the module exposes
+both. `array_factor` also accepts a frequency ratio, so wideband squint
+(`sin(theta) = sin(theta0) / (f/f0)`) and the grating-lobe spacing limit are
+numerical rather than asserted.
+
+`modcode.qfc` carries the transduction side: photon energy and Bose-Einstein
+occupation, a phase-insensitive converter with calibrated versus uncalibrated
+efficiency, Gaussian-state covariance propagation through that converter, and
+a transport comparison between coax, waveguide, free-space RF/optical, and
+fibre. The converter is usually not what destroys a microwave state. A 4 K bath
+at 10 GHz already carries 7.8 photons per mode, so the state is thermal before
+conversion begins; quantum frequency conversion is an argument about transport
+and detectors, not a way around cryogenics. Calibrated loss is likewise not
+excess noise, which is why fibre CV-QKD survives tens of dB of it.
+
+```python
+import numpy as np
+
+from modcode.phasedarray import LinearArray
+from modcode.qfc import Transducer, thermal_occupation, transport_budget
+
+array = LinearArray(elements=16, frequency=10e9)
+phases = array.element_quantized_phases(17.0, order=8)
+print(array.peak_angle(phases), array.scan_loss_db(17.0, phases))
+
+device = Transducer(efficiency=0.5, added_noise=1e-3)
+print(device.excess_noise(calibrated=True))
+print(device.surviving_squeezing_db(10.0, bath_occupation=thermal_occupation(10e9, 4.0)))
+for path in transport_budget(100e3):
+    print(path.label, path.loss_db)
+```
+
+Run `python examples/wavefront_qfc_lab.py` to regenerate five figures in
+`examples/figures/`: wavefront steering, phase quantisation, wideband squint,
+the QFC transport/noise comparison, and the Gaussian-state survival plot. The
+script also prints the numeric report that the test suite pins down.
 
 ### Tail-biting trellis coding and cyclic shifts
 
@@ -333,23 +433,205 @@ merely on choosing a group that is non-cyclic. Many deployed systems use
 cyclic subgroups; proposing a “stronger” group requires a precisely defined
 hard problem and cryptanalysis, not just a different group structure.
 
+## Figures
+
+All figures are stored in the repository. The maintained lab figures are
+regenerated by `python examples/wavefront_qfc_lab.py`; the legacy figures are
+retained from the original scratch scripts under `src/modcode/cyclic-5g/`.
+Click a figure to open the full PNG.
+
+### Maintained wavefront and QFC lab
+
+| Wavefront steering | Phase quantisation |
+|---|---|
+| <a href="examples/figures/wavefront_steering.png"><img src="examples/figures/wavefront_steering.png" alt="Wavefronts for exact phase ramps at 0, 15, 30, and 45 degrees" width="440"></a> | <a href="examples/figures/phase_quantization.png"><img src="examples/figures/phase_quantization.png" alt="Per-element and uniform-step C4, C8, and C16 phase quantisation at 17 degrees" width="440"></a> |
+| <sub><b>Figure 1.</b> Near-field wavefronts and phase maps for exact ramps at 0°, 15°, 30°, and 45° (16 elements, 10 GHz, d = λ/2).</sub> | <sub><b>Figure 2.</b> C4/C8/C16 quantisation at 17°: per-element rounding keeps the pointing but adds wavefront ripple; uniform-step rounding keeps a flat wavefront but moves the beam.</sub> |
+
+| Wideband squint | QFC transport and noise |
+|---|---|
+| <a href="examples/figures/beam_squint.png"><img src="examples/figures/beam_squint.png" alt="Realised pointing versus drive frequency and patterns at three frequencies" width="440"></a> | <a href="examples/figures/qfc_transport.png"><img src="examples/figures/qfc_transport.png" alt="Transport loss, thermal occupation, and transduction excess-noise budget" width="440"></a> |
+| <sub><b>Figure 3.</b> A fixed phase ramp is pointed only at its design frequency; a 10% shift moves the beam about 3° at 30°.</sub> | <sub><b>Figure 4.</b> 100 km transport loss, thermal photons per mode, and the calibrated versus uncalibrated excess-noise budget.</sub> |
+
+<p align="center">
+  <a href="examples/figures/qfc_state.png"><img src="examples/figures/qfc_state.png" alt="Squeezed-state covariance through the converter and surviving squeezing versus efficiency and bath temperature" width="700"></a>
+</p>
+<p align="center"><sub><b>Figure 5.</b> A squeezed state through the converter: Wigner contours, surviving squeezing versus efficiency, and the 4 K bath that erases 10 dB of microwave squeezing.</sub></p>
+
+### Legacy cyclic-5g outputs
+
+These figures are retained from the original scratch lab. The maintained
+figures above are authoritative; the scratch scripts are kept for provenance
+and the `cyclic-5g` directory is not an importable package because its name
+contains a hyphen.
+
+| Legacy wavefront | Legacy quantisation |
+|---|---|
+| <a href="src/modcode/cyclic-5g/figures/wavefront_steering.png"><img src="src/modcode/cyclic-5g/figures/wavefront_steering.png" alt="Legacy wavefront figure for 0, 15, 30, and 45 degrees" width="440"></a> | <a href="src/modcode/cyclic-5g/figures/quantization_error.png"><img src="src/modcode/cyclic-5g/figures/quantization_error.png" alt="Legacy quantisation comparison at 17 degrees" width="440"></a> |
+| <sub><b>Figure 6.</b> Original scratch-lab wavefront figure for 0°, 15°, 30°, and 45°.</sub> | <sub><b>Figure 7.</b> Original scratch-lab C4/C8 quantisation comparison at 17°.</sub> |
+
+| Legacy QFC transduction | Legacy beam patterns |
+|---|---|
+| <a href="src/modcode/cyclic-5g/figures/qfc_transduction.png"><img src="src/modcode/cyclic-5g/figures/qfc_transduction.png" alt="Legacy QFC transport and noise figure" width="440"></a> | <a href="src/modcode/cyclic-5g/figures/beam_patterns.png"><img src="src/modcode/cyclic-5g/figures/beam_patterns.png" alt="Legacy polar beam patterns, quantisation damage, and phase ramps" width="440"></a> |
+| <sub><b>Figure 8.</b> Original scratch-lab QFC transport and transduction-noise figure.</sub> | <sub><b>Figure 9.</b> Original scratch-lab polar patterns, quantisation damage, and phase ramps.</sub> |
+
+## Module reference
+
+| Module | Purpose | Main entry points |
+|---|---|---|
+| `modcode` | Core convenience exports | `BPSK`, `QPSK`, `QAM`, `Hamming74`, `AWGNChannel`, `Link`, `LinkResult`, `run_link` |
+| `modcode.modulation` | Modulation families and the shared interface | `BPSK`, `QPSK`, `QAM`, `APSK`, `TailBitingTCM8PSK`, `Modulation` |
+| `modcode.waveforms` | PSK and Zadoff–Chu generation, periodic correlation | `psk_constellation`, `zadoff_chu`, `periodic_autocorrelation`, `cyclic_cross_correlation` |
+| `modcode.fec` | Block-code interface and standard codes | `FEC`, `Hamming74`, `PolarBEC`; `modcode.fec.cyclic` (`cyclic_shift`), `modcode.fec.qc_ldpc` (`expand_qc_base_matrix`) |
+| `modcode.channel` | Channel models | `AWGNChannel` |
+| `modcode.pipeline` | End-to-end link simulation | `Link`, `LinkResult`, `run_link` |
+| `modcode.metrics` | BER measurement | `ber_sweep` |
+| `modcode.viz` | Constellation, BER, array, and QFC plotting | `plot_constellation`, `plot_ber`, `plot_wavefront`, `plot_pattern`, `plot_phase_ramp`, `plot_squint`, `plot_transport_budget`, `plot_noise_budget`, `plot_wigner` |
+| `modcode.phasedarray` | Array geometry and cyclic phase quantisation | `LinearArray`, `quantize_phases`, `squint_angle`, `grating_lobe_limit` |
+| `modcode.qfc` | QFC noise, quantum states, and link budgets | `Transducer`, `thermal_occupation`, `transport_budget`, `wigner_function`, `covariance_squeezing_db` |
+| `modcode.optical` | IM/DD experiments | `OOK`, `IntensityPAM`, `NonUniformPAM`, `IMDDChannel`, `optimize_pam_levels`, `ber_sweep_imdd` |
+| `modcode.number_theory` | Full-reptend arithmetic | `multiplicative_order`, `is_full_reptend_prime`, `full_reptend_cycle`, `cyclic_multiples`, `full_reptend_primes` |
+| `modcode.cryptography` | Deliberately insecure Diffie–Hellman | `ToyDiffieHellman` |
+| `modcode.shaping` | Probabilistic shaping and autocorrelation | `maxwell_boltzmann_probabilities`, `sample_shaped_symbols`, `periodic_autocorrelation` |
+| `src/modcode/cyclic-5g` | Standalone scratch lab; not importable | `qkd_phased_array_lab.py`, `wavefront_qfc_lab.py` |
+
+## Documentation
+
+The README is the map; the long-form notes are in `docs/`:
+
+- [Cyclic numbers, the Riemann Hypothesis, cyclic codes, and cryptography](docs/cyclic-numbers-rh-fec-cryptography.md)
+  — full-reptend primes, Artin/GRH, quasi-RH caveats, cyclic codes, DLP,
+  quantum cyclic topology, and a claims audit.
+- [Cyclic groups in radio: PSK, space–time codes, and Zadoff–Chu](docs/cyclic-groups-radio-modulation.md)
+  — PSK as `C_M`, unitary group codes, ZC autocorrelation, the KHAN proposal,
+  and runnable checks backed by `modcode.waveforms`.
+
 ## Project structure
 
 ```text
-src/modcode/
-├── modulation/       # BPSK, QPSK, QAM, APSK, tail-biting 8-PSK TCM
-├── fec/              # Hamming, QC-LDPC matrix, Polar BEC, and FEC interface
-├── channel/          # Channel interface and Eb/N0-normalized AWGN
-├── pipeline/         # Link and run_link
-├── metrics/          # BER sweeps
-├── viz/              # Constellation and BER plotting
-├── number_theory/    # Multiplicative orders and full-reptend exploration
-├── optical/          # IM/DD modulation and impairment experiments
-├── cryptography/     # Insecure educational Diffie-Hellman demonstration
-└── shaping.py        # Probabilistic symbol shaping and periodic autocorrelation
-examples/              # BER, coding, cyclicity, QC-LDPC, and Polar demos
-tests/                 # Signal, coding, matrix, polarization, and cyclicity tests
+modcode-lab/
+├── .github/workflows/ci.yml
+├── docs/
+│   ├── cyclic-groups-radio-modulation.md
+│   └── cyclic-numbers-rh-fec-cryptography.md
+├── examples/
+│   ├── figures/
+│   │   ├── beam_squint.png
+│   │   ├── phase_quantization.png
+│   │   ├── qfc_state.png
+│   │   ├── qfc_transport.png
+│   │   └── wavefront_steering.png
+│   ├── explore_cyclic_structures.py
+│   ├── explore_qc_polar.py
+│   ├── hamming_demo.py
+│   ├── qc_ldpc_shift_demo.py
+│   ├── run_ber_sweep.py
+│   └── wavefront_qfc_lab.py
+├── src/modcode/
+│   ├── __init__.py
+│   ├── shaping.py
+│   ├── channel/
+│   │   ├── __init__.py
+│   │   ├── awgn.py
+│   │   └── base.py
+│   ├── cryptography/
+│   │   ├── __init__.py
+│   │   └── toy_dh.py
+│   ├── cyclic-5g/                  # scratch lab; not an importable package
+│   │   ├── figures/
+│   │   │   ├── beam_patterns.png
+│   │   │   ├── qfc_transduction.png
+│   │   │   ├── quantization_error.png
+│   │   │   └── wavefront_steering.png
+│   │   ├── qkd_phased_array_lab.py
+│   │   ├── run_output.txt
+│   │   └── wavefront_qfc_lab.py
+│   ├── fec/
+│   │   ├── __init__.py
+│   │   ├── base.py
+│   │   ├── cyclic.py
+│   │   ├── hamming.py
+│   │   ├── polar.py
+│   │   └── qc_ldpc.py
+│   ├── metrics/
+│   │   ├── __init__.py
+│   │   └── ber.py
+│   ├── modulation/
+│   │   ├── __init__.py
+│   │   ├── apsk.py
+│   │   ├── base.py
+│   │   ├── bpsk.py
+│   │   ├── cyclic_tcm.py
+│   │   ├── qam.py
+│   │   └── qpsk.py
+│   ├── number_theory/
+│   │   ├── __init__.py
+│   │   └── full_reptend.py
+│   ├── optical/
+│   │   ├── __init__.py
+│   │   ├── channel.py
+│   │   ├── modulation.py
+│   │   └── robustness.py
+│   ├── phasedarray/
+│   │   ├── __init__.py
+│   │   └── array.py
+│   ├── pipeline/
+│   │   ├── __init__.py
+│   │   └── chain.py
+│   ├── qfc/
+│   │   ├── __init__.py
+│   │   ├── link.py
+│   │   └── photons.py
+│   ├── viz/
+│   │   ├── __init__.py
+│   │   ├── ber_plot.py
+│   │   ├── constellation.py
+│   │   ├── optical.py
+│   │   ├── phasedarray.py
+│   │   └── qfc.py
+│   └── waveforms/
+│       ├── __init__.py
+│       └── sequences.py
+├── tests/
+│   ├── test_apsk.py
+│   ├── test_ber_awgn.py
+│   ├── test_cyclic_fec.py
+│   ├── test_cyclic_tcm.py
+│   ├── test_full_reptend.py
+│   ├── test_hamming.py
+│   ├── test_optical_imdd.py
+│   ├── test_phasedarray.py
+│   ├── test_polar_bec.py
+│   ├── test_qam_gray.py
+│   ├── test_qc_ldpc.py
+│   ├── test_qfc.py
+│   ├── test_shaping.py
+│   ├── test_toy_dh.py
+│   └── test_waveforms.py
+├── .gitignore
+├── LICENSE
+├── README.md
+└── pyproject.toml
 ```
+
+`src/modcode/cyclic-5g/` is kept as provenance for the original QKD and
+phased-array scratch scripts. It is not importable because the directory name
+contains a hyphen; the maintained implementations are `modcode.phasedarray`
+and `modcode.qfc`, exercised by `examples/wavefront_qfc_lab.py`.
+
+## Testing and reproducibility
+
+```bash
+python -m pytest          # full test suite
+ruff check .              # lint
+python examples/wavefront_qfc_lab.py  # regenerate the five maintained figures
+```
+
+The suite covers modulation geometry, Gray labeling, AWGN BER, Hamming and
+QC-LDPC structure, Polar BEC construction, optical IM/DD, full-reptend
+arithmetic, toy Diffie–Hellman, phased-array synthesis, QFC noise, and the
+PSK/ZC waveform checks. The figure-producing script is deterministic given its
+fixed seeds and constants; the numeric report it prints is the same one the
+tests pin down.
 
 ## Extending modcode-lab
 
@@ -381,6 +663,9 @@ for new modulation, coding, and channel behavior.
 - Proakis and Salehi, *Digital Communications*, 5th edition.
 - Sklar, *Digital Communications: Fundamentals and Applications*, 2nd edition.
 - Lin and Costello, *Error Control Coding*, 2nd edition.
+- I. A. Simakov and I. S. Besedin, “Low-overhead quantum error correction
+  codes with a cyclic topology,” *Physical Review A* **111**, 012444 (2025);
+  [arXiv:2211.03094](https://arxiv.org/abs/2211.03094).
 
 ## License
 

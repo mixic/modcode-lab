@@ -1,0 +1,174 @@
+==============================================================================
+CYCLIC-5G LAB -- QKD over microwave + cyclic phased-array steering
+Python 3.14.7 | pure stdlib
+==============================================================================
+==============================================================================
+1. PHOTON BUDGET: why a 10 GHz single-photon link cannot work
+==============================================================================
+carrier                 f (Hz)    E=hf (J)   kT/E @290K  n_thermal
+------------------------------------------------------------------------------
+1 GHz microwave      1.000e+09  6.6261e-25       6042.6   6.04e+03
+10 GHz microwave     1.000e+10  6.6261e-24        604.3        604
+1550 nm optical      1.934e+14  1.2816e-19          0.0   1.26e-14
+
+optical / microwave photon energy ratio : 19,341
+  -> the discussion said '~100,000x less'. That is the 1-2 GHz number.
+  -> at 10 GHz the honest ratio is ~19,341x.
+
+Single mode at 290 K, 10 GHz, holds ~604 thermal photons.
+  A 'single photon' detector must resolve 1 photon inside a 600-photon
+  bath: that is the wall. Hence CV-QKD (which measures quadratures
+  relative to a strong local oscillator) instead of photon counting.
+
+==============================================================================
+2. BB84 WITH INTERCEPT-RESEND EVE: the 25% error signature
+==============================================================================
+scenario                             sifted   errors     QBER
+------------------------------------------------------------------------------
+clean channel (no eavesdropper)        9991        0   0.00%
+intercept-resend Eve (full tap)        9991     2481  24.83%
+
+Theory: Eve guesses the basis correctly 1/2 of the time; when she
+guesses wrong, Bob is wrong 1/2 of the time -> QBER = 1/4 = 25.00%.
+
+Security threshold (one-way, asymptotic) : 11.0%
+Measured QBER                            : 24.83%
+Verdict                                  : ABORT KEY
+Secret fraction 1 - 2*H2(Q)              : -0.6172
+  -> negative: at Q > 11% no key survives privacy amplification.
+  The tap is detected, not ignored -- this is the whole point.
+
+==============================================================================
+3. CV-QKD EXCESS-NOISE CHECK (toy model, not a security proof)
+==============================================================================
+Alice modulation variance V_A = 4.0 SNU, transmittance T = 0.5
+
+channel                                   xi_hat +/- SE       verdict
+------------------------------------------------------------------------------
+clean-ish link, xi = 0.02                 0.0156 +/-0.0064      ACCEPT
+Eve taps, +0.30 SNU of noise              0.6143 +/-0.0083       ABORT
+
+  The sampling noise on the clean case (~0.006 SNU) is why 0.02
+  estimates as ~0.016: the estimator is unbiased, just finite-sample.
+
+Abort threshold used here: xi_max = 0.1 SNU (illustrative; real
+thresholds follow from a composable secret-key-rate analysis and
+depend on T, reconciliation efficiency and V_A).
+
+MICROWAVE REALITY CHECK (same estimator, thermal bath as 'noise'):
+  thermal occupation @290 K, 10 GHz : 604 SNU  <- vs xi_max 0.1
+  thermal occupation @  4 K, 10 GHz : 7.84e+00 SNU
+  factor by which 290 K noise exceeds the abort threshold : 6,038x
+
+  -> room-temperature CV-QKD at 10 GHz is off by ~3 orders of
+     magnitude on noise alone. Practical routes: cryogenic receivers,
+     near-quantum-limited LNAs, or optical upconversion of the
+     microwave signal before detection. The discussion's framing of
+     'I/Q quadratures = QAM plane' is right; the 'room temperature'
+     implication is the part that needs the qualifier.
+
+==============================================================================
+4. PHASED-ARRAY STEERING: dphi = 2*pi*d*sin(theta)/lambda
+==============================================================================
+f = 10 GHz   lambda = 3.00 cm   d = lambda/2 = 1.50 cm
+
+(a) required inter-element phase step
+   theta  sin(theta)        dphi   dphi mod 360
+------------------------------------------------------------------------------
+      0deg      0.0000       0.00          0.00
+     10deg      0.1736      31.26         31.26
+     20deg      0.3420      61.56         61.56
+     30deg      0.5000      90.00         90.00
+     45deg      0.7071     127.28        127.28
+     60deg      0.8660     155.88        155.88
+     90deg      1.0000     180.00        180.00
+
+Check the worked case from the discussion: theta = 30 deg
+  dphi = pi*sin(30) = pi/2 = 90.00 deg  -> 90 deg. OK
+
+(b) numeric pattern peak for a 16-element array, commanded theta_0 = 30 deg
+  predicted peak : 30.000 deg
+  measured peak  : 30.000 deg   (AF = 1.0000)
+  error          : 0.0000 deg  -> formula confirmed
+
+(c) 100-element array beamwidth
+  -3 dB width    : 1.173 deg
+  theory 0.886*lambda/(N*d) broadside = 1.015 deg
+  broadened by 1/cos(30 deg) at scan  = 1.172 deg   -> 0.1% off
+  -> a ~1 deg pencil beam: an enemy 3 deg off-axis sits -20.4 dB down.
+
+(d) finite cyclic phase groups: quantization of the steering step
+  group     step    dphi_q   theta_q  point err  scan loss
+------------------------------------------------------------------------------
+C4         90.0deg    90.0deg    30.00deg     +0.00    0.00 dB
+C8         45.0deg    90.0deg    30.00deg     +0.00    0.00 dB
+C16        22.5deg    90.0deg    30.00deg     +0.00    0.00 dB
+C32        11.2deg    90.0deg    30.00deg     +0.00    0.00 dB
+C64         5.6deg    90.0deg    30.00deg     +0.00    0.00 dB
+C128        2.8deg    90.0deg    30.00deg     +0.00    0.00 dB
+
+  At theta_0 = 30 deg with d = lambda/2 the step is exactly 90 deg,
+  so C4 and everything above it is exact. That is a coincidence of
+  this angle -- not a general property. See theta_0 = 17 deg below.
+
+  same test at theta_0 = 17.0 deg (dphi = 52.627 deg):
+  group      dphi_q   theta_q  point err  scan loss
+------------------------------------------------------------------------------
+C4           90.0deg    30.00deg    +13.00   -0.83 dB
+C8           45.0deg    14.48deg     -2.52   -0.23 dB
+C16          45.0deg    14.48deg     -2.52   -0.05 dB
+C32          56.2deg    18.21deg     +1.21   -0.01 dB
+C64          50.6deg    16.33deg     -0.67   -0.00 dB
+C128         53.4deg    17.27deg     +0.27   -0.00 dB
+
+(e) the modulo-360 wraparound the hardware actually stores
+  commanded phases for elements 0..11 (degrees, mod 360):
+    0.0  270.0  180.0   90.0    0.0  270.0  180.0   90.0    0.0  270.0  180.0   90.0
+  distinct values needed for this beam: 4  -> the pattern just repeats.
+
+  Sign note: this array applies -n*dphi, so the sequence runs
+  0, 270, 180, 90, 0, ... because a POSITIVE dphi steers to +theta
+  under this convention. Writing +n*dphi (0, 90, 180, 270) is the
+  same beam mirrored to -theta. Both are convention, not error --
+  but the sign of dphi is what picks left from right in hardware.
+
+(f) element spacing and grating lobes (theta_0 = 30 deg, N = 16)
+    the phase step is re-solved for each spacing, so the main beam
+    stays commanded to 30 deg and spacing is the only variable
+  d/lambda                             beams found           level
+------------------------------------------------------------------------------
+     0.500            main +30.0deg, side +18.7deg   -13.1 dB side
+     0.667            equal beams at -88deg/+30deg     0.0 dB each
+     0.700            equal beams at -68deg/+30deg     0.0 dB each
+     1.000            equal beams at -30deg/+30deg     0.0 dB each
+
+  No-grating-lobe condition: d/lambda <= 1/(1+|sin(theta_0)|).
+  For theta_0 = 30 deg that bound is 1/(1+0.5) = 0.667: d = lambda/2
+  sits 25% below it. At d = lambda the image lobe lands at exactly
+  -30 deg, a full-strength copy of your beam aimed at the enemy. That,
+  not aesthetics, is why tactical arrays use lambda/2.
+  (At d = lambda/2 the ~-13 dB lobes are ordinary uniform-array
+  sidelobes, not grating lobes; tapering the amplitude flattens them.)
+
+==============================================================================
+5. CLAIM AUDIT
+==============================================================================
+claim                                                     computed          
+------------------------------------------------------------------------------
+lambda at 10 GHz = 3 cm                                    3.00 cm   OK
+d = lambda/2 = 1.5 cm                                      1.50 cm   OK
+dphi(30 deg) = 90 deg                                    90.00 deg   OK
+4*90 deg == 0 mod 360                                            0   OK
+BB84 intercept-resend QBER = 25%                measured in sec. 2   OK
+QBER 25% > 11% threshold -> abort                            abort   OK
+AES-256 -> 128-bit post-Grover                             correct   OK
+microwave photon ~1e5x less than optical        ~19,341x at 10 GHz   REVISE
+100-element array -> ~1 deg beam                          1.02 deg   OK
+
+Only one claim needed revising: the 1e5 photon-energy ratio, which is
+the 1-2 GHz figure. At 10 GHz it is ~2e4 -- still huge, still fatal
+for photon counting, just not that number.
+
+==============================================================================
+done
+==============================================================================
