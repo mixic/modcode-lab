@@ -43,6 +43,8 @@ from modcode.channel.phase_imbalance import PhaseImbalanceChannel
 from modcode.modulation.involution import (
     block_tau_hypothesis,
     correct_tau,
+    demodulate_phase_imbalance,
+    demodulate_tau_aware,
     pilot_tau_hypothesis,
     tau_log_likelihood_ratio,
 )
@@ -71,6 +73,10 @@ def _ber(reference: np.ndarray, decoded: np.ndarray) -> float:
     return float(np.mean(reference != decoded))
 
 
+def _noise_variance(qpsk: QPSK, ebn0_db: float) -> float:
+    return AWGNChannel.noise_variance(ebn0_db, qpsk.bits_per_symbol)
+
+
 def _coherent(
     qpsk: QPSK,
     bits: np.ndarray,
@@ -80,7 +86,7 @@ def _coherent(
     """Standard coherent detector: assume the phase reference is exact."""
     transmitted = qpsk.modulate(bits)
     received = PhaseImbalanceChannel(PHI).transmit(
-        transmitted, ebn0_db, qpsk.bits_per_symbol, rng=rng
+        transmitted, _noise_variance(qpsk, ebn0_db), rng=rng
     )
     return qpsk.demodulate(received)
 
@@ -94,9 +100,9 @@ def _oracle(
     """Oracle detector: knows that the channel is the phi = pi reflection."""
     transmitted = qpsk.modulate(bits)
     received = PhaseImbalanceChannel(PHI).transmit(
-        transmitted, ebn0_db, qpsk.bits_per_symbol, rng=rng
+        transmitted, _noise_variance(qpsk, ebn0_db), rng=rng
     )
-    return qpsk.demodulate_phase_imbalance(received, PHI)
+    return demodulate_phase_imbalance(qpsk, received, PHI)
 
 
 def _pilot_assisted(
@@ -119,7 +125,7 @@ def _pilot_assisted(
         blocks.append((pilot_index, block_start, block_end))
     frames = np.asarray(frames, dtype=np.complex128)
     received = PhaseImbalanceChannel(PHI).transmit(
-        frames, ebn0_db, qpsk.bits_per_symbol, rng=rng
+        frames, _noise_variance(qpsk, ebn0_db), rng=rng
     )
     decoded_blocks = []
     wrong_hypotheses = 0
@@ -145,10 +151,10 @@ def _blind(
 ) -> tuple[np.ndarray, np.ndarray]:
     """Test the two hypotheses from the data alone, one block at a time."""
     transmitted = qpsk.modulate(bits)
+    variance = _noise_variance(qpsk, ebn0_db)
     received = PhaseImbalanceChannel(PHI).transmit(
-        transmitted, ebn0_db, qpsk.bits_per_symbol, rng=rng
+        transmitted, variance, rng=rng
     )
-    variance = AWGNChannel.noise_variance(ebn0_db, qpsk.bits_per_symbol)
     decoded_blocks = []
     hypotheses = []
     for start in range(0, received.size, block):
@@ -167,14 +173,14 @@ def _noiseless_report(qpsk: QPSK, bits: np.ndarray) -> None:
     transmitted = qpsk.modulate(bits)
     received = PhaseImbalanceChannel(PHI).impair(transmitted)
     coherent = qpsk.demodulate(received)
-    oracle = qpsk.demodulate_phase_imbalance(received, PHI)
+    oracle = demodulate_phase_imbalance(qpsk, received, PHI)
     pilot_hypothesis = pilot_tau_hypothesis(
         np.asarray([np.conj(PILOT)]), np.asarray([PILOT])
     )
-    pilot = qpsk.demodulate_tau_aware(received, hypothesis=pilot_hypothesis)
+    pilot = demodulate_tau_aware(qpsk, received, hypothesis=pilot_hypothesis)
     llr = tau_log_likelihood_ratio(qpsk, received)
     blind_hypothesis = block_tau_hypothesis(qpsk, received)
-    blind = qpsk.demodulate_tau_aware(received, hypothesis=blind_hypothesis)
+    blind = demodulate_tau_aware(qpsk, received, hypothesis=blind_hypothesis)
 
     print()
     print(RULE)
@@ -265,8 +271,7 @@ def _figure(qpsk: QPSK, curves: dict[str, np.ndarray]) -> None:
     transmitted = qpsk.modulate(bits)
     noisy = PhaseImbalanceChannel(PHI).transmit(
         transmitted,
-        8.0,
-        qpsk.bits_per_symbol,
+        _noise_variance(qpsk, 8.0),
         rng=np.random.default_rng(8),
     )
     llr = tau_log_likelihood_ratio(

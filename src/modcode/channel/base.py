@@ -22,12 +22,16 @@ class Channel(ABC):
     def transmit(
         self,
         symbols: NDArray[np.complexfloating],
-        ebn0_db: float,
-        bits_per_symbol: int,
-        code_rate: float = 1.0,
+        noise_variance: float,
         rng: np.random.Generator | None = None,
     ) -> NDArray[np.complex128]:
-        """Return the received complex symbols."""
+        """Return the received complex symbols.
+
+        The pipeline computes ``noise_variance`` from the channel's noise
+        model and the link's spectral efficiency, then passes the scalar
+        here.  A channel does not need to know the modulation order, the FEC
+        rate, or the coding scheme.
+        """
 
     def noise_variance(
         self,

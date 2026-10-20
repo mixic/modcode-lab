@@ -108,16 +108,14 @@ class PhaseImbalanceChannel(Channel):
     def transmit(
         self,
         symbols: NDArray[np.complexfloating],
-        ebn0_db: float,
-        bits_per_symbol: int,
-        code_rate: float = 1.0,
+        noise_variance: float,
         rng: np.random.Generator | None = None,
     ) -> NDArray[np.complex128]:
-        """Apply the mismatch and then add AWGN at the requested Eb/N0."""
+        """Apply the mismatch and then add AWGN with the given variance."""
         impaired = self.impair(symbols)
-        variance = AWGNChannel.noise_variance(
-            ebn0_db, bits_per_symbol, code_rate
-        )
+        variance = float(noise_variance)
+        if not np.isfinite(variance) or variance < 0.0:
+            raise ValueError("noise_variance must be finite and non-negative")
         generator = rng if rng is not None else np.random.default_rng()
         noise = np.sqrt(variance) * (
             generator.standard_normal(impaired.size)

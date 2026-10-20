@@ -50,7 +50,7 @@ path to a BER curve, read the quickstart below.
 | **FEC** | Hamming(7,4) with syndrome decoding and soft ML over 16 codewords; rate-1/2 constraint-length-3 convolutional code with hard and soft Viterbi |
 | **Channels** | AWGN with information-bit Eb/N0 normalization |
 | **Pipeline** | `Link` with `decoding="auto"`, `"hard"`, or `"soft"`; `LinkResult.decoding` records the path |
-| **Metrics** | Simulated BER and closed-form BPSK/QPSK/QAM references |
+| **Metrics** | Simulated BER with adaptive stopping and Wilson confidence intervals, plus closed-form BPSK/QPSK/QAM references |
 | **Plots** | Constellations and BER curves with dashed theory overlays |
 | **Tests** | Full pytest suite, including LLR sign/scale, Hamming soft ML, Viterbi hard/soft, and theory values |
 | **CI** | GitHub Actions on Python 3.10 / 3.11 / 3.12 |
@@ -173,11 +173,11 @@ python examples/phase_imbalance_lab.py
 | Module | Purpose | Main entry points |
 |---|---|---|
 | `modcode` | Convenience exports | `BPSK`, `QPSK`, `QAM`, `Hamming74`, `ConvolutionalCode`, `AWGNChannel`, `Link`, `run_link` |
-| `modcode.modulation` | Constellations and LLRs | `BPSK`, `QPSK`, `QAM`, `Modulation.soft_demodulate`, `demodulate_phase_imbalance` |
+| `modcode.modulation` | Constellations and LLRs | `BPSK`, `QPSK`, `QAM`, `Modulation.soft_demodulate` |
 | `modcode.fec` | FEC codes | `Hamming74` (hard + `decode_soft`), `ConvolutionalCode` (hard/soft Viterbi), `CRC`, `PolarBEC` |
 | `modcode.channel` | Core channel | `AWGNChannel`; `PhaseImbalanceChannel` is an exploratory appendix |
 | `modcode.pipeline` | Link composition | `Link(..., decoding="auto"/"hard"/"soft")`, `LinkResult`, `run_link` |
-| `modcode.metrics` | BER and theory | `ber_sweep`, `theoretical_ber`, `q_function` |
+| `modcode.metrics` | BER and theory | `ber_sweep`, `ber_sweep_detailed`, `BERCurve`, `theoretical_ber`, `q_function` |
 | `modcode.viz` | Plots | `plot_constellation`, `plot_ber(..., theory=...)` |
 
 The full API and derivations are in [`docs/core-simulator.md`](docs/core-simulator.md).
@@ -243,7 +243,7 @@ ruff check .              # lint
 
 Core tests include:
 
-- `tests/test_ber_awgn.py` — noise normalization and link BER;
+- `tests/test_ber_awgn.py` — noise normalization, Q-function comparison, adaptive stopping, and confidence intervals;
 - `tests/test_soft_decision.py` — LLR sign/scale, Hamming soft ML, theory values;
 - `tests/test_convolutional.py` — hard/soft Viterbi and the soft-decoding gain;
 - `tests/test_hamming.py`, `tests/test_qam_gray.py` — code and constellation structure.
@@ -269,7 +269,9 @@ The core roadmap is intentionally short.  The appendices are not on it.
 | P0 | ✅ | Soft LLR demodulation and soft Hamming ML |
 | P0 | ✅ | Rate-1/2 convolutional code with hard/soft Viterbi |
 | P0 | ✅ | Theoretical BER overlays for BPSK/QPSK/QAM |
+| P0 | ✅ | O(N) QAM slicing, vectorized Hamming LUT, adaptive BER with Wilson intervals |
 | P1 | ⬜ | Rayleigh/block-fading channel and CSI assumptions |
+| P1 | ⬜ | Bit interleaving across FEC blocks and QAM symbols |
 | P1 | ⬜ | BCH and Reed–Solomon codes |
 | P2 | ⬜ | TCM / C-TCM over 8-PSK |
 | P2 | ⬜ | Documentation site, notebooks, and more channel models |

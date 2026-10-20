@@ -42,6 +42,19 @@ class Hamming74(FEC):
         self._codewords = self.encode(self._data_words.reshape(-1)).reshape(
             -1, 7
         )
+        self._syndrome_to_position = self._build_syndrome_lut()
+
+    @classmethod
+    def _build_syndrome_lut(cls) -> NDArray[np.intp]:
+        """Map each nonzero syndrome to a 1-based error position."""
+        lut = np.zeros(8, dtype=np.intp)
+        for position in range(7):
+            column = cls._parity_checks[:, position]
+            value = int(column[0]) * 4 + int(column[1]) * 2 + int(column[2])
+            lut[value] = position + 1
+        if np.any(lut[1:] == 0):
+            raise RuntimeError("Hamming parity-check columns are not distinct")
+        return lut
 
     @property
     def data_bits_per_block(self) -> int:
@@ -71,13 +84,10 @@ class Hamming74(FEC):
             raise ValueError("Hamming(7,4) requires a multiple of 7 code bits")
         words = values.reshape(-1, 7).copy()
         syndromes = (words @ self._parity_checks.T) % 2
-        for word, syndrome in zip(words, syndromes, strict=True):
-            if np.any(syndrome):
-                matches = np.flatnonzero(
-                    np.all(self._parity_checks.T == syndrome, axis=1)
-                )
-                if matches.size:
-                    word[matches[0]] ^= 1
+        indices = syndromes @ np.asarray([4, 2, 1], dtype=np.uint8)
+        positions = self._syndrome_to_position[indices]
+        error_rows = np.flatnonzero(positions)
+        words[error_rows, positions[error_rows] - 1] ^= 1
         return words[:, :4].reshape(-1)
 
     def decode_soft(

@@ -446,10 +446,11 @@ observable alone.
 - `modcode.channel.PhaseImbalanceChannel`: the forward map
   \(y=I+jQe^{j\phi}\), optional AWGN, the real matrix \(R(\phi)\), and the
   mean energy ratio.
-- `Modulation.demodulate_phase_imbalance(symbols, phi)`: known-phase inverse.
-  It raises at the singular \(\phi=\pi/2\).
-- `Modulation.demodulate_tau_aware(symbols, hypothesis=0|1)`: the two
-  hypotheses; hypothesis \(1\) conjugates the received symbols.
+- `demodulate_phase_imbalance(modulation, symbols, phi)` in
+  `modcode.modulation.involution`: known-phase inverse.
+- `demodulate_tau_aware(modulation, symbols, hypothesis=0|1)` in the same
+  module: the two hypotheses; hypothesis \(1\) conjugates the received
+  symbols.
 - `modcode.modulation.involution.tau_log_likelihood_ratio`: the per-symbol
   log-likelihood ratio for \(\phi=0\) versus \(\phi=\pi\).
 - `block_tau_hypothesis`: sums the LLR over a block with one constant
@@ -577,7 +578,7 @@ Files:
 
 - `src/modcode/channel/phase_imbalance.py`
 - `src/modcode/modulation/involution.py`
-- `src/modcode/modulation/base.py` (`demodulate_phase_imbalance`,
+- `src/modcode/modulation/involution.py` (`demodulate_phase_imbalance`,
   `demodulate_tau_aware`)
 - `src/modcode/viz/phase_imbalance.py`
 - `examples/phase_imbalance_lab.py`

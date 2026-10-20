@@ -14,6 +14,7 @@ import itertools
 import numpy as np
 import pytest
 
+from modcode.modulation.base import Modulation
 from modcode.modulation.qam import QAM
 
 
@@ -48,6 +49,27 @@ def test_qam_round_trip_and_unit_average_power(order: int) -> None:
     assert np.isclose(
         np.mean(np.abs(list(modulation.constellation.values())) ** 2), 1.0
     )
+
+
+def test_qam_round_trip_on_a_large_batch() -> None:
+    modulation = QAM(64)
+    bits = np.random.default_rng(64).integers(
+        0, 2, size=modulation.bits_per_symbol * 200_000, dtype=np.uint8
+    )
+    assert np.array_equal(modulation.demodulate(modulation.modulate(bits)), bits)
+
+
+def test_qam_soft_llrs_match_generic_max_log() -> None:
+    modulation = QAM(16)
+    rng = np.random.default_rng(16)
+    bits = rng.integers(
+        0, 2, size=modulation.bits_per_symbol * 2_000, dtype=np.uint8
+    )
+    symbols = modulation.modulate(bits)
+    variance = 0.3
+    per_axis = modulation.soft_demodulate(symbols, variance)
+    generic = Modulation.soft_demodulate(modulation, symbols, variance)
+    np.testing.assert_allclose(per_axis, generic, atol=1e-12)
 
 
 @pytest.mark.parametrize("order", [3, 8, 15, 16.0])

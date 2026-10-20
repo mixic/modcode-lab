@@ -56,30 +56,13 @@ class LinkResult:
 
 
 def _decode(
-    link: Link, received_symbols: SymbolArray, ebn0_db: float
+    link: Link, received_symbols: SymbolArray, variance: float
 ) -> tuple[BitArray, str]:
     """Decode with soft LLRs when both the channel and FEC support them."""
     if link.fec is None:
         return link.modulation.demodulate(received_symbols), "hard"
 
     if link.decoding == "hard":
-        return (
-            link.fec.decode(link.modulation.demodulate(received_symbols)),
-            "hard",
-        )
-
-    try:
-        variance = link.channel.noise_variance(
-            ebn0_db,
-            link.modulation.bits_per_symbol,
-            link.fec.rate,
-        )
-    except NotImplementedError:
-        if link.decoding == "soft":
-            raise ValueError(
-                f"{type(link.channel).__name__} does not expose a noise "
-                "variance; soft decoding is unavailable"
-            ) from None
         return (
             link.fec.decode(link.modulation.demodulate(received_symbols)),
             "hard",
@@ -123,14 +106,18 @@ def run_link(
     padded = np.pad(source, (0, padded_size - n_bits))
     transmitted = link.fec.encode(padded) if link.fec else padded
     tx_symbols = link.modulation.modulate(transmitted)
-    rx_symbols = link.channel.transmit(
-        tx_symbols,
-        ebn0_db,
-        link.modulation.bits_per_symbol,
-        link.fec.rate if link.fec else 1.0,
-        generator,
-    )
-    decoded, decoding = _decode(link, rx_symbols, ebn0_db)
+    try:
+        variance = link.channel.noise_variance(
+            ebn0_db,
+            link.modulation.bits_per_symbol,
+            link.fec.rate if link.fec else 1.0,
+        )
+    except NotImplementedError as error:
+        raise ValueError(
+            f"{type(link.channel).__name__} does not expose a noise variance"
+        ) from error
+    rx_symbols = link.channel.transmit(tx_symbols, variance, generator)
+    decoded, decoding = _decode(link, rx_symbols, variance)
     return LinkResult(
         source_bits=source,
         received_bits=decoded[:n_bits],

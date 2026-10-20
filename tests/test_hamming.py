@@ -36,6 +36,12 @@ def test_round_trips_multiple_blocks() -> None:
     assert np.array_equal(code.decode(code.encode(data)), data)
 
 
+def test_syndrome_table_covers_every_nonzero_syndrome() -> None:
+    code = Hamming74()
+    assert np.all(code._syndrome_to_position[1:] > 0)
+    assert code._syndrome_to_position[0] == 0
+
+
 @pytest.mark.parametrize("bits", [[0, 1], [0, 1, 0, 1, 0]])
 def test_encode_requires_complete_blocks(bits: list[int]) -> None:
     with pytest.raises(ValueError):

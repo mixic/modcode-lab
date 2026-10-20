@@ -17,6 +17,8 @@ from modcode.modulation.cyclic_tcm import TailBitingTCM8PSK
 from modcode.modulation.involution import (
     block_tau_hypothesis,
     correct_tau,
+    demodulate_phase_imbalance,
+    demodulate_tau_aware,
     pilot_tau_hypothesis,
     tau_log_likelihood_ratio,
 )
@@ -34,6 +36,8 @@ __all__ = [
     "TailBitingTCM8PSK",
     "block_tau_hypothesis",
     "correct_tau",
+    "demodulate_phase_imbalance",
+    "demodulate_tau_aware",
     "pilot_tau_hypothesis",
     "tau_log_likelihood_ratio",
 ]

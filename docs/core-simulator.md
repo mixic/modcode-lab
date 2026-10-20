@@ -44,9 +44,12 @@ soft_demodulate(symbols, noise_variance) -> LLRs
 ```
 
 The implemented constellations are BPSK, Gray-mapped QPSK, and square
-Gray-mapped QAM (4, 16, 64, 256, ...).  APSK and the tail-biting 8-PSK example
-are exploratory; their constellation maps still work with the generic LLR
-method, but they are not part of the core BER claims.
+Gray-mapped QAM (4, 16, 64, 256, ...).  Square QAM is sliced per axis: the
+receiver scales each coordinate to the odd-integer level grid and rounds, so
+hard slicing is O(N) and allocates no N-by-M distance matrix.  The QAM soft
+LLR override uses the same per-axis decomposition.  APSK and the tail-biting
+8-PSK example are exploratory; their constellation maps still work with the
+generic LLR method, but they are not part of the core BER claims.
 
 ### 2.1 LLR convention
 
@@ -86,7 +89,10 @@ checks are the three-bit remainder.
 ### 3.1 Hard decoding
 
 Hard decoding computes the syndrome and flips the bit whose column matches
-the syndrome.  It corrects any single bit error per codeword.
+the syndrome.  It corrects any single bit error per codeword.  The 7 nonzero
+syndromes map to distinct columns, so the implementation uses a 7-entry
+syndrome-to-position lookup table and applies all corrections in one
+vectorized step rather than looping over codewords.
 
 ### 3.2 Soft decoding
 
@@ -169,6 +175,19 @@ mode is stated.
 decodes, and slices back to the requested number of bits.  The returned
 `LinkResult` contains the source, received, transmitted, and symbol arrays.
 
+The channel interface is intentionally narrow:
+
+```python
+noise_variance = channel.noise_variance(ebn0_db, bits_per_symbol, code_rate)
+received = channel.transmit(symbols, noise_variance, rng)
+```
+
+The channel receives a scalar variance, not the modulation order or code rate.
+`run_link` computes the variance once from the link parameters and passes the
+same value to the channel and to the soft demodulator.  A custom channel that
+does not expose `noise_variance` cannot be used by the pipeline; that is a
+deliberate failure rather than a silent hard-decision fallback.
+
 ---
 
 ## 6. Theoretical BER references
@@ -194,6 +213,37 @@ The QAM expression is an approximation, not an exact bit-error probability.
 measured curves use markers.  This makes a normalization error visible
 immediately: if the simulation and theory do not overlap at high SNR, the
 noise variance or the \(E_b/N_0\) convention is wrong.
+
+### 6.1 Adaptive stopping and confidence intervals
+
+`ber_sweep` keeps the historical fixed-`n_bits` behaviour by default.  For
+serious curves use `ber_sweep_detailed`:
+
+```python
+from modcode.metrics import ber_sweep_detailed
+
+curves = ber_sweep_detailed(
+    {"BPSK": BPSK(), "QPSK": QPSK()},
+    ebn0_db,
+    min_errors=100,
+    max_bits=1_000_000,
+    batch_bits=50_000,
+    seed=2026,
+)
+curve = curves["BPSK"]
+print(curve.ber, curve.errors, curve.bits, curve.ci_low, curve.ci_high)
+```
+
+A point stops at `min_errors` errors or `max_bits` bits.  The interval is the
+Wilson score interval at the requested confidence, which is well behaved at
+zero errors: a zero-error point has `ber = 0` but `ci_high > 0`.  Plot the
+upper bound, or report it explicitly, rather than treating a zero count as an
+exact zero rate.
+
+Each link gets a seed stream derived from its name, and each Eb/N0 point gets
+an independent child stream.  Adding a modulation to a mapping therefore does
+not change the results for the existing names, and reordering a sequence does
+not silently share noise between links.
 
 ---
 

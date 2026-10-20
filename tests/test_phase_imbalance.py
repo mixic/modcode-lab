@@ -18,6 +18,8 @@ from modcode.fec.crc import CRC8
 from modcode.modulation.involution import (
     block_tau_hypothesis,
     correct_tau,
+    demodulate_phase_imbalance,
+    demodulate_tau_aware,
     pilot_tau_hypothesis,
     tau_log_likelihood_ratio,
 )
@@ -52,8 +54,8 @@ def test_quarter_turn_phase_imbalance_is_rank_deficient() -> None:
     assert np.isclose(np.linalg.det(matrix), 0.0, atol=1e-12)
     assert np.linalg.matrix_rank(matrix) == 1
     with pytest.raises(ValueError, match="singular"):
-        QPSK().demodulate_phase_imbalance(
-            np.asarray([1.0 + 1.0j]), np.pi / 2.0
+        demodulate_phase_imbalance(
+            QPSK(), np.asarray([1.0 + 1.0j]), np.pi / 2.0
         )
 
 
@@ -62,7 +64,7 @@ def test_known_phase_correction_recovers_qpsk() -> None:
     bits = _bits()
     transmitted = qpsk.modulate(bits)
     received = PhaseImbalanceChannel(np.pi).impair(transmitted)
-    decoded = qpsk.demodulate_phase_imbalance(received, np.pi)
+    decoded = demodulate_phase_imbalance(qpsk, received, np.pi)
     np.testing.assert_array_equal(decoded, bits)
 
 
@@ -71,7 +73,7 @@ def test_known_phase_correction_handles_a_non_pi_angle() -> None:
     bits = _bits()
     transmitted = qpsk.modulate(bits)
     received = PhaseImbalanceChannel(0.7).impair(transmitted)
-    decoded = qpsk.demodulate_phase_imbalance(received, 0.7)
+    decoded = demodulate_phase_imbalance(qpsk, received, 0.7)
     np.testing.assert_array_equal(decoded, bits)
 
 
@@ -90,13 +92,13 @@ def test_tau_aware_demodulation_uses_the_hypothesis() -> None:
     bits = _bits()
     transmitted = qpsk.modulate(bits)
     np.testing.assert_array_equal(
-        qpsk.demodulate_tau_aware(transmitted, hypothesis=0), bits
+        demodulate_tau_aware(qpsk, transmitted, hypothesis=0), bits
     )
     np.testing.assert_array_equal(
-        qpsk.demodulate_tau_aware(np.conj(transmitted), hypothesis=1), bits
+        demodulate_tau_aware(qpsk, np.conj(transmitted), hypothesis=1), bits
     )
     with pytest.raises(ValueError, match="hypothesis"):
-        qpsk.demodulate_tau_aware(transmitted, hypothesis=2)
+        demodulate_tau_aware(qpsk, transmitted, hypothesis=2)
 
 
 def test_tau_likelihood_ratio_is_zero_for_qpsk() -> None:
@@ -113,7 +115,7 @@ def test_reflected_qpsk_gives_a_tie_and_chance_level_ber() -> None:
     llr = tau_log_likelihood_ratio(qpsk, received)
     assert abs(float(np.sum(llr))) < 1e-9
     assert block_tau_hypothesis(qpsk, received) == 0
-    decoded = qpsk.demodulate_tau_aware(received, hypothesis=0)
+    decoded = demodulate_tau_aware(qpsk, received, hypothesis=0)
     assert np.mean(decoded != bits) == 0.5
 
 
@@ -150,13 +152,12 @@ def test_correct_tau_and_validation() -> None:
 
 def test_phase_imbalance_channel_adds_awgn() -> None:
     channel = PhaseImbalanceChannel(np.pi)
+    expected = AWGNChannel.noise_variance(3.0, 2)
     received = channel.transmit(
         np.zeros(100_000, dtype=np.complex128),
-        ebn0_db=3.0,
-        bits_per_symbol=2,
+        expected,
         rng=np.random.default_rng(1),
     )
-    expected = AWGNChannel.noise_variance(3.0, 2)
     assert np.isclose(np.var(received.real), expected, rtol=0.03)
     assert np.isclose(np.var(received.imag), expected, rtol=0.03)
 

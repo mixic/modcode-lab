@@ -154,9 +154,55 @@ def correct_tau(
     return np.conj(values)
 
 
+def demodulate_tau_aware(
+    modulation: Modulation,
+    symbols: NDArray[np.complexfloating],
+    *,
+    hypothesis: int,
+) -> NDArray[np.uint8]:
+    """Demodulate under one of the two tau hypotheses.
+
+    This lives outside :class:`Modulation` so the core interface does not
+    carry the exploratory I/Q model.  ``hypothesis=0`` assumes the ideal
+    channel; ``hypothesis=1`` assumes the ``phi = pi`` reflection.
+    """
+    values = modulation._validated_symbols(symbols)
+    if isinstance(hypothesis, bool) or hypothesis not in (0, 1):
+        raise ValueError("hypothesis must be 0 or 1")
+    if hypothesis == 0:
+        return modulation.demodulate(values)
+    return modulation.demodulate(np.conj(values))
+
+
+def demodulate_phase_imbalance(
+    modulation: Modulation,
+    symbols: NDArray[np.complexfloating],
+    phi: float,
+) -> NDArray[np.uint8]:
+    """Demodulate after inverting a known I/Q phase mismatch ``phi``.
+
+    This is the engineering counterpart of the DSIN phase flip.  It is kept
+    outside :class:`Modulation` so the core interface stays free of the
+    exploratory model.
+    """
+    values = modulation._validated_symbols(symbols)
+    angle = float(phi)
+    if not np.isfinite(angle):
+        raise ValueError("phi must be finite")
+    cosine = float(np.cos(angle))
+    if abs(cosine) < 1e-12:
+        raise ValueError("phase imbalance is singular at phi = pi/2 (mod pi)")
+    corrected = (values.real + values.imag * np.tan(angle)) + 1j * (
+        values.imag / cosine
+    )
+    return modulation.demodulate(corrected)
+
+
 __all__ = [
     "block_tau_hypothesis",
     "correct_tau",
+    "demodulate_phase_imbalance",
+    "demodulate_tau_aware",
     "pilot_tau_hypothesis",
     "tau_log_likelihood_ratio",
 ]

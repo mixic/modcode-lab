@@ -47,11 +47,11 @@ def test_soft_viterbi_beats_hard_viterbi_under_noise() -> None:
     encoded = code.encode(bits)
     bpsk = BPSK()
     symbols = bpsk.modulate(encoded)
+    variance = AWGNChannel.noise_variance(2.0, 1, code.rate)
     received = AWGNChannel().transmit(
-        symbols, 2.0, 1, code.rate, rng
+        symbols, variance, np.random.default_rng(43)
     )
     hard = code.decode((received.real < 0).astype(np.uint8))
-    variance = AWGNChannel.noise_variance(2.0, 1, code.rate)
     soft = code.decode_soft(bpsk.soft_demodulate(received, variance))
     hard_ber = float(np.mean(hard != bits))
     soft_ber = float(np.mean(soft != bits))
