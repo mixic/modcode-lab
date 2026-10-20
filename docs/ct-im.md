@@ -294,6 +294,9 @@ patent literature before any novelty claim. This note makes no such claim.
    buys decoding complexity over lookup.
 7. **Literature audit:** the novelty claims in §6.
 
+Items 1–4 map to CT-IM-2, CT-IM-3, CT-IM-4, and CT-IM-6 in §10. Item 6 is a
+later trellis question outside the ten-day experimental track.
+
 ---
 
 ## 9. Reproducibility
@@ -313,6 +316,97 @@ Files:
 - `src/modcode/viz/ct_im.py`
 - `examples/ct_im_lab.py`
 - `tests/test_ct_im.py`
+
+---
+
+## 10. Milestones
+
+The project-level table is in the
+[README roadmap](../README.md#ct-im-experimental-track). This section records
+the status and the **definition of done** so a checkbox cannot be inflated by
+proximity. Status: ✅ complete, ⬜ open.
+
+| Milestone | Status | Deliverable | Effort |
+|---|---|---|---|
+| **CT-IM-0** | ✅ | `modcode.modulation.CTIM` with the Hamming(7,4) weight-3 index layer; encode/decode; unit tests | 1 day |
+| **CT-IM-1** | ⬜ | Constant-weight punctured variant; symbol-budget fix | 1 day |
+| **CT-IM-2** | ⬜ | Baselines: classical OFDM-IM and EGIM | 2 days |
+| **CT-IM-3** | ⬜ | BER sweep and PAPR CCDF figures | 1 day |
+| **CT-IM-4** | ⬜ | Rayleigh channel extension | 1 day |
+| **CT-IM-5** | ✅ | Blind cyclic-shift detection theorem + test | 1 day |
+| **CT-IM-6** | ⬜ | BCH(15,7) index-layer variant | 2 days |
+| **CT-IM-7** | ✅ | Write-up in `docs/ct-im.md` | 1 day |
+| **Total** | | | **~10 days** |
+
+The estimates total about ten focused days for the full experimental paper
+draft. Three items are complete, so about seven days remain. The numbers are
+planning estimates, not measured effort.
+
+### 10.1 Status notes
+
+- **CT-IM-0 is done.** The codebook, mapper, nearest-word decoder, and 11 tests
+  exist. The current codebook is the **unpunctured** seven-word weight-3
+  Hamming orbit.
+- **CT-IM-1 is open.** "Constant-weight punctured variant" is not a synonym for
+  the existing orbit. A completion must exhibit the punctured codebook, prove
+  its weight and distance, define the symbol budget, and test that every block
+  uses the same number of active subcarriers. The current reserved-label
+  convention (label 7 has no codeword) is a CT-IM-0 interface choice, not the
+  CT-IM-1 puncturing result.
+- **CT-IM-5 is done as an impossibility result.** §5 proves that every cyclic
+  shift is a codeword and therefore has zero syndrome; the test
+  `test_all_cyclic_shifts_are_valid_codewords` verifies the premise. This
+  milestone does **not** produce a blind detector. It rules one out.
+- **CT-IM-7 is an initial write-up, not the paper draft.** The note is complete
+  for the implemented object. It must be revised after CT-IM-2, CT-IM-3,
+  CT-IM-4, and CT-IM-6 supply data.
+
+### 10.2 Definition of done for the open items
+
+**CT-IM-1 — punctured constant-weight family.**
+A codebook of length `n`, constant weight `k`, minimum distance `d`, and a
+mapper/decoder. The write-up must state the puncturing rule, the resulting
+rate, and the exact symbol budget. Tests must cover codebook size, constant
+weight, pairwise distance, single-error correction, and rate. If puncturing
+changes the active count per block, the budget fix must be explicit rather than
+hidden in a reserved label.
+
+**CT-IM-2 — OFDM-IM and EGIM baselines.**
+Both baselines must use the same `n=7`, `k=3`, QPSK, channel, and detector
+budget as CT-IM. Classical OFDM-IM is the combinatorial baseline: 35 patterns,
+32 used, 5 index bits, 6 symbol bits, 11 bits per block. The exact EGIM variant
+must be pinned with a citation before coding; "EGIM" is currently a proposal
+label, not a fully specified construction. Tests must pin codebook/rate
+accounting, and the comparison must separate index-bit from symbol-bit errors.
+
+**CT-IM-3 — BER and PAPR figures.**
+A deterministic BER-versus-Eb/N0 sweep in AWGN with separate index-bit and
+symbol-bit error curves, and a PAPR CCDF with three explicit cases: no shift,
+best shift with perfect side information, and best shift with a stated
+side-information budget. The figure script must print the rates and the
+side-information assumption. Monte Carlo points are not pinned by tests; the
+codebooks and rates are.
+
+**CT-IM-4 — Rayleigh extension.**
+A block Rayleigh channel with a defined CSI assumption (known or estimated),
+the same activity detector for all schemes, and BER curves against CT-IM-0 and
+the CT-IM-2 baselines. Tests must cover the channel statistics and the
+known-CSI path. No improvement claim is allowed before the data exist.
+
+**CT-IM-6 — BCH(15,7) index layer.**
+The binary BCH(15,7,d=5) code is linear, so its codeword weights vary. The
+milestone is a **constant-weight subcode or orbit** selected from it, with its
+size, weight, minimum distance, decoder, and rate stated. Tests must cover
+codebook size, weight, pairwise distance, and correction capability. This is
+not a claim that the full BCH code is constant-weight.
+
+### 10.3 Paper-draft gate
+
+The ten-day track is complete when CT-IM-1 through CT-IM-4 and CT-IM-6 have
+their tests and figures, CT-IM-7 has been revised with the measured results,
+and the write-up states the limitations: the index code is nonlinear, symbol
+bits are unprotected, the shift path needs side information, and no novelty
+claim has been established without the literature audit.
 
 ---
 

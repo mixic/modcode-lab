@@ -834,6 +834,32 @@ make components composable without changing the simulation pipeline.
 | **M4** | ⬜ | TCM / C-TCM over 8-PSK |
 | **M5** | ⬜ | Documentation site (MkDocs), Jupyter notebooks |
 
+### CT-IM experimental track
+
+The CT-IM milestones are tracked separately from M0–M5 because they form a
+single experimental paper track. The effort column is the proposal's planning
+estimate, not a measured duration. Status: ✅ complete, ⬜ open.
+
+| Milestone | Status | Deliverable | Effort |
+|---|---|---|---|
+| **CT-IM-0** | ✅ | `modcode.modulation.CTIM` with the Hamming(7,4) weight-3 index layer; encode/decode; unit tests | 1 day |
+| **CT-IM-1** | ⬜ | Constant-weight punctured variant; symbol-budget fix | 1 day |
+| **CT-IM-2** | ⬜ | Baselines: classical OFDM-IM and EGIM | 2 days |
+| **CT-IM-3** | ⬜ | BER sweep and PAPR CCDF figures | 1 day |
+| **CT-IM-4** | ⬜ | Rayleigh channel extension | 1 day |
+| **CT-IM-5** | ✅ | Blind cyclic-shift detection theorem + test | 1 day |
+| **CT-IM-6** | ⬜ | BCH(15,7) index-layer variant | 2 days |
+| **CT-IM-7** | ✅ | Write-up in `docs/ct-im.md` | 1 day |
+| **Total** | | | **~10 days** |
+
+`CT-IM-0`, `CT-IM-5`, and the initial `CT-IM-7` note are complete. The remaining
+track is about seven focused days. `CT-IM-1` is **not** the existing
+constant-weight orbit: the current codebook is unpunctured, and the punctured
+family plus its symbol-budget accounting remain open. The ten-day total is the
+estimate for a full experimental paper draft, not for the current note. See
+[`docs/ct-im.md` §10](docs/ct-im.md#10-milestones) for acceptance criteria and
+the mapping from the existing experiments.
+
 ## Contributing
 
 Create a virtual environment, install `.[dev]`, then run `ruff check .` and
