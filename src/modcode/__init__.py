@@ -18,6 +18,7 @@ from modcode.fec.convolutional import ConvolutionalCode
 from modcode.fec.hamming import Hamming74
 from modcode.fec.reed_solomon import ReedSolomon
 from modcode.modulation.bpsk import BPSK
+from modcode.modulation.lattice import LatticeModulation
 from modcode.modulation.qam import QAM
 from modcode.modulation.qpsk import QPSK
 from modcode.modulation.tcm import TCM8PSK
@@ -34,6 +35,7 @@ __all__ = [
     "Hamming74",
     "Link",
     "LinkResult",
+    "LatticeModulation",
     "PermutationInterleaver",
     "PhaseImbalanceChannel",
     "QAM",

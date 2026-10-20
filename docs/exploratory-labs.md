@@ -27,6 +27,7 @@ research programme.
 | Phased arrays and QFC | `modcode.phasedarray`, `modcode.qfc` | `examples/wavefront_qfc_lab.py` | no separate note |
 | CT-IM constant-weight index modulation | `modcode.modulation.ct_im` | `examples/ct_im_lab.py` | [`ct-im.md`](ct-im.md) |
 | I/Q phase involution | `modcode.channel.phase_imbalance` | `examples/phase_imbalance_lab.py` | [`phase-shift-involution.md`](phase-shift-involution.md) |
+| Lattice modulation (D4/E8) | `modcode.modulation.lattice` | `examples/lattice_lab.py` | [`lattice-modulation.md`](lattice-modulation.md) |
 | Legacy cyclic-5g scratch lab | `src/modcode/cyclic-5g` | not importable | provenance only |
 
 ---
@@ -163,7 +164,28 @@ See [`phase-shift-involution.md`](phase-shift-involution.md) and
 
 ---
 
-## 9. Provenance: the cyclic-5g scratch lab
+## 9. Lattice modulation (D4 and E8)
+
+`LatticeModulation` builds spherical-cut D4 and E8 constellations and compares
+them with QAM at matched bits and energy per **real dimension**.  The
+dimension matching matters: D4-16 is comparable to QPSK, not 16-QAM.
+
+The tested claim is a minimum-distance claim: D4-256 beats 16-QAM and E8-256
+beats QPSK at matched \(\eta\).  The BER measurement is more nuanced: D4-16
+does not beat QPSK, E8-256 wins above roughly 5–6 dB, and D4-256 crosses
+16-QAM only near 11–12 dB.  The component-stream PAPR diagnostic and the naive
+software demodulation cost are reported as costs, not as a system-level
+verdict.
+
+This is a standalone appendix; multi-dimensional symbols are not carried by
+the scalar-complex `Link` pipeline.
+
+See [`lattice-modulation.md`](lattice-modulation.md) and
+`examples/lattice_lab.py`.
+
+---
+
+## 10. Provenance: the cyclic-5g scratch lab
 
 `src/modcode/cyclic-5g/` is retained as provenance for the original QKD and
 phased-array scratch scripts.  It is not importable because the directory name

@@ -77,6 +77,7 @@ the scope statement.  Then pick one row:
 |---|---|---|
 | CT-IM constant-weight index modulation | [`ct-im.md`](ct-im.md) | `python examples/ct_im_lab.py` |
 | I/Q phase involution | [`phase-shift-involution.md`](phase-shift-involution.md) | `python examples/phase_imbalance_lab.py` |
+| Lattice modulation (D4/E8) | [`lattice-modulation.md`](lattice-modulation.md) | `python examples/lattice_lab.py` |
 | Phased arrays and QFC | `exploratory-labs.md` §6 | `python examples/wavefront_qfc_lab.py` |
 | CRC and toy QC-MDPC | [`cyclic-numbers-rh-fec-cryptography.md`](cyclic-numbers-rh-fec-cryptography.md) | `python examples/cyclic_codes_pqc_lab.py` |
 | Number theory / residual indices | [`cyclic-numbers-rh-fec-cryptography.md`](cyclic-numbers-rh-fec-cryptography.md) | `python examples/residual_index_lab.py` |

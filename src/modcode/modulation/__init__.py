@@ -22,6 +22,7 @@ from modcode.modulation.involution import (
     pilot_tau_hypothesis,
     tau_log_likelihood_ratio,
 )
+from modcode.modulation.lattice import LatticeModulation
 from modcode.modulation.qam import QAM
 from modcode.modulation.qpsk import QPSK
 from modcode.modulation.tcm import TCM8PSK
@@ -34,6 +35,7 @@ __all__ = [
     "Modulation",
     "QAM",
     "QPSK",
+    "LatticeModulation",
     "TCM8PSK",
     "TailBitingTCM8PSK",
     "block_tau_hypothesis",

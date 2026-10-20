@@ -85,6 +85,11 @@ a dedicated figure; see `examples/explore_cyclic_structures.py`.
 </p>
 <p align="center"><sub><b>Figure 18.</b> The I/Q reflection at phi = pi, hard/oracle/pilot/blind BER, the channel determinant, and the identically zero blind LLR.</sub></p>
 
+<p align="center">
+  <a href="../examples/figures/lattice.png"><img src="../examples/figures/lattice.png" alt="D4/E8 lattice BER, component-stream PAPR, and demodulation throughput" width="1000"></a>
+</p>
+<p align="center"><sub><b>Figure 19.</b> Lattice appendix: dimension-matched BER, component-stream PAPR diagnostic, and naive software demodulation cost.</sub></p>
+
 ---
 
 ## Legacy scratch-lab outputs
@@ -95,12 +100,12 @@ maintained implementations are `modcode.phasedarray` and `modcode.qfc`.
 | Legacy wavefront | Legacy quantisation |
 |---|---|
 | <a href="../src/modcode/cyclic-5g/figures/wavefront_steering.png"><img src="../src/modcode/cyclic-5g/figures/wavefront_steering.png" alt="Legacy wavefront figure" width="440"></a> | <a href="../src/modcode/cyclic-5g/figures/quantization_error.png"><img src="../src/modcode/cyclic-5g/figures/quantization_error.png" alt="Legacy quantisation figure" width="440"></a> |
-| <sub><b>Figure 19.</b> Original scratch-lab wavefront figure.</sub> | <sub><b>Figure 20.</b> Original scratch-lab C4/C8 quantisation comparison.</sub> |
+| <sub><b>Figure 20.</b> Original scratch-lab wavefront figure.</sub> | <sub><b>Figure 21.</b> Original scratch-lab C4/C8 quantisation comparison.</sub> |
 
 | Legacy QFC | Legacy beam patterns |
 |---|---|
 | <a href="../src/modcode/cyclic-5g/figures/qfc_transduction.png"><img src="../src/modcode/cyclic-5g/figures/qfc_transduction.png" alt="Legacy QFC figure" width="440"></a> | <a href="../src/modcode/cyclic-5g/figures/beam_patterns.png"><img src="../src/modcode/cyclic-5g/figures/beam_patterns.png" alt="Legacy beam patterns" width="440"></a> |
-| <sub><b>Figure 21.</b> Original QFC transport and noise figure.</sub> | <sub><b>Figure 22.</b> Original polar beam patterns and phase ramps.</sub> |
+| <sub><b>Figure 22.</b> Original QFC transport and noise figure.</sub> | <sub><b>Figure 23.</b> Original polar beam patterns and phase ramps.</sub> |
 
 ---
 
@@ -118,4 +123,5 @@ python examples/cyclic_codes_pqc_lab.py
 python examples/residual_index_lab.py
 python examples/ct_im_lab.py
 python examples/phase_imbalance_lab.py
+python examples/lattice_lab.py
 ```

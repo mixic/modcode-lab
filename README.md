@@ -75,6 +75,7 @@ repository, pick one of the [learning paths](docs/learning-paths.md).
 | Phased arrays and QFC | `examples/wavefront_qfc_lab.py` | no separate note |
 | CT-IM | `examples/ct_im_lab.py` | [`ct-im.md`](docs/ct-im.md) |
 | I/Q phase involution | `examples/phase_imbalance_lab.py` | [`phase-shift-involution.md`](docs/phase-shift-involution.md) |
+| Lattice modulation (D4/E8) | `examples/lattice_lab.py` | [`lattice-modulation.md`](docs/lattice-modulation.md) |
 
 The appendices are **not** claims that the project is about all of these
 topics.  They are linked from one place so the core README stays readable.
@@ -195,6 +196,7 @@ python examples/cyclic_codes_pqc_lab.py
 python examples/residual_index_lab.py
 python examples/ct_im_lab.py
 python examples/phase_imbalance_lab.py
+python examples/lattice_lab.py
 ```
 
 ---
@@ -226,6 +228,7 @@ The full API and derivations are in [`docs/core-simulator.md`](docs/core-simulat
 | [`figures.md`](docs/figures.md) | Core BER figures and the complete exploratory gallery |
 | [`ct-im.md`](docs/ct-im.md) | CT-IM constant-weight note and milestone status |
 | [`phase-shift-involution.md`](docs/phase-shift-involution.md) | The DSIN τ / I/Q correspondence and its limits |
+| [`lattice-modulation.md`](docs/lattice-modulation.md) | D4/E8 spherical cuts, dimension-matched BER, PAPR diagnostic, and complexity |
 | [`cyclic-groups-radio-modulation.md`](docs/cyclic-groups-radio-modulation.md) | PSK as a cyclic group, space–time codes, ZC sequences |
 | [`cyclic-numbers-rh-fec-cryptography.md`](docs/cyclic-numbers-rh-fec-cryptography.md) | Full-reptend primes, Artin/GRH, cyclic codes, DLP, QC-MDPC, QEC |
 
@@ -243,6 +246,7 @@ modcode-lab/
 │   ├── figures.md
 │   ├── ct-im.md
 │   ├── phase-shift-involution.md
+│   ├── lattice-modulation.md
 │   ├── cyclic-groups-radio-modulation.md
 │   └── cyclic-numbers-rh-fec-cryptography.md
 ├── examples/
