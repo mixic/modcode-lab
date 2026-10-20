@@ -43,6 +43,17 @@ class FEC(ABC):
     def decode(self, bits: NDArray[np.integer]) -> BitArray:
         """Decode a one-dimensional sequence of encoded bits."""
 
+    def decode_soft(self, llrs: NDArray[np.floating]) -> BitArray:
+        """Decode from bit LLRs, positive for bit 0.
+
+        The default is unavailable so that a hard-decision-only code fails
+        loudly if a caller asks for soft decoding.  ``run_link`` falls back to
+        hard decisions when this method is not overridden.
+        """
+        raise NotImplementedError(
+            f"{type(self).__name__} does not implement soft decoding"
+        )
+
     @staticmethod
     def validated_bits(bits: NDArray[np.integer], name: str = "bits") -> BitArray:
         values = np.asarray(bits)

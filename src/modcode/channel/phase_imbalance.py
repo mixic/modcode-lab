@@ -98,6 +98,13 @@ class PhaseImbalanceChannel(Channel):
         impaired = values.real + 1j * values.imag * np.exp(1j * self.phi)
         return float(np.mean(np.abs(impaired) ** 2) / input_energy)
 
+    @staticmethod
+    def noise_variance(
+        ebn0_db: float, bits_per_symbol: int, code_rate: float = 1.0
+    ) -> float:
+        """Return the AWGN variance used by this channel."""
+        return AWGNChannel.noise_variance(ebn0_db, bits_per_symbol, code_rate)
+
     def transmit(
         self,
         symbols: NDArray[np.complexfloating],

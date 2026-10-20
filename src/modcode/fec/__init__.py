@@ -10,8 +10,9 @@
 """Forward error-correction codes."""
 
 from modcode.fec.base import FEC
+from modcode.fec.convolutional import ConvolutionalCode
 from modcode.fec.crc import CRC
 from modcode.fec.hamming import Hamming74
 from modcode.fec.polar import PolarBEC
 
-__all__ = ["CRC", "FEC", "Hamming74", "PolarBEC"]
+__all__ = ["CRC", "ConvolutionalCode", "FEC", "Hamming74", "PolarBEC"]

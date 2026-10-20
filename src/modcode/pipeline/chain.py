@@ -26,6 +26,11 @@ class Link:
     modulation: Modulation
     channel: Channel
     fec: FEC | None = None
+    decoding: str = "auto"
+
+    def __post_init__(self) -> None:
+        if self.decoding not in {"auto", "hard", "soft"}:
+            raise ValueError("decoding must be 'auto', 'hard', or 'soft'")
 
 
 @dataclass(frozen=True)
@@ -37,6 +42,7 @@ class LinkResult:
     transmitted_bits: BitArray
     transmitted_symbols: SymbolArray
     received_symbols: SymbolArray
+    decoding: str = "hard"
 
     @property
     def bit_errors(self) -> int:
@@ -47,6 +53,50 @@ class LinkResult:
         if self.source_bits.size == 0:
             return 0.0
         return self.bit_errors / self.source_bits.size
+
+
+def _decode(
+    link: Link, received_symbols: SymbolArray, ebn0_db: float
+) -> tuple[BitArray, str]:
+    """Decode with soft LLRs when both the channel and FEC support them."""
+    if link.fec is None:
+        return link.modulation.demodulate(received_symbols), "hard"
+
+    if link.decoding == "hard":
+        return (
+            link.fec.decode(link.modulation.demodulate(received_symbols)),
+            "hard",
+        )
+
+    try:
+        variance = link.channel.noise_variance(
+            ebn0_db,
+            link.modulation.bits_per_symbol,
+            link.fec.rate,
+        )
+    except NotImplementedError:
+        if link.decoding == "soft":
+            raise ValueError(
+                f"{type(link.channel).__name__} does not expose a noise "
+                "variance; soft decoding is unavailable"
+            ) from None
+        return (
+            link.fec.decode(link.modulation.demodulate(received_symbols)),
+            "hard",
+        )
+
+    try:
+        llrs = link.modulation.soft_demodulate(received_symbols, variance)
+        return link.fec.decode_soft(llrs), "soft"
+    except NotImplementedError:
+        if link.decoding == "soft":
+            raise ValueError(
+                f"{type(link.fec).__name__} does not implement soft decoding"
+            ) from None
+        return (
+            link.fec.decode(link.modulation.demodulate(received_symbols)),
+            "hard",
+        )
 
 
 def run_link(
@@ -80,12 +130,12 @@ def run_link(
         link.fec.rate if link.fec else 1.0,
         generator,
     )
-    demodulated = link.modulation.demodulate(rx_symbols)
-    decoded = link.fec.decode(demodulated) if link.fec else demodulated
+    decoded, decoding = _decode(link, rx_symbols, ebn0_db)
     return LinkResult(
         source_bits=source,
         received_bits=decoded[:n_bits],
         transmitted_bits=transmitted,
         transmitted_symbols=tx_symbols,
         received_symbols=rx_symbols,
+        decoding=decoding,
     )

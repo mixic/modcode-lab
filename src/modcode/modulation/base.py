@@ -39,6 +39,54 @@ class Modulation(ABC):
     def demodulate(self, symbols: NDArray[np.complexfloating]) -> BitArray:
         """Make hard decisions and return the corresponding bits."""
 
+    def soft_demodulate(
+        self,
+        symbols: NDArray[np.complexfloating],
+        noise_variance: float,
+    ) -> NDArray[np.float64]:
+        """Return max-log bit LLRs for passed symbols.
+
+        The convention is ``L = log P(b=0|y) / P(b=1|y)``: positive values
+        favour bit 0.  ``noise_variance`` is the variance per real component
+        of the circular complex AWGN, matching
+        :meth:`modcode.channel.awgn.AWGNChannel.noise_variance`.
+
+        The implementation uses the constellation and its bit labels, so it
+        applies to every modulation with a finite constellation.  It is
+        max-log rather than exact log-sum-exp; for BPSK and QPSK the two
+        agree because each bit has one constellation point per value.
+        """
+        values = self._validated_symbols(symbols)
+        variance = float(noise_variance)
+        if not np.isfinite(variance) or variance <= 0.0:
+            raise ValueError("noise_variance must be finite and positive")
+        if values.size == 0:
+            return np.empty(0, dtype=np.float64)
+
+        points = np.asarray(
+            list(self.constellation.values()), dtype=np.complex128
+        )
+        labels = np.asarray(
+            list(self.constellation.keys()), dtype=np.uint8
+        )
+        if points.ndim != 1 or labels.ndim != 2:
+            raise ValueError("constellation must be a finite bit-label mapping")
+        if labels.shape != (points.size, self.bits_per_symbol):
+            raise ValueError("constellation labels do not match bits_per_symbol")
+
+        distances = np.abs(values[:, None] - points[None, :]) ** 2
+        llrs = np.empty(
+            (values.size, self.bits_per_symbol), dtype=np.float64
+        )
+        for bit in range(self.bits_per_symbol):
+            zero = labels[:, bit] == 0
+            if not np.any(zero) or np.all(zero):
+                raise ValueError("each bit position must take both values")
+            nearest_zero = np.min(distances[:, zero], axis=1)
+            nearest_one = np.min(distances[:, ~zero], axis=1)
+            llrs[:, bit] = (nearest_one - nearest_zero) / (2.0 * variance)
+        return llrs.reshape(-1)
+
     def demodulate_phase_imbalance(
         self, symbols: NDArray[np.complexfloating], phi: float
     ) -> BitArray:

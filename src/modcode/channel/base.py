@@ -28,3 +28,19 @@ class Channel(ABC):
         rng: np.random.Generator | None = None,
     ) -> NDArray[np.complex128]:
         """Return the received complex symbols."""
+
+    def noise_variance(
+        self,
+        ebn0_db: float,
+        bits_per_symbol: int,
+        code_rate: float = 1.0,
+    ) -> float:
+        """Return noise variance per real component, if the channel has one.
+
+        Soft-decision decoding needs this quantity to scale LLRs.  Channels
+        without a well-defined AWGN variance leave the default in place, and
+        the link falls back to hard decisions.
+        """
+        raise NotImplementedError(
+            f"{type(self).__name__} does not expose a noise variance"
+        )

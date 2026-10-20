@@ -11,6 +11,7 @@
 
 from modcode.channel.awgn import AWGNChannel
 from modcode.channel.phase_imbalance import PhaseImbalanceChannel
+from modcode.fec.convolutional import ConvolutionalCode
 from modcode.fec.hamming import Hamming74
 from modcode.modulation.bpsk import BPSK
 from modcode.modulation.qam import QAM
@@ -20,6 +21,7 @@ from modcode.pipeline.chain import Link, LinkResult, run_link
 __all__ = [
     "AWGNChannel",
     "BPSK",
+    "ConvolutionalCode",
     "Hamming74",
     "Link",
     "LinkResult",

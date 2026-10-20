@@ -22,8 +22,15 @@ def plot_ber(
     ebn0_db: NDArray[np.floating] | Sequence[float],
     results: Mapping[str, NDArray[np.floating] | Sequence[float]],
     ax: Axes | None = None,
+    *,
+    theory: Mapping[str, NDArray[np.floating] | Sequence[float]] | None = None,
 ) -> tuple[Figure, Axes]:
-    """Plot named BER curves on a semilogarithmic y-axis."""
+    """Plot named BER curves on a semilogarithmic y-axis.
+
+    ``theory`` optionally overlays closed-form references as dashed gray
+    curves.  Simulation and theory are separate arguments so a caller cannot
+    accidentally label a measured curve as exact.
+    """
     points = np.asarray(ebn0_db, dtype=np.float64)
     if points.ndim != 1 or points.size == 0:
         raise ValueError("ebn0_db must be a non-empty one-dimensional sequence")
@@ -46,6 +53,25 @@ def plot_ber(
             marker="o",
             label=name,
         )
+    if theory is not None:
+        for name, values in theory.items():
+            ber = np.asarray(values, dtype=np.float64)
+            if ber.shape != points.shape:
+                raise ValueError(
+                    f"theoretical values for {name!r} must match ebn0_db"
+                )
+            if not np.all(np.isfinite(ber)) or np.any((ber < 0) | (ber > 1)):
+                raise ValueError(
+                    f"theoretical values for {name!r} must be between 0 and 1"
+                )
+            axes.semilogy(
+                points,
+                np.maximum(ber, np.finfo(np.float64).tiny),
+                linestyle="--",
+                color="0.45",
+                linewidth=1.2,
+                label=f"{name} theory",
+            )
     axes.set_xlabel("Eb/N0 (dB)")
     axes.set_ylabel("Bit error rate")
     axes.set_title("BER vs. Eb/N0")
