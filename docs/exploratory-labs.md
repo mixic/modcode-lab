@@ -28,6 +28,7 @@ research programme.
 | CT-IM constant-weight index modulation | `modcode.modulation.ct_im` | `examples/ct_im_lab.py` | [`ct-im.md`](ct-im.md) |
 | I/Q phase involution | `modcode.channel.phase_imbalance` | `examples/phase_imbalance_lab.py` | [`phase-shift-involution.md`](phase-shift-involution.md) |
 | Lattice modulation (D4/E8) | `modcode.modulation.lattice` | `examples/lattice_lab.py` | [`lattice-modulation.md`](lattice-modulation.md) |
+| Tau-invariant RM(1,3) | `modcode.fec.tau_invariant` | `examples/tau_invariant_lab.py` | [`tau-invariant.md`](tau-invariant.md) |
 | Legacy cyclic-5g scratch lab | `src/modcode/cyclic-5g` | not importable | provenance only |
 
 ---
@@ -186,7 +187,20 @@ See [`lattice-modulation.md`](lattice-modulation.md) and
 
 ---
 
-## 10. Provenance: the cyclic-5g scratch lab
+## 10. Tau-invariant codes (RM(1,3))
+
+`TauInvariantCode` implements a code invariant under a coordinate involution.
+RM(1,3) is the canonical example: length 8, dimension 4, distance 4, invariant
+under the non-cyclic coordinate flip $i\mapsto i\oplus1$, and not cyclic.
+It uses a hard nearest-codeword decoder and a soft ML decoder over the 16
+codewords.  The comparison with cyclic Hamming(7,4) is structural, not a gain
+claim.
+
+See [`tau-invariant.md`](tau-invariant.md) and `examples/tau_invariant_lab.py`.
+
+---
+
+## 11. Provenance: the cyclic-5g scratch lab
 
 `src/modcode/cyclic-5g/` is retained as provenance for the original QKD and
 phased-array scratch scripts.  It is not importable because the directory name

@@ -17,6 +17,7 @@ from modcode.fec.hamming import Hamming74
 from modcode.fec.ldpc import LDPC36
 from modcode.fec.polar import PolarBEC
 from modcode.fec.reed_solomon import ReedSolomon
+from modcode.fec.tau_invariant import TauInvariantCode, rm13
 
 __all__ = [
     "BCH15",
@@ -27,4 +28,6 @@ __all__ = [
     "LDPC36",
     "PolarBEC",
     "ReedSolomon",
+    "TauInvariantCode",
+    "rm13",
 ]

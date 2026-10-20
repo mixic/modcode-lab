@@ -18,6 +18,7 @@ from modcode.fec.convolutional import ConvolutionalCode
 from modcode.fec.hamming import Hamming74
 from modcode.fec.ldpc import LDPC36
 from modcode.fec.reed_solomon import ReedSolomon
+from modcode.fec.tau_invariant import TauInvariantCode, rm13
 from modcode.modulation.bpsk import BPSK
 from modcode.modulation.lattice import LatticeModulation
 from modcode.modulation.qam import QAM
@@ -43,6 +44,8 @@ __all__ = [
     "QAM",
     "QPSK",
     "ReedSolomon",
+    "TauInvariantCode",
     "TCM8PSK",
+    "rm13",
     "run_link",
 ]
