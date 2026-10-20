@@ -11,6 +11,7 @@
 
 from modcode.channel.awgn import AWGNChannel
 from modcode.channel.burst import BurstChannel
+from modcode.channel.multipath import MultipathChannel, TapProcess
 from modcode.channel.phase_imbalance import PhaseImbalanceChannel
 from modcode.channel.rayleigh import BlockRayleighChannel
 
@@ -18,5 +19,7 @@ __all__ = [
     "AWGNChannel",
     "BlockRayleighChannel",
     "BurstChannel",
+    "MultipathChannel",
     "PhaseImbalanceChannel",
+    "TapProcess",
 ]

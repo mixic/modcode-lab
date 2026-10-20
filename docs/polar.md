@@ -294,7 +294,7 @@ python examples/polar_lab.py
 python -m pytest tests/test_polar_awgn.py -q
 ```
 
-Figure: Figure 21 in [`figures.md`](figures.md); source
+Figure: Figure 24 in [`figures.md`](figures.md); source
 `examples/figures/polar.png`.  The LDPC side of the comparison is documented in
 [`ldpc.md`](ldpc.md).
 

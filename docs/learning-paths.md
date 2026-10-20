@@ -90,7 +90,7 @@ $10^{-3}$; why the list saturates at high SNR; and why none of the codes here
 is 3GPP conformant.
 
 **Checkpoint:** `python -m pytest tests/test_ldpc.py tests/test_polar_awgn.py
--q` should pass, and `examples/figures/polar.png` (Figure 21 in
+-q` should pass, and `examples/figures/polar.png` (Figure 24 in
 [`figures.md`](figures.md)) should show the crossover, not just one family.
 
 ---
@@ -129,10 +129,12 @@ read as an appendix.
 
 - **Core:** modulation, FEC, AWGN/known-CSI fading, LLRs, decoding, BER, theory
   overlays.  The core path is Paths 1, 2, and 3.
-- **Coding extensions:** interleaving, Rayleigh, BCH/RS, TCM, LDPC, and polar.
-  These are documented in [`advanced-coding.md`](advanced-coding.md),
-  [`ldpc.md`](ldpc.md), and [`polar.md`](polar.md); they are still pedagogical,
-  but they are part of the core-facing material.
+- **Coding extensions:** interleaving, Rayleigh, BCH/RS, TCM, LDPC, polar, and
+  the OFDM multipath/Doppler path with pilot-based channel estimation.  These
+  are documented in [`advanced-coding.md`](advanced-coding.md),
+  [`ldpc.md`](ldpc.md), [`polar.md`](polar.md), and
+  [`multipath.md`](multipath.md); they are still pedagogical, but they are part
+  of the core-facing material.
 - **Appendices:** optical, arrays/QFC, PQC, number theory, CT-IM, phase
   involution.  These are Path 4 and are not required for the core claims.
 

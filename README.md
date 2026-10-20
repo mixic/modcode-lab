@@ -37,7 +37,7 @@ communication link:
 The core now spans the classical block codes, the convolutional baseline, and
 both modern families (LDPC and polar), so the trade-offs are measured in one
 pipeline rather than quoted: the LDPC-versus-polar BER and decoding-cost
-comparison is Figure 21 in [`docs/figures.md`](docs/figures.md).  The boundary
+comparison is Figure 24 in [`docs/figures.md`](docs/figures.md).  The boundary
 is still a boundary: these are small pedagogical codes with explicit
 [non-claims](docs/polar.md#6-what-is-claimed-measured-and-not-claimed), not
 3GPP implementations.
@@ -66,7 +66,7 @@ repository, pick one of the [learning paths](docs/learning-paths.md).
 | **FEC** | Hamming(7,4) with syndrome/soft ML; rate-1/2 convolutional code with hard/soft Viterbi; BCH(15,7) hard Berlekamp–Massey + soft ML; RS(15,11) hard Berlekamp–Massey/Chien; LDPC(1008,506) with normalized min-sum belief propagation; Polar(1024,512) with SC, SCL, and CRC-aided list decoding |
 | **TCM** | Four-state rate-2/3 8-PSK trellis-coded modulation with soft Viterbi |
 | **Interleaving** | Deterministic bit permutation; hard/soft deinterleaving in the link |
-| **Channels** | AWGN; block Rayleigh fading with known CSI; synthetic burst channel |
+| **Channels** | AWGN; block Rayleigh fading with known CSI; synthetic burst channel; OFDM multipath/Doppler with pilot-based LS estimation and per-subcarrier LLRs |
 | **Pipeline** | `Link` with `decoding="auto"`, `"hard"`, or `"soft"`; `LinkResult.decoding` records the path |
 | **Metrics** | Simulated BER with adaptive stopping and Wilson confidence intervals, plus closed-form BPSK/QPSK/QAM references |
 | **Plots** | Constellations and BER curves with dashed theory overlays |
@@ -84,7 +84,7 @@ repository, pick one of the [learning paths](docs/learning-paths.md).
 | Toy QC-MDPC | `examples/cyclic_codes_pqc_lab.py` | cyclic-numbers note §3.7 |
 | Number theory / residual indices | `examples/residual_index_lab.py` | cyclic-numbers note |
 | Phased arrays and QFC | `examples/wavefront_qfc_lab.py` | no separate note |
-| CT-IM | `examples/ct_im_lab.py` | [`ct-im.md`](docs/ct-im.md) |
+| CT-IM | `examples/ct_im_lab.py`, `examples/ct_im_experiments.py` | [`ct-im.md`](docs/ct-im.md) |
 | I/Q phase involution | `examples/phase_imbalance_lab.py` | [`phase-shift-involution.md`](docs/phase-shift-involution.md) |
 | Lattice modulation (D4/E8) | `examples/lattice_lab.py` | [`lattice-modulation.md`](docs/lattice-modulation.md) |
 | Tau-invariant RM(1,3) with FHT | `examples/tau_invariant_lab.py` | [`tau-invariant.md`](docs/tau-invariant.md) |
@@ -223,6 +223,7 @@ python examples/fading_lab.py          # block Rayleigh + FEC
 python examples/bch_rs_lab.py          # BCH, RS, Hamming, convolutional
 python examples/ldpc_lab.py            # LDPC min-sum vs convolutional
 python examples/polar_lab.py           # polar SC/SCL/CA-SCL vs LDPC
+python examples/multipath_lab.py       # OFDM multipath with estimated CSI
 python examples/tcm_lab.py             # TCM 8-PSK vs QPSK
 python examples/hamming_demo.py
 
@@ -233,6 +234,7 @@ python examples/wavefront_qfc_lab.py
 python examples/cyclic_codes_pqc_lab.py
 python examples/residual_index_lab.py
 python examples/ct_im_lab.py
+python examples/ct_im_experiments.py
 python examples/phase_imbalance_lab.py
 python examples/lattice_lab.py
 python examples/tau_invariant_lab.py
@@ -247,8 +249,8 @@ python examples/tau_invariant_lab.py
 | `modcode` | Convenience exports | `BPSK`, `QPSK`, `QAM`, `BCH15`, `ReedSolomon`, `LDPC36`, `PolarAWGN`, `ConvolutionalCode`, `TCM8PSK`, `Hamming74`, `AWGNChannel`, `BlockRayleighChannel`, `Link`, `run_link` |
 | `modcode.modulation` | Constellations, LLRs, TCM | `BPSK`, `QPSK`, `QAM`, `TCM8PSK`, `Modulation.soft_demodulate` |
 | `modcode.fec` | FEC codes | `Hamming74`, `ConvolutionalCode`, `BCH15`, `ReedSolomon`, `LDPC36`, `PolarAWGN`, `CRC`, `PolarBEC` |
-| `modcode.channel` | Channels | `AWGNChannel`, `BlockRayleighChannel`, `BurstChannel`; `PhaseImbalanceChannel` is an exploratory appendix |
-| `modcode.pipeline` | Link composition | `Link(..., decoding="auto"/"hard"/"soft", interleaver=...)`, `PermutationInterleaver`, `LinkResult`, `run_link` |
+| `modcode.channel` | Channels | `AWGNChannel`, `BlockRayleighChannel`, `BurstChannel`, `MultipathChannel`/`TapProcess`; `PhaseImbalanceChannel` is an exploratory appendix |
+| `modcode.pipeline` | Link composition | `Link(..., decoding="auto"/"hard"/"soft", interleaver=...)`, `PermutationInterleaver`, `LinkResult`, `run_link`; `OFDMLink`/`run_ofdm_link` for multipath with estimated CSI |
 | `modcode.metrics` | BER and theory | `ber_sweep`, `ber_sweep_detailed`, `BERCurve`, `theoretical_ber`, `theoretical_rayleigh_ber`, `q_function` |
 | `modcode.viz` | Plots | `plot_constellation`, `plot_ber(..., theory=...)` |
 
@@ -265,6 +267,7 @@ The full API and derivations are in [`docs/core-simulator.md`](docs/core-simulat
 | [`advanced-coding.md`](docs/advanced-coding.md) | Interleaving, block Rayleigh, BCH/RS, TCM, and their limits |
 | [`ldpc.md`](docs/ldpc.md) | LDPC(1008,506) construction, min-sum decoding, and finite-length comparison |
 | [`polar.md`](docs/polar.md) | Polar(1024,512) construction, SC/SCL/CA-SCL decoding, and the list-size trade-off |
+| [`multipath.md`](docs/multipath.md) | Multipath/Doppler channel, pilot-based channel estimation, zero-forcing equalisation, and measured BER |
 | [`exploratory-labs.md`](docs/exploratory-labs.md) | One place for the appendices: optical, arrays/QFC, PQC, number theory, CT-IM, phase involution |
 | [`figures.md`](docs/figures.md) | Core BER figures and the complete exploratory gallery |
 | [`ct-im.md`](docs/ct-im.md) | CT-IM constant-weight note and milestone status |
@@ -286,6 +289,7 @@ modcode-lab/
 │   ├── advanced-coding.md
 │   ├── ldpc.md
 │   ├── polar.md
+│   ├── multipath.md
 │   ├── exploratory-labs.md
 │   ├── figures.md
 │   ├── ct-im.md
@@ -336,7 +340,9 @@ Core tests include:
 - `tests/test_bch_rs.py`, `tests/test_tcm.py` — BCH/RS correction and TCM gain;
 - `tests/test_ldpc.py` — (3,6) regularity, rank, generator orthogonality, and min-sum decoding;
 - `tests/test_polar_awgn.py` — GA construction, SC agreement with an independent reference, SCL work scaling, and list-decoding error reduction;
+- `tests/test_multipath.py` — tap power/correlation, delay structure, subcarrier gains, and the OFDM estimation path;
 - `tests/test_tau_invariant.py` — RM(1,3) invariance, non-cyclicity, ML, and FHT decoding;
+- `tests/test_ct_im_experiments.py` — shortened/BCH index codes, ML detection, Rayleigh, and PAPR invariance;
 - `tests/test_hamming.py`, `tests/test_qam_gray.py` — code and constellation structure.
 
 The core figures are generated by:
@@ -370,8 +376,8 @@ The core roadmap is intentionally short.  The appendices are not on it.
 | P1 | ✅ | Bit interleaving across FEC blocks and QAM symbols |
 | P1 | ✅ | BCH(15,7) and Reed–Solomon RS(15,11) codes |
 | P2 | ✅ | Four-state 8-PSK TCM example with soft Viterbi |
-| P2 | ⬜ | Soft LLRs for equalized fading (per-symbol variance) |
-| P2 | ⬜ | Multipath/Doppler channels and channel estimation |
+| P2 | ✅ | Soft LLRs for equalized fading (per-subcarrier variance) in the OFDM path |
+| P2 | ✅ | Multipath/Doppler channels with pilot-based channel estimation |
 | P2 | ⬜ | Documentation site and notebooks |
 
 Not planned as core: QKD, optical hardware, quantum transduction, post-quantum

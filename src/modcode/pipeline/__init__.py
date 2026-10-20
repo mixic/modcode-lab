@@ -11,5 +11,14 @@
 
 from modcode.pipeline.chain import Link, LinkResult, run_link
 from modcode.pipeline.interleaver import PermutationInterleaver
+from modcode.pipeline.ofdm import OFDMLink, OFDMResult, run_ofdm_link
 
-__all__ = ["Link", "LinkResult", "PermutationInterleaver", "run_link"]
+__all__ = [
+    "Link",
+    "LinkResult",
+    "OFDMLink",
+    "OFDMResult",
+    "PermutationInterleaver",
+    "run_link",
+    "run_ofdm_link",
+]

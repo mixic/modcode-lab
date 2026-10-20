@@ -268,9 +268,11 @@ values are.
 
 - It is not a production modem.  The codes are small and the channel models
   are deliberately simple.
-- It does not implement channel estimation, synchronization, equalization,
-  fading, or RF nonidealities beyond the separate I/Q phase-imbalance
-  experiment.
+- It does not implement synchronization, full equalization, or RF nonidealities
+  beyond the separate I/Q phase-imbalance experiment.  Fading is modelled, and
+  the OFDM multipath path in [`multipath.md`](multipath.md) does include
+  pilot-based channel estimation and zero-forcing equalization, but the plain
+  `Link` still assumes one scalar noise variance per block.
 - It does not claim that Hamming or this convolutional code are competitive
   with modern LDPC/Polar/Turbo codes.
 - The exploratory PQC/QFC/phased-array/CT-IM modules are not part of these

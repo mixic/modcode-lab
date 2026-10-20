@@ -25,7 +25,7 @@ research programme.
 | Toy QC-MDPC post-quantum structure | `modcode.pqc` | `examples/cyclic_codes_pqc_lab.py` | cyclic-numbers note §3.7 |
 | Full-reptend primes and residual indices | `modcode.number_theory` | `examples/residual_index_lab.py` | cyclic-numbers note |
 | Phased arrays and QFC | `modcode.phasedarray`, `modcode.qfc` | `examples/wavefront_qfc_lab.py` | no separate note |
-| CT-IM constant-weight index modulation | `modcode.modulation.ct_im` | `examples/ct_im_lab.py` | [`ct-im.md`](ct-im.md) |
+| CT-IM constant-weight index modulation | `modcode.modulation.ct_im`, `modcode.metrics.index_modulation` | `examples/ct_im_lab.py`, `examples/ct_im_experiments.py` | [`ct-im.md`](ct-im.md) |
 | I/Q phase involution | `modcode.channel.phase_imbalance` | `examples/phase_imbalance_lab.py` | [`phase-shift-involution.md`](phase-shift-involution.md) |
 | Lattice modulation (D4/E8) | `modcode.modulation.lattice` | `examples/lattice_lab.py` | [`lattice-modulation.md`](lattice-modulation.md) |
 | Tau-invariant RM(1,3) | `modcode.fec.tau_invariant` | `examples/tau_invariant_lab.py` | [`tau-invariant.md`](tau-invariant.md) |
@@ -141,12 +141,18 @@ alphabet: $\log_2 7\approx2.807$ bits, or 9 bits per 7-subcarrier block with
 QPSK versus 11 for classical OFDM-IM.
 
 This is an **exploratory appendix**, not a core result.  The implemented
-object is the unpunctured weight-3 orbit; the punctured variant, baselines, BER
-and PAPR experiments, Rayleigh extension, and BCH(15,7) variant are not done.
-The blind cyclic-shift theorem is an impossibility result: every shift is a
-codeword, so the syndrome cannot identify it.
+objects are the weight-3 orbit, a shortened constant-weight variant, a
+BCH(15,7) weight-7 orbit, and the classical OFDM-IM baseline.  The BER
+experiments are done for AWGN and known-CSI flat Rayleigh, and they answer the
+rate question honestly: OFDM-IM wins in AWGN at these rates, while the index
+code wins under Rayleigh above about 6 dB.  The PAPR experiment is a null
+result: a cyclic shift of the whole block is PAPR-invariant, so the shift
+selection buys nothing.  The blind cyclic-shift theorem is an impossibility
+result: every shift is a codeword, so the syndrome cannot identify it.  The
+EGIM baseline and the literature audit remain open.
 
-See [`ct-im.md`](ct-im.md) and `examples/ct_im_lab.py`.
+See [`ct-im.md`](ct-im.md), `examples/ct_im_lab.py`, and
+`examples/ct_im_experiments.py`.
 
 ---
 

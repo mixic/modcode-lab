@@ -11,6 +11,7 @@
 
 from modcode.channel.awgn import AWGNChannel
 from modcode.channel.burst import BurstChannel
+from modcode.channel.multipath import MultipathChannel
 from modcode.channel.phase_imbalance import PhaseImbalanceChannel
 from modcode.channel.rayleigh import BlockRayleighChannel
 from modcode.fec.bch import BCH15
@@ -27,6 +28,7 @@ from modcode.modulation.qpsk import QPSK
 from modcode.modulation.tcm import TCM8PSK
 from modcode.pipeline.chain import Link, LinkResult, run_link
 from modcode.pipeline.interleaver import PermutationInterleaver
+from modcode.pipeline.ofdm import OFDMLink, run_ofdm_link
 
 __all__ = [
     "AWGNChannel",
@@ -39,7 +41,9 @@ __all__ = [
     "Link",
     "LinkResult",
     "LatticeModulation",
+    "MultipathChannel",
     "LDPC36",
+    "OFDMLink",
     "PermutationInterleaver",
     "PhaseImbalanceChannel",
     "PolarAWGN",
@@ -48,6 +52,7 @@ __all__ = [
     "ReedSolomon",
     "TauInvariantCode",
     "TCM8PSK",
+    "run_ofdm_link",
     "rm13",
     "run_link",
 ]
