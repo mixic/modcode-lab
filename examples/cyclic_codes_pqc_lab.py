@@ -28,7 +28,12 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from modcode.fec.crc import CRC8
-from modcode.pqc import QCMDPC
+from modcode.pqc import (
+    QCMDPC,
+    decoder_success_rates,
+    dual_weight_distribution,
+    syndrome_search_space_bits,
+)
 from modcode.viz.crc import (
     plot_crc_division,
     plot_crc_frame,
@@ -37,8 +42,11 @@ from modcode.viz.crc import (
 from modcode.viz.pqc import (
     plot_bit_vector,
     plot_circulant_block,
+    plot_decoder_success,
+    plot_dual_weight_histogram,
     plot_key_scaling,
     plot_parity_check,
+    plot_search_space,
     plot_syndrome_history,
 )
 
@@ -180,6 +188,72 @@ def _qc_figure() -> None:
     print("  quasi-cyclic code; the toy parameters and decoder are not secure.")
 
 
+def _qc_security_figure() -> None:
+    code = QCMDPC(block_length=47, row_weight=3, seed=7)
+    weights, success = decoder_success_rates(
+        code, np.arange(1, 7), trials=15, seed=42
+    )
+    search_weights = np.arange(1, 16)
+    search_bits = np.asarray(
+        [
+            syndrome_search_space_bits(code.code_length, int(weight))
+            for weight in search_weights
+        ]
+    )
+
+    small = QCMDPC(block_length=15, row_weight=3, seed=3)
+    counts = dual_weight_distribution(small)
+    minimum = int(np.flatnonzero(counts[1:])[0] + 1)
+    secret_weight = 2 * small.row_weight
+
+    figure, axes = plt.subplots(1, 3, figsize=(16.0, 4.4))
+    figure.suptitle(
+        "QC-MDPC security experiments: decoder threshold, search space, "
+        "and low-weight dual words",
+        fontsize=12,
+    )
+    plot_decoder_success(
+        axes[0],
+        weights,
+        success,
+        title="bit-flipping success (n=47)",
+    )
+    plot_search_space(
+        axes[1],
+        search_weights,
+        search_bits,
+        title="log2 error patterns (2n=94)",
+    )
+    plot_dual_weight_histogram(
+        axes[2],
+        counts,
+        secret_weight=secret_weight,
+        title="dual weights (n=15 toy)",
+    )
+    _save(figure, OUTPUT_DIR / "qc_mdpc_security.png", rect=(0, 0, 1, 0.92))
+
+    print()
+    print(RULE)
+    print("QC-MDPC SECURITY EXPERIMENTS (TOY)")
+    print(RULE)
+    summary = ", ".join(
+        f"{int(weight)}:{rate:.2f}"
+        for weight, rate in zip(weights, success, strict=True)
+    )
+    print(f"decoder success by weight : {summary}")
+    print(f"log2 patterns at t=2      : {search_bits[1]:.1f} bits")
+    print(f"log2 patterns at t=6      : {search_bits[5]:.1f} bits")
+    print(f"small toy minimum dual wt : {minimum}")
+    print(f"secret row weight         : {secret_weight}")
+    print()
+    print("  The success curve falls as the error weight crosses the decoder's")
+    print("  correction capability. The search-space panel shows why the")
+    print("  syndrome-decoding problem does not become easy at toy scale. The")
+    print("  right panel exposes the structural attack surface: the dual code")
+    print("  contains the sparse secret rows, so key recovery is a low-weight")
+    print("  codeword search. Real parameters must make that search infeasible.")
+
+
 def main() -> None:
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     print(RULE)
@@ -189,6 +263,7 @@ def main() -> None:
     print(RULE)
     _crc_figure()
     _qc_figure()
+    _qc_security_figure()
     print()
     print(RULE)
     print(f"done -- figures in {OUTPUT_DIR}")

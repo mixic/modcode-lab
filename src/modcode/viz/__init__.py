@@ -26,8 +26,11 @@ from modcode.viz.phasedarray import (
 from modcode.viz.pqc import (
     plot_bit_vector,
     plot_circulant_block,
+    plot_decoder_success,
+    plot_dual_weight_histogram,
     plot_key_scaling,
     plot_parity_check,
+    plot_search_space,
     plot_syndrome_history,
 )
 from modcode.viz.qfc import (
@@ -46,12 +49,15 @@ __all__ = [
     "plot_crc_division",
     "plot_crc_frame",
     "plot_crc_syndromes",
+    "plot_decoder_success",
+    "plot_dual_weight_histogram",
     "plot_key_scaling",
     "plot_noise_budget",
     "plot_parity_check",
     "plot_pattern",
     "plot_pattern_family",
     "plot_phase_ramp",
+    "plot_search_space",
     "plot_squeezing_survival",
     "plot_squint",
     "plot_syndrome_history",

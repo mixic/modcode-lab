@@ -553,10 +553,20 @@ key-size argument that makes code-based post-quantum proposals attractive
 The security assumption is the hardness of decoding a random quasi-cyclic
 code, not the circulant structure by itself. The structure is both an
 efficiency feature and a cryptanalytic target: highly structured codes can be
-weaker than random ones, so parameter and decoder design matter. The toy
-`modcode.pqc.QCMDPC` demonstrates the layout, key-size scaling, and a small
-bit-flipping decoder; its parameters are far too small to be secure, and it is
-not BIKE.
+weaker than random ones, so parameter and decoder design matter. BIKE is the
+canonical QC-MDPC example; HQC is another quasi-cyclic code-based KEM, but its
+construction is not simply “QC-LDPC,” so that shorthand should not be read as a
+precise classification. The toy `modcode.pqc.QCMDPC` demonstrates the layout,
+key-size scaling, and a small bit-flipping decoder; its parameters are far too
+small to be secure, and it is not BIKE.
+
+The `modcode.pqc.analysis` layer makes the tradeoff measurable. The
+bit-flipping success rate falls as the injected error weight rises; the
+syndrome search space \(\log_2 \binom{2n}{t}\) grows exponentially with \(t\);
+and the dual code’s low-weight spectrum contains the sparse secret rows, which
+is the target of key-recovery attacks. Those are three quantities a real
+parameter set must balance. The toy sizes are chosen to make the plots
+readable, not to recommend parameters.
 
 ---
 

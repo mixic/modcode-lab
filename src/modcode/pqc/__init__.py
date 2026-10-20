@@ -9,6 +9,11 @@
 
 """Toy quasi-cyclic code-based cryptography demonstrations."""
 
+from modcode.pqc.analysis import (
+    decoder_success_rates,
+    dual_weight_distribution,
+    syndrome_search_space_bits,
+)
 from modcode.pqc.qc_mdpc import (
     QCMDPC,
     DecodeResult,
@@ -16,4 +21,12 @@ from modcode.pqc.qc_mdpc import (
     is_circulant,
 )
 
-__all__ = ["DecodeResult", "QCMDPC", "circulant", "is_circulant"]
+__all__ = [
+    "QCMDPC",
+    "DecodeResult",
+    "circulant",
+    "decoder_success_rates",
+    "dual_weight_distribution",
+    "is_circulant",
+    "syndrome_search_space_bits",
+]

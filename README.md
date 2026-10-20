@@ -249,6 +249,14 @@ post-quantum cryptography. The security assumption is the hardness of decoding
 a random quasi-cyclic code; the module’s parameters and toy decoder are **not
 secure** and are included only to make the structure visible.
 
+BIKE is the canonical QC-MDPC example; HQC is another quasi-cyclic code-based
+KEM, but its construction is not simply “QC-LDPC,” so the shorthand should not
+be read as a precise classification. `modcode.pqc.analysis` adds the
+security experiments plotted in Figure 13: bit-flipping success versus error
+weight, the exponential syndrome search space, and the low-weight dual-code
+spectrum that key-recovery attacks target. The model is a diagnostic toy, not
+a security proof or a parameter recommendation.
+
 ### Optical IM/DD experiments
 
 `modcode.optical` provides OOK, conventional nonnegative PAM, a small
@@ -506,6 +514,11 @@ contains a hyphen.
 </p>
 <p align="center"><sub><b>Figure 12.</b> A weight-two QC-MDPC error, its syndrome, and the syndrome weight falling to zero during bit-flipping.</sub></p>
 
+<p align="center">
+  <a href="examples/figures/qc_mdpc_security.png"><img src="examples/figures/qc_mdpc_security.png" alt="QC-MDPC decoder success versus error weight, log2 syndrome search space, and dual-code low-weight spectrum" width="900"></a>
+</p>
+<p align="center"><sub><b>Figure 13.</b> The security experiments: bit-flipping success falls as the error weight grows, the syndrome search space grows exponentially, and the dual code contains the sparse secret rows at weight 6 (toy n=15).</sub></p>
+
 ## Module reference
 
 | Module | Purpose | Main entry points |
@@ -514,11 +527,11 @@ contains a hyphen.
 | `modcode.modulation` | Modulation families and the shared interface | `BPSK`, `QPSK`, `QAM`, `APSK`, `TailBitingTCM8PSK`, `Modulation` |
 | `modcode.waveforms` | PSK and Zadoff–Chu generation, periodic correlation | `psk_constellation`, `zadoff_chu`, `periodic_autocorrelation`, `cyclic_cross_correlation` |
 | `modcode.fec` | Block-code interface, CRC, Hamming, and Polar | `FEC`, `CRC`, `Hamming74`, `PolarBEC`; `modcode.fec.cyclic` (`cyclic_shift`), `modcode.fec.qc_ldpc` (`expand_qc_base_matrix`) |
-| `modcode.pqc` | Toy QC-MDPC McEliece-style structure | `QCMDPC`, `DecodeResult`, `circulant`, `is_circulant` |
+| `modcode.pqc` | Toy QC-MDPC McEliece-style structure and security experiments | `QCMDPC`, `DecodeResult`, `circulant`, `is_circulant`, `decoder_success_rates`, `syndrome_search_space_bits`, `dual_weight_distribution` |
 | `modcode.channel` | Channel models | `AWGNChannel` |
 | `modcode.pipeline` | End-to-end link simulation | `Link`, `LinkResult`, `run_link` |
 | `modcode.metrics` | BER measurement | `ber_sweep` |
-| `modcode.viz` | Constellation, BER, array, CRC, PQC, and QFC plotting | `plot_constellation`, `plot_ber`, `plot_wavefront`, `plot_pattern`, `plot_phase_ramp`, `plot_squint`, `plot_crc_frame`, `plot_crc_division`, `plot_crc_syndromes`, `plot_parity_check`, `plot_circulant_block`, `plot_key_scaling`, `plot_transport_budget`, `plot_noise_budget`, `plot_wigner` |
+| `modcode.viz` | Constellation, BER, array, CRC, PQC, and QFC plotting | `plot_constellation`, `plot_ber`, `plot_wavefront`, `plot_pattern`, `plot_phase_ramp`, `plot_squint`, `plot_crc_frame`, `plot_crc_division`, `plot_crc_syndromes`, `plot_parity_check`, `plot_circulant_block`, `plot_key_scaling`, `plot_decoder_success`, `plot_search_space`, `plot_dual_weight_histogram`, `plot_transport_budget`, `plot_noise_budget`, `plot_wigner` |
 | `modcode.phasedarray` | Array geometry and cyclic phase quantisation | `LinearArray`, `quantize_phases`, `squint_angle`, `grating_lobe_limit` |
 | `modcode.qfc` | QFC noise, quantum states, and link budgets | `Transducer`, `thermal_occupation`, `transport_budget`, `wigner_function`, `covariance_squeezing_db` |
 | `modcode.optical` | IM/DD experiments | `OOK`, `IntensityPAM`, `NonUniformPAM`, `IMDDChannel`, `optimize_pam_levels`, `ber_sweep_imdd` |
@@ -553,6 +566,7 @@ modcode-lab/
 │   │   ├── phase_quantization.png
 │   │   ├── qc_mdpc_decoding.png
 │   │   ├── qc_mdpc_matrix.png
+│   │   ├── qc_mdpc_security.png
 │   │   ├── qfc_state.png
 │   │   ├── qfc_transport.png
 │   │   └── wavefront_steering.png
@@ -617,6 +631,7 @@ modcode-lab/
 │   │   └── chain.py
 │   ├── pqc/
 │   │   ├── __init__.py
+│   │   ├── analysis.py
 │   │   └── qc_mdpc.py
 │   ├── qfc/
 │   │   ├── __init__.py
@@ -645,6 +660,7 @@ modcode-lab/
 │   ├── test_optical_imdd.py
 │   ├── test_phasedarray.py
 │   ├── test_polar_bec.py
+│   ├── test_pqc_analysis.py
 │   ├── test_qam_gray.py
 │   ├── test_qc_ldpc.py
 │   ├── test_qc_mdpc.py
@@ -675,10 +691,10 @@ python examples/cyclic_codes_pqc_lab.py # CRC and QC-MDPC figures
 The suite covers modulation geometry, Gray labeling, AWGN BER, CRC detection,
 Hamming and QC-LDPC structure, Polar BEC construction, optical IM/DD,
 full-reptend arithmetic, toy Diffie–Hellman, phased-array synthesis, QFC noise,
-PSK/ZC waveforms, and the toy QC-MDPC key structure/decoder. The
-figure-producing scripts are deterministic given their fixed seeds and
-constants; the numeric reports they print are the same ones the tests pin
-down.
+PSK/ZC waveforms, and the toy QC-MDPC key structure, decoder threshold,
+syndrome search space, and dual-code weight spectrum. The figure-producing
+scripts are deterministic given their fixed seeds and constants; the numeric
+reports they print are the same ones the tests pin down.
 
 ## Extending modcode-lab
 

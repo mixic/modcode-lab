@@ -145,10 +145,84 @@ def plot_syndrome_history(
     return ax
 
 
+def plot_decoder_success(
+    ax: Axes,
+    error_weights: ArrayLike,
+    success_rates: ArrayLike,
+    *,
+    title: str = "Bit-flipping threshold",
+) -> Axes:
+    """Plot decoder success against injected error weight."""
+    weights = np.asarray(error_weights, dtype=int)
+    rates = np.asarray(success_rates, dtype=float)
+    ax.plot(weights, rates, marker="o", color="tab:blue")
+    ax.set_xlabel("injected error weight", fontsize=8)
+    ax.set_ylabel("decoder success rate", fontsize=8)
+    ax.set_ylim(-0.05, 1.05)
+    ax.set_title(title, fontsize=9)
+    ax.tick_params(labelsize=7)
+    ax.grid(alpha=0.3)
+    return ax
+
+
+def plot_search_space(
+    ax: Axes,
+    error_weights: ArrayLike,
+    search_bits: ArrayLike,
+    *,
+    title: str = "Syndrome search space",
+) -> Axes:
+    """Plot ``log2`` of the number of error patterns of each weight."""
+    weights = np.asarray(error_weights, dtype=int)
+    bits = np.asarray(search_bits, dtype=float)
+    ax.plot(weights, bits, marker="o", color="tab:purple")
+    ax.set_xlabel("error weight", fontsize=8)
+    ax.set_ylabel("log2 candidate patterns", fontsize=8)
+    ax.set_title(title, fontsize=9)
+    ax.tick_params(labelsize=7)
+    ax.grid(alpha=0.3)
+    return ax
+
+
+def plot_dual_weight_histogram(
+    ax: Axes,
+    weight_counts: ArrayLike,
+    *,
+    secret_weight: int,
+    title: str = "Dual-code low-weight spectrum",
+) -> Axes:
+    """Plot the dual-code weight distribution and mark the secret-row weight."""
+    counts = np.asarray(weight_counts, dtype=float)
+    weights = np.arange(counts.size)
+    heights = counts[1:]
+    ax.bar(weights[1:], heights, color="tab:orange", alpha=0.8)
+    ax.axvline(secret_weight, color="tab:red", linestyle="--", linewidth=1.5)
+    ax.text(
+        secret_weight + 0.5,
+        max(float(heights.max()), 1.0),
+        "secret row weight",
+        color="tab:red",
+        fontsize=7,
+        rotation=90,
+        va="top",
+    )
+    ax.set_yscale("log")
+    ax.set_ylim(bottom=0.8)
+    ax.set_xlabel("dual-codeword weight", fontsize=8)
+    ax.set_ylabel("number of words", fontsize=8)
+    ax.set_title(title, fontsize=9)
+    ax.tick_params(labelsize=7)
+    ax.grid(alpha=0.3, which="both")
+    return ax
+
+
 __all__ = [
     "plot_bit_vector",
     "plot_circulant_block",
+    "plot_decoder_success",
+    "plot_dual_weight_histogram",
     "plot_key_scaling",
     "plot_parity_check",
+    "plot_search_space",
     "plot_syndrome_history",
 ]
