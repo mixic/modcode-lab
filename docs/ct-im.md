@@ -4,6 +4,12 @@
 
 *Research note for [modcode-lab](../README.md)*
 
+> **Scope:** this is an exploratory appendix, not part of the core
+> modulation/FEC simulator and not a paper-level result. It is kept because
+> the codebook and its limits are tested; the open milestones are marked in
+> §10. See [`exploratory-labs.md`](exploratory-labs.md) for the project-level
+> separation between the core and the appendices.
+
 ---
 
 ## Abstract
@@ -295,7 +301,7 @@ patent literature before any novelty claim. This note makes no such claim.
 7. **Literature audit:** the novelty claims in §6.
 
 Items 1–4 map to CT-IM-2, CT-IM-3, CT-IM-4, and CT-IM-6 in §10. Item 6 is a
-later trellis question outside the ten-day experimental track.
+later trellis question outside the CT-IM milestone list.
 
 ---
 
@@ -321,8 +327,8 @@ Files:
 
 ## 10. Milestones
 
-The project-level table is in the
-[README roadmap](../README.md#ct-im-experimental-track). This section records
+The project-level placement is in the
+[README exploratory track](../README.md#exploratory-track). This section records
 the status and the **definition of done** so a checkbox cannot be inflated by
 proximity. Status: ✅ complete, ⬜ open.
 
@@ -338,9 +344,9 @@ proximity. Status: ✅ complete, ⬜ open.
 | **CT-IM-7** | ✅ | Write-up in `docs/ct-im.md` | 1 day |
 | **Total** | | | **~10 days** |
 
-The estimates total about ten focused days for the full experimental paper
-draft. Three items are complete, so about seven days remain. The numbers are
-planning estimates, not measured effort.
+The estimates total about ten focused days for the full experimental study,
+**if it is pursued**. Three items are complete, so about seven days remain.
+The numbers are planning estimates, not measured effort.
 
 ### 10.1 Status notes
 
@@ -357,9 +363,9 @@ planning estimates, not measured effort.
   shift is a codeword and therefore has zero syndrome; the test
   `test_all_cyclic_shifts_are_valid_codewords` verifies the premise. This
   milestone does **not** produce a blind detector. It rules one out.
-- **CT-IM-7 is an initial write-up, not the paper draft.** The note is complete
-  for the implemented object. It must be revised after CT-IM-2, CT-IM-3,
-  CT-IM-4, and CT-IM-6 supply data.
+- **CT-IM-7 is an initial write-up, not the full experimental report.** The
+  note is complete for the implemented object. It must be revised after
+  CT-IM-2, CT-IM-3, CT-IM-4, and CT-IM-6 supply data.
 
 ### 10.2 Definition of done for the open items
 
@@ -400,13 +406,14 @@ size, weight, minimum distance, decoder, and rate stated. Tests must cover
 codebook size, weight, pairwise distance, and correction capability. This is
 not a claim that the full BCH code is constant-weight.
 
-### 10.3 Paper-draft gate
+### 10.3 Study gate (if pursued)
 
 The ten-day track is complete when CT-IM-1 through CT-IM-4 and CT-IM-6 have
 their tests and figures, CT-IM-7 has been revised with the measured results,
 and the write-up states the limitations: the index code is nonlinear, symbol
 bits are unprotected, the shift path needs side information, and no novelty
-claim has been established without the literature audit.
+claim has been established without the literature audit. This gate is not a
+core-project commitment.
 
 ---
 

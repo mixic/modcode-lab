@@ -3,6 +3,11 @@
 *Research note for [modcode-lab](../README.md), with a companion note in the
 `riemann-framework` repository.*
 
+> **Scope:** this is an interpretive appendix, not part of the core
+> modulation/FEC simulator. It records a structural analogy and an
+> identifiability result; it is not a new modulation scheme and not evidence
+> for RH. See [`exploratory-labs.md`](exploratory-labs.md).
+
 ---
 
 ## Abstract
