@@ -16,6 +16,11 @@ from modcode.viz.crc import (
     plot_crc_frame,
     plot_crc_syndromes,
 )
+from modcode.viz.ct_im import (
+    plot_codebook,
+    plot_distance_matrix,
+    plot_rate_budget,
+)
 from modcode.viz.number_theory import (
     plot_residual_index_convergence,
     plot_residual_index_density,
@@ -54,7 +59,9 @@ __all__ = [
     "plot_crc_division",
     "plot_crc_frame",
     "plot_crc_syndromes",
+    "plot_codebook",
     "plot_decoder_success",
+    "plot_distance_matrix",
     "plot_dual_weight_histogram",
     "plot_key_scaling",
     "plot_noise_budget",
@@ -65,6 +72,7 @@ __all__ = [
     "plot_residual_index_convergence",
     "plot_residual_index_density",
     "plot_residual_index_histogram",
+    "plot_rate_budget",
     "plot_search_space",
     "plot_squeezing_survival",
     "plot_squint",

@@ -12,8 +12,18 @@
 from modcode.modulation.apsk import APSK
 from modcode.modulation.base import Modulation
 from modcode.modulation.bpsk import BPSK
+from modcode.modulation.ct_im import CTIM, ConstantWeightCyclicCode
 from modcode.modulation.cyclic_tcm import TailBitingTCM8PSK
 from modcode.modulation.qam import QAM
 from modcode.modulation.qpsk import QPSK
 
-__all__ = ["APSK", "BPSK", "Modulation", "QAM", "QPSK", "TailBitingTCM8PSK"]
+__all__ = [
+    "APSK",
+    "BPSK",
+    "CTIM",
+    "ConstantWeightCyclicCode",
+    "Modulation",
+    "QAM",
+    "QPSK",
+    "TailBitingTCM8PSK",
+]
