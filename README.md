@@ -35,7 +35,8 @@ claims.  See [`docs/exploratory-labs.md`](docs/exploratory-labs.md).
 
 If you want the theory behind the core, read
 [`docs/core-simulator.md`](docs/core-simulator.md).  If you want the quickest
-path to a BER curve, read the quickstart below.
+path to a BER curve, read the quickstart below.  If you are new to the
+repository, pick one of the [learning paths](docs/learning-paths.md).
 
 ---
 
@@ -214,6 +215,7 @@ The full API and derivations are in [`docs/core-simulator.md`](docs/core-simulat
 
 | Document | Contents |
 |---|---|
+| [`learning-paths.md`](docs/learning-paths.md) | Three guided routes: FEC, modulation, and the appendices |
 | [`core-simulator.md`](docs/core-simulator.md) | Signal model, LLR convention, Hamming hard/soft, convolutional trellis/Viterbi, pipeline modes, theoretical BER |
 | [`advanced-coding.md`](docs/advanced-coding.md) | Interleaving, block Rayleigh, BCH/RS, TCM, and their limits |
 | [`exploratory-labs.md`](docs/exploratory-labs.md) | One place for the appendices: optical, arrays/QFC, PQC, number theory, CT-IM, phase involution |
@@ -230,6 +232,7 @@ The full API and derivations are in [`docs/core-simulator.md`](docs/core-simulat
 ```text
 modcode-lab/
 ├── docs/
+│   ├── learning-paths.md
 │   ├── core-simulator.md
 │   ├── advanced-coding.md
 │   ├── exploratory-labs.md
@@ -287,7 +290,9 @@ python examples/soft_decision_lab.py
 ```
 
 Monte Carlo points are not pinned by tests; the codebooks, LLR conventions,
-rates, and closed-form values are.
+rates, and closed-form values are.  The 8 dB BPSK case is pinned explicitly by
+`test_theory_matches_simulation_at_high_snr`: 500,000 bits must land within
+20% of `0.5 * erfc(sqrt(Eb/N0))`.
 
 ---
 

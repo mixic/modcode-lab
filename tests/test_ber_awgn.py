@@ -9,6 +9,8 @@
 
 """Tests for AWGN normalization and link-level BER behavior."""
 
+import math
+
 import numpy as np
 
 from modcode.channel.awgn import AWGNChannel
@@ -75,6 +77,21 @@ def test_simulated_qpsk_ber_matches_the_q_function() -> None:
     expected = theoretical_ber(QPSK(), [ebn0_db])[0]
     standard_error = np.sqrt(expected * (1.0 - expected) / n_bits)
     assert abs(result.ber - expected) < 4.0 * standard_error
+
+
+def test_theory_matches_simulation_at_high_snr() -> None:
+    """At 8 dB Eb/N0, BPSK theory BER is about 1.9e-4; allow 20%."""
+    n_bits = 500_000
+    ebn0_db = 8.0
+    result = run_link(
+        Link(BPSK(), AWGNChannel()),
+        n_bits=n_bits,
+        ebn0_db=ebn0_db,
+        rng=np.random.default_rng(2026),
+    )
+    # Q(sqrt(2 Eb/N0)) = 0.5 * erfc(sqrt(Eb/N0)).
+    theory = 0.5 * math.erfc(math.sqrt(10.0 ** (ebn0_db / 10.0)))
+    assert abs(result.ber - theory) / theory < 0.20
 
 
 def test_ber_sweep_detailed_uses_stopping_rule_and_reports_intervals() -> None:
