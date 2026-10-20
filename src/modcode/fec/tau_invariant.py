@@ -45,6 +45,26 @@ def _tau_permutation(n: int = 8) -> NDArray[np.intp]:
     return np.asarray([index ^ 1 for index in range(n)], dtype=np.intp)
 
 
+def fast_hadamard_transform(values: NDArray[np.floating]) -> NDArray[np.float64]:
+    """Return the unnormalized Walsh-Hadamard transform of a power-of-two vector."""
+    array = np.asarray(values, dtype=np.float64)
+    if array.ndim != 1 or array.size == 0:
+        raise ValueError("values must be a nonempty one-dimensional array")
+    if array.size & (array.size - 1):
+        raise ValueError("Hadamard length must be a power of two")
+    transformed = array.copy()
+    half = 1
+    while half < transformed.size:
+        blocks = transformed.reshape(-1, 2, half)
+        first = blocks[:, 0, :].copy()
+        second = blocks[:, 1, :].copy()
+        blocks[:, 0, :] = first + second
+        blocks[:, 1, :] = first - second
+        transformed = blocks.reshape(-1)
+        half <<= 1
+    return transformed
+
+
 class TauInvariantCode(FEC):
     """A binary code invariant under a coordinate involution.
 
@@ -82,6 +102,10 @@ class TauInvariantCode(FEC):
         if len(self._codebook_set) != (1 << self.k):
             raise ValueError("generator rows are not independent")
         self._verify_invariance()
+        self._index = {
+            tuple(row): index for index, row in enumerate(self.codebook)
+        }
+        self._fht_table = self._build_fht_table()
 
     def _enumerate_codebook(self) -> NDArray[np.uint8]:
         rows = 1 << self.k
@@ -136,6 +160,13 @@ class TauInvariantCode(FEC):
         return decoded.reshape(-1)
 
     def decode_soft(self, llrs: NDArray[np.floating]) -> BitArray:
+        """Decode with the FHT when available, otherwise by codebook ML."""
+        if self._fht_table is not None:
+            return self.decode_soft_fht(llrs)
+        return self.decode_soft_ml(llrs)
+
+    def decode_soft_ml(self, llrs: NDArray[np.floating]) -> BitArray:
+        """Exact soft ML by correlating against every codeword."""
         values = np.asarray(llrs, dtype=np.float64)
         if values.ndim != 1:
             raise ValueError("llrs must be a one-dimensional array")
@@ -150,6 +181,69 @@ class TauInvariantCode(FEC):
             [self._index_to_bits(int(index)) for index in best],
             dtype=np.uint8,
         ).reshape(-1)
+
+    def decode_soft_fht(self, llrs: NDArray[np.floating]) -> BitArray:
+        """Soft ML for an affine RM(1,m) code via the Fast Hadamard Transform.
+
+        The table maps each Walsh frequency to the two codewords with that
+        character and its complement.  For RM(1,3) this is exact ML at
+        O(n log n) per block instead of O(2^k n).
+        """
+        if self._fht_table is None:
+            raise ValueError("this code does not have an FHT decoder")
+        values = np.asarray(llrs, dtype=np.float64)
+        if values.ndim != 1:
+            raise ValueError("llrs must be a one-dimensional array")
+        if not np.all(np.isfinite(values)):
+            raise ValueError("llrs must contain only finite values")
+        if values.size % self.n:
+            raise ValueError(f"LLR length must be a multiple of n={self.n}")
+        blocks = values.reshape(-1, self.n)
+        transformed = blocks.copy()
+        half = 1
+        while half < self.n:
+            views = transformed.reshape(blocks.shape[0], -1, 2, half)
+            first = views[:, :, 0, :].copy()
+            second = views[:, :, 1, :].copy()
+            views[:, :, 0, :] = first + second
+            views[:, :, 1, :] = first - second
+            half <<= 1
+        frequencies = np.argmax(np.abs(transformed), axis=1)
+        decoded = np.empty((blocks.shape[0], self.k), dtype=np.uint8)
+        for index, frequency in enumerate(frequencies):
+            positive, negative = self._fht_table[int(frequency)]
+            codeword = (
+                positive
+                if transformed[index, int(frequency)] >= 0.0
+                else negative
+            )
+            decoded[index] = self._index_to_bits(codeword)
+        return decoded.reshape(-1)
+
+    def _build_fht_table(self) -> dict[int, tuple[int, int]] | None:
+        """Map Walsh frequencies to RM codewords, or None if not applicable."""
+        if self.n & (self.n - 1):
+            return None
+        table: dict[int, tuple[int, int]] = {}
+        for frequency in range(self.n):
+            signs = np.asarray(
+                [
+                    1.0 - 2.0 * ((frequency & coordinate).bit_count() & 1)
+                    for coordinate in range(self.n)
+                ],
+                dtype=np.float64,
+            )
+            positive = ((1.0 - signs) / 2.0).astype(np.uint8)
+            negative = 1 - positive
+            if tuple(positive) not in self._index:
+                continue
+            if tuple(negative) not in self._index:
+                continue
+            table[frequency] = (
+                self._index[tuple(positive)],
+                self._index[tuple(negative)],
+            )
+        return table if len(table) == self.n else None
 
     def min_distance(self) -> int:
         distance = self.n
@@ -182,4 +276,4 @@ def rm13() -> TauInvariantCode:
     return TauInvariantCode(_rm13_generator(), _tau_permutation(8))
 
 
-__all__ = ["TauInvariantCode", "rm13"]
+__all__ = ["TauInvariantCode", "fast_hadamard_transform", "rm13"]

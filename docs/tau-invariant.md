@@ -152,13 +152,38 @@ enumerates the full codebook (small codes only), verifies that every codeword's
 $\tau$-image is in the codebook, and raises if not.
 
 - **Hard decoding:** nearest codeword in Hamming distance.
-- **Soft decoding:** maximum correlation over the codebook, using the same LLR
-  convention as the core.
+- **Soft decoding:** maximum correlation over the codebook; for RM(1,3) the
+  default path uses the Fast Hadamard Transform.
 - **Rate:** $k/n$.
 - **Minimum distance:** exhaustive over the codebook.
 
-RM(1,3) has 16 codewords, so exhaustive ML is exact and cheap.  A production
-decoder would use the Fast Hadamard Transform; that is **not** implemented.
+### 5.1 Fast Hadamard decoding
+
+For RM(1,3), the 16 codewords are the eight Walsh characters and their
+complements.  Correlating the received LLR vector with all of them can be done
+with the Walsh–Hadamard transform:
+
+$$
+W = H_8 L,
+\qquad
+H_8 = H_2^{\otimes 3},
+$$
+
+where $L$ is the length-8 LLR vector.  The largest $|W_k|$ identifies the
+linear function, and the sign identifies the constant term.  The implementation
+builds a table from the codebook so the Walsh-frequency-to-codeword mapping is
+explicit, then verifies that FHT and exhaustive ML return the same decisions.
+
+The transform is $O(n\log n)$, or 24 butterfly additions for $n=8$, versus
+$O(2^k n)=128$ correlation operations for exhaustive ML.  At $n=8$ in Python
+the vectorized codebook ML and the batched FHT are within a few milliseconds of
+each other because overhead dominates; the asymptotic advantage is the point,
+not a measured speedup.  A production decoder would use a hardware or compiled
+FHT.
+
+`decode_soft_ml` exposes the exhaustive path for comparison, and
+`decode_soft_fht` is the explicit transform decoder.  `decode_soft` dispatches
+to the FHT when the codebook has the required affine structure.
 
 ---
 
@@ -178,9 +203,9 @@ per point:
 The soft-decision curves are close; RM is slightly better at 4–6 dB in this
 run, while hard-decision RM is worse at this rate because its rate and distance
 distribution differ from Hamming.  The exhaustive nearest-codeword decoder is
-already maximum-likelihood for the hard metric; a Fast Hadamard Transform would
-reduce its complexity, not improve its BER.  This is a finite-length
-comparison, not a claim that one symmetry class is better.
+already maximum-likelihood for the hard metric; the FHT reduces the soft
+decoder's complexity, not its BER.  This is a finite-length comparison, not a
+claim that one symmetry class is better.
 
 The structural distinction is the point: Hamming is cyclic; RM(1,3) is
 invariant under a non-cyclic involution.  Their AWGN gains are similar because
@@ -192,7 +217,8 @@ create coding gain.
 ## 7. Limits
 
 - RM(1,3) is tiny; exhaustive decoding is not a scalable method.
-- No Fast Hadamard decoder.
+- The FHT path is implemented for the affine RM structure; no general fast
+  decoder for arbitrary $\tau$-invariant codes.
 - No code design or search over $\tau$-invariant codes.
 - No claim that involution-invariance is better than cyclic-invariance.
 - No claim that this closes a “gap” in the FEC core; it adds a structural

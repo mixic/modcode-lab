@@ -22,6 +22,7 @@ with one-error-correcting distance; the difference is the symmetry class.
 
 from __future__ import annotations
 
+import time
 from pathlib import Path
 
 import matplotlib.pyplot as plt
@@ -56,6 +57,26 @@ def _sweep(fec, decoding: str) -> np.ndarray:
     return np.asarray(values)
 
 
+def _benchmark(code, blocks: int = 5_000) -> None:
+    rng = np.random.default_rng(31)
+    llrs = rng.normal(size=(blocks, code.n)).reshape(-1)
+    start = time.perf_counter()
+    codebook = code.decode_soft_ml(llrs)
+    codebook_time = time.perf_counter() - start
+    start = time.perf_counter()
+    fht = code.decode_soft_fht(llrs)
+    fht_time = time.perf_counter() - start
+    if not np.array_equal(codebook, fht):
+        raise RuntimeError("FHT and codebook ML disagree")
+    print(
+        f"\nsoft ML benchmark, {blocks} blocks:\n"
+        f"  codebook ML: {codebook_time * 1e3:.2f} ms\n"
+        f"  FHT:         {fht_time * 1e3:.2f} ms\n"
+        "  Algorithms: O(2^k n) versus O(n log n); at n=8 the Python\n"
+        "  overhead is comparable, so this is not a speed claim."
+    )
+
+
 def main() -> None:
     hamming = Hamming74()
     rm = rm13()
@@ -68,6 +89,7 @@ def main() -> None:
         f"Hamming(7,4): rate {hamming.rate:.4f}, d_min 3\n"
         f"RM(1,3):      rate {rm.rate:.4f}, d_min {rm.min_distance()}\n"
     )
+    _benchmark(rm)
     print("Eb/N0   Ham-hard  Ham-soft  RM-hard  RM-soft")
     for index, ebn0_db in enumerate(EBN0_DB):
         print(

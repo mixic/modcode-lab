@@ -13,7 +13,7 @@ Click a figure to open the full PNG.
 | BER with theoretical references | Hard versus soft decoding |
 |---|---|
 | <a href="../examples/figures/ber_sweep.png"><img src="../examples/figures/ber_sweep.png" alt="BPSK, QPSK, and 16-QAM BER versus Eb/N0 with Q-function theory overlays" width="440"></a> | <a href="../examples/figures/soft_decision.png"><img src="../examples/figures/soft_decision.png" alt="Uncoded BPSK theory, Hamming hard/soft, and convolutional hard/soft BER" width="440"></a> |
-| <sub><b>Figure 1.</b> Uncoded BPSK, QPSK, and 16-QAM against the closed-form references. The dashed curves are theory, not fits.</sub> | <sub><b>Figure 2.</b> Hamming(7,4) and rate-1/2 convolutional decoding: hard decisions versus LLRs. The convolutional soft curve is the main coding gain.</sub> |
+| <sub><b>Figure 1.</b> Uncoded BPSK, QPSK, and 16-QAM against the closed-form references. The dashed curves are theory, not fits.</sub> | <sub><b>Figure 2.</b> Hamming(7,4), tau-invariant RM(1,3) with the FHT, and rate-1/2 convolutional decoding: hard decisions versus LLRs. The convolutional soft curve is the main coding gain.</sub> |
 
 | Interleaver under bursts | Block Rayleigh |
 |---|---|

@@ -190,7 +190,7 @@ coded = Link(
 ```bash
 # core
 python examples/run_ber_sweep.py       # BER + theory overlays
-python examples/soft_decision_lab.py   # Hamming/convolutional hard vs soft
+python examples/soft_decision_lab.py   # Hamming, RM(1,3) FHT, convolutional
 python examples/interleaver_lab.py     # bursts with/without interleaving
 python examples/fading_lab.py          # block Rayleigh + FEC
 python examples/bch_rs_lab.py          # BCH, RS, Hamming, convolutional

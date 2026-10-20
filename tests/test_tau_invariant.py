@@ -61,6 +61,25 @@ def test_rm13_soft_decoding_round_trip() -> None:
     np.testing.assert_array_equal(code.decode_soft(llr), bits)
 
 
+def test_fht_matches_codebook_ml() -> None:
+    code = rm13()
+    rng = np.random.default_rng(9)
+    llrs = rng.normal(size=(200, code.n))
+    ml = code.decode_soft_ml(llrs.reshape(-1))
+    fht = code.decode_soft_fht(llrs.reshape(-1))
+    np.testing.assert_array_equal(fht, ml)
+
+
+def test_fht_transform_round_trip_property() -> None:
+    from modcode.fec.tau_invariant import fast_hadamard_transform
+
+    values = np.arange(8, dtype=float)
+    transformed = fast_hadamard_transform(values)
+    np.testing.assert_allclose(
+        fast_hadamard_transform(transformed), values * 8.0
+    )
+
+
 def test_rm13_link_uses_soft_decoding() -> None:
     result = run_link(
         Link(BPSK(), AWGNChannel(), rm13(), decoding="soft"),
