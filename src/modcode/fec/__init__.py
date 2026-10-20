@@ -14,6 +14,7 @@ from modcode.fec.bch import BCH15
 from modcode.fec.convolutional import ConvolutionalCode
 from modcode.fec.crc import CRC
 from modcode.fec.hamming import Hamming74
+from modcode.fec.ldpc import LDPC36
 from modcode.fec.polar import PolarBEC
 from modcode.fec.reed_solomon import ReedSolomon
 
@@ -23,6 +24,7 @@ __all__ = [
     "ConvolutionalCode",
     "FEC",
     "Hamming74",
+    "LDPC36",
     "PolarBEC",
     "ReedSolomon",
 ]

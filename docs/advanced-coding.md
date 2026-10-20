@@ -3,7 +3,8 @@
 This note documents the coding and channel extensions that sit on top of the
 core simulator in [`core-simulator.md`](core-simulator.md).  They are still
 pedagogical implementations: the codes are short, the fading model is flat and
-block-wise, and the TCM is a four-state example, not a standard.
+block-wise, and the TCM is a four-state example, not a standard.  The short
+LDPC decoder is documented separately in [`ldpc.md`](ldpc.md).
 
 ---
 

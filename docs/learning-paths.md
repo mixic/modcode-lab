@@ -30,6 +30,10 @@ uncoded even when the decoder is correct.
 **Checkpoint:** `python -m pytest tests/test_soft_decision.py
 tests/test_convolutional.py -q` should pass.
 
+**Next, iterative decoding:** run `python examples/ldpc_lab.py` and read
+[`ldpc.md`](ldpc.md). This is the natural comparison to Viterbi: a different
+graph, a different decoder, and a measured finite-length gain.
+
 **Optional FEC detour (10 minutes):** `python examples/hamming_demo.py` →
 [`tests/test_hamming.py`](../tests/test_hamming.py) → [the Hamming
 section](core-simulator.md#3-hamming74). This shows the block-code side before

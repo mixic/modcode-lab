@@ -87,7 +87,8 @@ trace.  CRC is a detection code, not a correction code.
 `modcode.fec.qc_ldpc` demonstrates quasi-cyclic lifting from a base matrix;
 `modcode.fec.polar` constructs a Polar code for the binary erasure channel.
 Both are structural demonstrations, not decoded BER comparisons against the
-core codes.
+core codes.  The **core** LDPC decoder is `LDPC36`, documented separately in
+[`ldpc.md`](ldpc.md); it is not part of this appendix.
 
 `modcode.pqc.QCMDPC` is a deliberately tiny QC-MDPC McEliece-style toy.  It
 shows circulant blocks and linear key-size scaling; it is **not cryptography**
