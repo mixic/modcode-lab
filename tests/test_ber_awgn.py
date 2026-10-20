@@ -94,6 +94,21 @@ def test_theory_matches_simulation_at_high_snr() -> None:
     assert abs(result.ber - theory) / theory < 0.20
 
 
+def test_bpsk_ber_at_6db_matches_published_value() -> None:
+    """BPSK at 6 dB has theory BER about 2.388e-3; allow 15%."""
+    n_bits = 500_000
+    ebn0_db = 6.0
+    result = run_link(
+        Link(BPSK(), AWGNChannel()),
+        n_bits=n_bits,
+        ebn0_db=ebn0_db,
+        rng=np.random.default_rng(2026),
+    )
+    theory = 0.5 * math.erfc(math.sqrt(10.0 ** (ebn0_db / 10.0)))
+    assert np.isclose(theory, 2.3882907809328075e-3, rtol=1e-12)
+    assert abs(result.ber - theory) / theory < 0.15
+
+
 def test_ber_sweep_detailed_uses_stopping_rule_and_reports_intervals() -> None:
     curves = ber_sweep_detailed(
         {"BPSK": BPSK()},

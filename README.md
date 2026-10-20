@@ -6,8 +6,6 @@
 
 *Bits → FEC → modulation → channel → LLR or hard decision → FEC decode → BER.*
 
-> **A tested reference implementation of the link-level signal chain — theory-pinned BER, correct LLR handling, and a clearly separated exploratory appendix.**
-
 [![CI](https://github.com/mixic/modcode-lab/actions/workflows/ci.yml/badge.svg)](https://github.com/mixic/modcode-lab/actions/workflows/ci.yml)
 [![Python](https://img.shields.io/badge/python-3.10%20%7C%203.11%20%7C%203.12-blue.svg)](https://www.python.org/)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
@@ -18,6 +16,10 @@
 ---
 
 ## What this is
+
+Want to see why soft decoding beats hard decoding by 2 dB, or how Hamming(7,4)
+turns a 3-bit syndrome into an error location? This lab reproduces those
+results end-to-end, with theory overlays that let you check the answer.
 
 `modcode-lab` is a small simulator for the **core** of a digital communication
 link:
@@ -292,9 +294,10 @@ python examples/soft_decision_lab.py
 ```
 
 Monte Carlo points are not pinned by tests; the codebooks, LLR conventions,
-rates, and closed-form values are.  The 8 dB BPSK case is pinned explicitly by
-`test_theory_matches_simulation_at_high_snr`: 500,000 bits must land within
-20% of `0.5 * erfc(sqrt(Eb/N0))`.
+rates, and closed-form values are.  The 6 dB and 8 dB BPSK cases are pinned
+explicitly: 500,000 bits at 6 dB must land within 15% of the published
+\(2.388\times10^{-3}\), and at 8 dB within 20% of
+`0.5 * erfc(sqrt(Eb/N0))`.
 
 ---
 
