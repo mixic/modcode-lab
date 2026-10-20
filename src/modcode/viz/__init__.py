@@ -16,6 +16,11 @@ from modcode.viz.crc import (
     plot_crc_frame,
     plot_crc_syndromes,
 )
+from modcode.viz.number_theory import (
+    plot_residual_index_convergence,
+    plot_residual_index_density,
+    plot_residual_index_histogram,
+)
 from modcode.viz.phasedarray import (
     plot_pattern,
     plot_pattern_family,
@@ -57,6 +62,9 @@ __all__ = [
     "plot_pattern",
     "plot_pattern_family",
     "plot_phase_ramp",
+    "plot_residual_index_convergence",
+    "plot_residual_index_density",
+    "plot_residual_index_histogram",
     "plot_search_space",
     "plot_squeezing_survival",
     "plot_squint",

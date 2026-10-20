@@ -393,6 +393,52 @@ not a statement about the Artin $L$-functions of a Galois representation.
 “Artin $L$-functions” and “metaplectic forms” should not be used to identify the
 two.
 
+### 2.8 Residual-index densities
+
+For a prime $p \nmid 10$, the residual index is
+
+$$
+c_p = \frac{p-1}{\operatorname{ord}_p(10)}.
+$$
+
+Artin's conjecture is the case $c_p=1$ (full period). The case $c_p=m$ is a
+prescribed index, not the coding-theory notion of a “semi-cyclic” code; the
+word is overloaded. Under GRH, the density is the Hooley–Lenstra field-degree
+sum
+
+$$
+\delta(10,m)
+= \sum_{n=1}^{\infty}
+\frac{\mu(n)}
+{\left[\mathbb{Q}(\zeta_{mn}, 10^{1/(mn)}) : \mathbb{Q}\right]}.
+$$
+
+For squarefree $10$, the degree is $mn\,\phi(mn)$, except when
+$\sqrt{10}\in\mathbb{Q}(\zeta_{mn})$ — equivalently $40 \mid mn$ — where it
+drops by a factor of two.
+
+The small values are:
+
+| \(m\) | density | value |
+|---:|---|---:|
+| 1 | \(A\) | 0.3739558 |
+| 2 | \(3A/4\) | 0.2804669 |
+| 4 | \(29A/152\) | 0.0713468 |
+
+The frequently quoted \(29A/52\approx0.2085\) is not consistent with the
+field-degree formula or with direct counting. At \(X=10^6\), the observed
+fractions are \(0.3758, 0.2805, 0.0719\) for \(m=1,2,4\); at \(X=5\cdot10^6\)
+the \(m=4\) fraction is \(0.07082\), approaching \(0.07135\). The \(29/152\)
+denominator comes from adding the \(10\mid n\) quadratic correction
+\(A/304\) to the base sum \(3A/16\).
+
+The densities fall with \(m\) in this range roughly quadratically for \(m\ge2\)
+— \(0.2805\to0.0713\to0.0166\) for \(m=2,4,8\) — but that is an empirical
+observation from the table, not a proof of an asymptotic. The finite counts
+are unconditional but converge slowly; the GRH formula is the practical tool.
+`modcode.number_theory.residual_index` computes the sum and the counts;
+`examples/residual_index_lab.py` plots both.
+
 ---
 
 ## 3. Cyclic codes and forward error correction
@@ -888,3 +934,5 @@ assert dh.shared_secret(alice, dh.public_key(bob)) == dh.shared_secret(
     codes", *Proc. IEEE ISIT* (2013).
 24. BIKE team, *BIKE: Bit Flipping Key Encapsulation*, specification,
     <https://bikesuite.org/>.
+25. P. Moree, "Artin's primitive root conjecture — a survey", *Integers*
+    **12** (2012), no. 6.

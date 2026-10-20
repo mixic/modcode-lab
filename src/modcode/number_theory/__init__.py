@@ -17,12 +17,26 @@ from modcode.number_theory.full_reptend import (
     is_prime,
     multiplicative_order,
 )
+from modcode.number_theory.residual_index import (
+    ResidualIndexCounts,
+    artin_constant,
+    count_residual_indices,
+    known_decimal_density_multiple,
+    residual_index_convergence,
+    residual_index_density,
+)
 
 __all__ = [
+    "ResidualIndexCounts",
+    "artin_constant",
+    "count_residual_indices",
     "cyclic_multiples",
     "full_reptend_cycle",
     "full_reptend_primes",
     "is_full_reptend_prime",
     "is_prime",
+    "known_decimal_density_multiple",
     "multiplicative_order",
+    "residual_index_convergence",
+    "residual_index_density",
 ]

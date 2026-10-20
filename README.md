@@ -83,6 +83,7 @@ It's the missing bridge between a lecture on cyclic groups and a real link-budge
 | **CRC** | Systematic CRC-8/16/32 encoding, detection, and division traces |
 | **Post-quantum structure** | Toy QC-MDPC McEliece-style circulant blocks and key-size scaling |
 | **Number theory** | Full-reptend primes, cyclic multiples, multiplicative orders |
+| **Residual indices** | Densities of primes with prescribed `(p-1)/ord_p(10)` index |
 | **Cryptography** | Toy Diffie–Hellman in a prime field |
 | **Optical IM/DD** | OOK, nonnegative PAM, impairment experiments |
 | **Cyclic-5g lab** | Standalone QKD/phased-array scratch scripts and generated figures |
@@ -130,6 +131,7 @@ python examples/explore_qc_polar.py
 python examples/qc_ldpc_shift_demo.py
 python examples/wavefront_qfc_lab.py
 python examples/cyclic_codes_pqc_lab.py
+python examples/residual_index_lab.py
 ```
 
 | Script | What it demonstrates |
@@ -141,6 +143,7 @@ python examples/cyclic_codes_pqc_lab.py
 | `qc_ldpc_shift_demo.py` | A small shift-value base matrix and its lifted parity-check matrix |
 | `wavefront_qfc_lab.py` | Wavefront steering, cyclic phase quantisation, and QFC transport/noise figures |
 | `cyclic_codes_pqc_lab.py` | CRC detection and the circulant-block structure of a toy QC-MDPC code |
+| `residual_index_lab.py` | Predicted densities and finite prime counts for `(p-1)/ord_p(10)` |
 
 Run the test suite with:
 
@@ -220,6 +223,17 @@ cyclic codes, and discrete-logarithm cryptography is in
 A companion note on radio modulation — PSK as a cyclic group, space–time group
 codes, and Zadoff–Chu sequences — is in
 [`docs/cyclic-groups-radio-modulation.md`](docs/cyclic-groups-radio-modulation.md).
+
+### Residual-index densities
+
+`modcode.number_theory.residual_index` computes the GRH density for primes with
+residual index `m = (p-1)/ord_p(10)`. The Hooley–Lenstra field-degree sum is
+`sum_n mu(n) / [Q(zeta_{mn}, 10^(1/(mn))):Q]`; for base 10 the degree halves
+when `40 | mn` because `sqrt(10)` lies in the cyclotomic field. The small cases
+are `m=1`: `A`; `m=2`: `3A/4`; `m=4`: `29A/152`. The often-quoted `29A/52` does
+not match the formula or the direct counts. `examples/residual_index_lab.py`
+plots the predicted densities, the finite-count convergence, and the observed
+histogram.
 
 ### PSK and Zadoff–Chu waveforms
 
@@ -519,6 +533,11 @@ contains a hyphen.
 </p>
 <p align="center"><sub><b>Figure 13.</b> The security experiments: bit-flipping success falls as the error weight grows, the syndrome search space grows exponentially, and the dual code contains the sparse secret rows at weight 6 (toy n=15).</sub></p>
 
+<p align="center">
+  <a href="examples/figures/residual_index_density.png"><img src="examples/figures/residual_index_density.png" alt="Predicted residual-index densities, finite-count convergence, and observed histogram" width="900"></a>
+</p>
+<p align="center"><sub><b>Figure 14.</b> Residual-index densities for base 10: predicted GRH values, finite-count convergence for m=1,2,4, and the observed histogram at X=1,000,000.</sub></p>
+
 ## Module reference
 
 | Module | Purpose | Main entry points |
@@ -535,7 +554,7 @@ contains a hyphen.
 | `modcode.phasedarray` | Array geometry and cyclic phase quantisation | `LinearArray`, `quantize_phases`, `squint_angle`, `grating_lobe_limit` |
 | `modcode.qfc` | QFC noise, quantum states, and link budgets | `Transducer`, `thermal_occupation`, `transport_budget`, `wigner_function`, `covariance_squeezing_db` |
 | `modcode.optical` | IM/DD experiments | `OOK`, `IntensityPAM`, `NonUniformPAM`, `IMDDChannel`, `optimize_pam_levels`, `ber_sweep_imdd` |
-| `modcode.number_theory` | Full-reptend arithmetic | `multiplicative_order`, `is_full_reptend_prime`, `full_reptend_cycle`, `cyclic_multiples`, `full_reptend_primes` |
+| `modcode.number_theory` | Full-reptend arithmetic and residual-index densities | `multiplicative_order`, `is_full_reptend_prime`, `full_reptend_cycle`, `cyclic_multiples`, `full_reptend_primes`, `artin_constant`, `residual_index_density`, `count_residual_indices` |
 | `modcode.cryptography` | Deliberately insecure Diffie–Hellman | `ToyDiffieHellman` |
 | `modcode.shaping` | Probabilistic shaping and autocorrelation | `maxwell_boltzmann_probabilities`, `sample_shaped_symbols`, `periodic_autocorrelation` |
 | `src/modcode/cyclic-5g` | Standalone scratch lab; not importable | `qkd_phased_array_lab.py`, `wavefront_qfc_lab.py` |
@@ -545,8 +564,9 @@ contains a hyphen.
 The README is the map; the long-form notes are in `docs/`:
 
 - [Cyclic numbers, the Riemann Hypothesis, cyclic codes, and cryptography](docs/cyclic-numbers-rh-fec-cryptography.md)
-  — full-reptend primes, Artin/GRH, quasi-RH caveats, cyclic codes, DLP,
-  quasi-cyclic post-quantum codes, quantum cyclic topology, and a claims audit.
+  — full-reptend primes, Artin/GRH, quasi-RH caveats, residual-index densities,
+  cyclic codes, DLP, quasi-cyclic post-quantum codes, quantum cyclic topology,
+  and a claims audit.
 - [Cyclic groups in radio: PSK, space–time codes, and Zadoff–Chu](docs/cyclic-groups-radio-modulation.md)
   — PSK as `C_M`, unitary group codes, ZC autocorrelation, the KHAN proposal,
   and runnable checks backed by `modcode.waveforms`.
@@ -569,12 +589,14 @@ modcode-lab/
 │   │   ├── qc_mdpc_security.png
 │   │   ├── qfc_state.png
 │   │   ├── qfc_transport.png
+│   │   ├── residual_index_density.png
 │   │   └── wavefront_steering.png
 │   ├── cyclic_codes_pqc_lab.py
 │   ├── explore_cyclic_structures.py
 │   ├── explore_qc_polar.py
 │   ├── hamming_demo.py
 │   ├── qc_ldpc_shift_demo.py
+│   ├── residual_index_lab.py
 │   ├── run_ber_sweep.py
 │   └── wavefront_qfc_lab.py
 ├── src/modcode/
@@ -617,7 +639,8 @@ modcode-lab/
 │   │   └── qpsk.py
 │   ├── number_theory/
 │   │   ├── __init__.py
-│   │   └── full_reptend.py
+│   │   ├── full_reptend.py
+│   │   └── residual_index.py
 │   ├── optical/
 │   │   ├── __init__.py
 │   │   ├── channel.py
@@ -642,6 +665,7 @@ modcode-lab/
 │   │   ├── ber_plot.py
 │   │   ├── constellation.py
 │   │   ├── crc.py
+│   │   ├── number_theory.py
 │   │   ├── optical.py
 │   │   ├── phasedarray.py
 │   │   ├── pqc.py
@@ -665,6 +689,7 @@ modcode-lab/
 │   ├── test_qc_ldpc.py
 │   ├── test_qc_mdpc.py
 │   ├── test_qfc.py
+│   ├── test_residual_index.py
 │   ├── test_shaping.py
 │   ├── test_toy_dh.py
 │   └── test_waveforms.py
@@ -690,11 +715,12 @@ python examples/cyclic_codes_pqc_lab.py # CRC and QC-MDPC figures
 
 The suite covers modulation geometry, Gray labeling, AWGN BER, CRC detection,
 Hamming and QC-LDPC structure, Polar BEC construction, optical IM/DD,
-full-reptend arithmetic, toy Diffie–Hellman, phased-array synthesis, QFC noise,
-PSK/ZC waveforms, and the toy QC-MDPC key structure, decoder threshold,
-syndrome search space, and dual-code weight spectrum. The figure-producing
-scripts are deterministic given their fixed seeds and constants; the numeric
-reports they print are the same ones the tests pin down.
+full-reptend arithmetic, residual-index densities and counts, toy
+Diffie–Hellman, phased-array synthesis, QFC noise, PSK/ZC waveforms, and the
+toy QC-MDPC key structure, decoder threshold, syndrome search space, and
+dual-code weight spectrum. The figure-producing scripts are deterministic
+given their fixed seeds and constants; the numeric reports they print are the
+same ones the tests pin down.
 
 ## Extending modcode-lab
 
@@ -733,6 +759,8 @@ for new modulation, coding, and channel behavior.
   codes,” *Proc. IEEE ISIT* (2013).
 - BIKE team, *BIKE: Bit Flipping Key Encapsulation*, specification,
   <https://bikesuite.org/>.
+- P. Moree, “Artin's primitive root conjecture — a survey,” *Integers* **12**
+  (2012), no. 6.
 - I. A. Simakov and I. S. Besedin, “Low-overhead quantum error correction
   codes with a cyclic topology,” *Physical Review A* **111**, 012444 (2025);
   [arXiv:2211.03094](https://arxiv.org/abs/2211.03094).
