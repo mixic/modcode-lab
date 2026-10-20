@@ -60,7 +60,7 @@ design rather than a code followed by a mapper.
 
 **Checkpoint:** `test_bpsk_ber_at_6db_matches_published_value` in
 [`tests/test_ber_awgn.py`](../tests/test_ber_awgn.py) pins BPSK at 6 dB to the
-published value \(2.388\times10^{-3}\), and the 8 dB test pins the high-SNR
+published value $2.388\times10^{-3}$, and the 8 dB test pins the high-SNR
 tail.
 
 ---

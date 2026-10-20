@@ -300,7 +300,7 @@ python examples/soft_decision_lab.py
 Monte Carlo points are not pinned by tests; the codebooks, LLR conventions,
 rates, and closed-form values are.  The 6 dB and 8 dB BPSK cases are pinned
 explicitly: 500,000 bits at 6 dB must land within 15% of the published
-\(2.388\times10^{-3}\), and at 8 dB within 20% of
+$2.388\times10^{-3}$, and at 8 dB within 20% of
 `0.5 * erfc(sqrt(Eb/N0))`.
 
 ---

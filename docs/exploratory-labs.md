@@ -36,8 +36,8 @@ research programme.
 
 `modcode.waveforms` generates PSK constellations and Zadoff–Chu sequences and
 computes periodic autocorrelation and cyclic cross-correlation.  With zero
-phase offset, the \(M\) PSK points are the \(M\)-th roots of unity and form the
-cyclic group \(C_M\); a global offset gives a coset, not a subgroup.
+phase offset, the $M$ PSK points are the $M$-th roots of unity and form the
+cyclic group $C_M$; a global offset gives a coset, not a subgroup.
 
 The companion note develops PSK as a cyclic group, unitary space–time group
 codes, ZC autocorrelation, and the KHAN proposal.  It is a radio-modulation
@@ -106,8 +106,8 @@ and `examples/cyclic_codes_pqc_lab.py`.
 cyclic multiples, and the GRH residual-index densities.  The finite searches
 do not prove Artin's conjecture or RH; the note records the distinction.
 
-The often-quoted \(m=4\) density \(29A/52\) is not supported by the formula or
-the direct counts; the implemented value is \(29A/152\).
+The often-quoted $m=4$ density $29A/52$ is not supported by the formula or
+the direct counts; the implemented value is $29A/152$.
 
 See [`cyclic-numbers-rh-fec-cryptography.md`](cyclic-numbers-rh-fec-cryptography.md)
 and `examples/residual_index_lab.py`.
@@ -133,7 +133,7 @@ See `examples/wavefront_qfc_lab.py`.
 CT-IM replaces the combinatorial OFDM-IM index lookup with the seven weight-3
 codewords of Hamming(7,4).  The codebook is one cyclic orbit, has minimum
 distance 4, and corrects one index-bit error.  The cost is a smaller index
-alphabet: \(\log_2 7\approx2.807\) bits, or 9 bits per 7-subcarrier block with
+alphabet: $\log_2 7\approx2.807$ bits, or 9 bits per 7-subcarrier block with
 QPSK versus 11 for classical OFDM-IM.
 
 This is an **exploratory appendix**, not a core result.  The implemented
@@ -148,13 +148,13 @@ See [`ct-im.md`](ct-im.md) and `examples/ct_im_lab.py`.
 
 ## 8. The I/Q phase-shift involution
 
-The DSIN relative-phase flip \(\tau=\operatorname{diag}(I,-I)\) and the I/Q
-phase error at \(\phi=\pi\) share the real matrix \(\operatorname{diag}(1,-1)\).
+The DSIN relative-phase flip $\tau=\operatorname{diag}(I,-I)$ and the I/Q
+phase error at $\phi=\pi$ share the real matrix $\operatorname{diag}(1,-1)$.
 The correspondence is basis-dependent and is not an identity between the two
 models.
 
 The engineering result is an **identifiability** statement: for a symmetric
-constellation and prior, the blind hypotheses \(\phi=0\) and \(\phi=\pi\) have
+constellation and prior, the blind hypotheses $\phi=0$ and $\phi=\pi$ have
 identical likelihoods.  A pilot, preamble, asymmetric constellation, or code
 constraint can break the tie.  This is an interpretive appendix, not a new
 modulation scheme and not evidence for RH.
@@ -171,7 +171,7 @@ them with QAM at matched bits and energy per **real dimension**.  The
 dimension matching matters: D4-16 is comparable to QPSK, not 16-QAM.
 
 The tested claim is a minimum-distance claim: D4-256 beats 16-QAM and E8-256
-beats QPSK at matched \(\eta\).  The BER measurement is more nuanced: D4-16
+beats QPSK at matched $\eta$.  The BER measurement is more nuanced: D4-16
 does not beat QPSK, E8-256 wins above roughly 5–6 dB, and D4-256 crosses
 16-QAM only near 11–12 dB.  The component-stream PAPR diagnostic and the naive
 software demodulation cost are reported as costs, not as a system-level

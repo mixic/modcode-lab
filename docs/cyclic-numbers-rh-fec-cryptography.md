@@ -310,8 +310,9 @@ primitive-root condition.
 
 A useful numerical check is to count full reptend primes up to a bound. With
 $10{,}000$ as the bound, the project finds $467$ full reptend primes among
-$1{,}229$ primes, a ratio of $0.379984$. This is close to $C_{\mathrm{Artin}}
-= 0.373956$, but a finite prefix is not a limit and the count is not a proof.
+$1{,}229$ primes, a ratio of $0.379984$. This is close to
+$C_{\mathrm{Artin}} = 0.373956$, but a finite prefix is not a limit and the
+count is not a proof.
 
 ### 2.6 The precise chain
 
@@ -419,21 +420,21 @@ drops by a factor of two.
 
 The small values are:
 
-| \(m\) | density | value |
+| $m$ | density | value |
 |---:|---|---:|
-| 1 | \(A\) | 0.3739558 |
-| 2 | \(3A/4\) | 0.2804669 |
-| 4 | \(29A/152\) | 0.0713468 |
+| 1 | $A$ | 0.3739558 |
+| 2 | $3A/4$ | 0.2804669 |
+| 4 | $29A/152$ | 0.0713468 |
 
-The frequently quoted \(29A/52\approx0.2085\) is not consistent with the
-field-degree formula or with direct counting. At \(X=10^6\), the observed
-fractions are \(0.3758, 0.2805, 0.0719\) for \(m=1,2,4\); at \(X=5\cdot10^6\)
-the \(m=4\) fraction is \(0.07082\), approaching \(0.07135\). The \(29/152\)
-denominator comes from adding the \(10\mid n\) quadratic correction
-\(A/304\) to the base sum \(3A/16\).
+The frequently quoted $29A/52\approx0.2085$ is not consistent with the
+field-degree formula or with direct counting. At $X=10^6$, the observed
+fractions are $0.3758, 0.2805, 0.0719$ for $m=1,2,4$; at $X=5\cdot10^6$
+the $m=4$ fraction is $0.07082$, approaching $0.07135$. The $29/152$
+denominator comes from adding the $10\mid n$ quadratic correction
+$A/304$ to the base sum $3A/16$.
 
-The densities fall with \(m\) in this range roughly quadratically for \(m\ge2\)
-— \(0.2805\to0.0713\to0.0166\) for \(m=2,4,8\) — but that is an empirical
+The densities fall with $m$ in this range roughly quadratically for $m\ge2$
+— $0.2805\to0.0713\to0.0166$ for $m=2,4,8$ — but that is an empirical
 observation from the table, not a proof of an asymptotic. The finite counts
 are unconditional but converge slowly; the GRH formula is the practical tool.
 `modcode.number_theory.residual_index` computes the sum and the counts;
@@ -561,20 +562,20 @@ algebraic theme, not a common group.
 ### 3.6 Cyclic topology in quantum error correction
 
 A different use of “cyclic” appears in quantum stabilizer codes. There the
-codewords are subspaces of \((\mathbb{C}^2)^{\otimes n}\), and the stabilizer
+codewords are subspaces of $(\mathbb{C}^2)^{\otimes n}$, and the stabilizer
 group is an abelian subgroup of the Pauli group. A **cyclic topology** means
 that the physical qubits are arranged on a ring and the stabilizer generators
 are cyclic permutations of a base generator. Simakov and Besedin use this idea
-to scale the five-qubit perfect code: for distances \(d=3,5,7,9\), the base
+to scale the five-qubit perfect code: for distances $d=3,5,7,9$, the base
 stabilizer is repeated around a ring of alternating data and ancilla qubits,
-and the total physical-qubit count scales linearly as \(N=8d-14\). They give an
+and the total physical-qubit count scales linearly as $N=8d-14$. They give an
 iSWAP/SWAP-based syndrome-extraction circuit and an LSTM decoder supported by
 a lookup-table decoder, and report exponential suppression of the logical
 error rate in a phenomenological noise model [Simakov & Besedin 2025].
 
 This is a structural cousin of the classical cyclic code, not an instance of
-the ideal-in-\(\mathbb{F}_q[C_n]\) theorem. The classical code is a subspace
-of \(\mathbb{F}_q^n\) invariant under coordinate shifts; the quantum code is a
+the ideal-in-$\mathbb{F}_q[C_n]$ theorem. The classical code is a subspace
+of $\mathbb{F}_q^n$ invariant under coordinate shifts; the quantum code is a
 subspace of a tensor-product Hilbert space stabilized by Pauli operators, and
 “cyclic” refers to the ring layout and the cyclic permutation of stabilizer
 supports. The shared design principle is symmetry; the algebraic objects and
@@ -583,15 +584,15 @@ the error model are different.
 ### 3.7 CRC and quasi-cyclic codes in post-quantum cryptography
 
 A CRC is a systematic cyclic code used for detection: the parity bits are the
-remainder of \(x^r m(x)\) modulo a generator \(g(x)\). A degree-\(r\) CRC
+remainder of $x^r m(x)$ modulo a generator $g(x)$. A degree-$r$ CRC
 detects every single-bit error and every burst whose length does not exceed
-\(r\), but it does not correct them [Peterson & Brown 1961].
+$r$, but it does not correct them [Peterson & Brown 1961].
 
 QC-LDPC and QC-MDPC use the same block-circulant idea. In a QC-MDPC
-McEliece-style scheme, the parity check is \(H = [H_0 \mid H_1]\) with
-circulant blocks, and the public generator is \(G = [I \mid Q]\) with
-\(Q = (H_1^{-1} H_0)^T\), also circulant. A dense \(Q\) needs \(n^2\) bits; a
-circulant \(Q\) is determined by its first row, so \(n\) bits suffice. The
+McEliece-style scheme, the parity check is $H = [H_0 \mid H_1]$ with
+circulant blocks, and the public generator is $G = [I \mid Q]$ with
+$Q = (H_1^{-1} H_0)^T$, also circulant. A dense $Q$ needs $n^2$ bits; a
+circulant $Q$ is determined by its first row, so $n$ bits suffice. The
 private sparse blocks are described by their nonzero positions. This is the
 key-size argument that makes code-based post-quantum proposals attractive
 [Misoczki et al. 2013; BIKE].
@@ -608,7 +609,7 @@ small to be secure, and it is not BIKE.
 
 The `modcode.pqc.analysis` layer makes the tradeoff measurable. The
 bit-flipping success rate falls as the injected error weight rises; the
-syndrome search space \(\log_2 \binom{2n}{t}\) grows exponentially with \(t\);
+syndrome search space $\log_2 \binom{2n}{t}$ grows exponentially with $t$;
 and the dual code’s low-weight spectrum contains the sparse secret rows, which
 is the target of key-recovery attacks. Those are three quantities a real
 parameter set must balance. The toy sizes are chosen to make the plots

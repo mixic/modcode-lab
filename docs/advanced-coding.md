@@ -43,7 +43,7 @@ code cannot fix both.  A permutation separates them.
 The AWGN panel of `examples/interleaver_lab.py` is a control: the gain is
 small because symbol errors are independent.  The burst panel uses
 `BurstChannel`, which erases contiguous runs of symbols.  The un-interleaved
-Hamming curve floors around \(1.3\times10^{-2}\), while the interleaved curve
+Hamming curve floors around $1.3\times10^{-2}$, while the interleaved curve
 continues down.  The burst channel is a modelling device, not a physical
 fading model.
 
@@ -68,14 +68,14 @@ model, not channel estimation.
 
 For BPSK/QPSK the uncoded reference is
 
-\[
+$$
 P_b=\frac12\left(1-\sqrt{\frac{\bar\gamma}{1+\bar\gamma}}\right),
 \qquad \bar\gamma=E_b/N_0,
-\]
+$$
 
 implemented as `theoretical_rayleigh_ber`.
 
-After zero-forcing, the noise variance is \(\sigma^2/|h|^2\) per symbol, which
+After zero-forcing, the noise variance is $\sigma^2/|h|^2$ per symbol, which
 is not a single scalar.  The current fading example therefore uses **hard**
 decisions.  A soft fading path needs per-symbol variance supplied to the LLR
 demodulator; that is a clearly marked extension, not a claim of the current
@@ -91,11 +91,11 @@ decoding over block fading.
 
 `BCH15` is the primitive binary BCH code of length 15, designed distance 5,
 correcting two bit errors.  The field is GF(16) with primitive polynomial
-\(x^4+x+1\); the generator is the product of the minimal polynomials of
-\(\alpha^1,\dots,\alpha^4\), of degree 8.
+$x^4+x+1$; the generator is the product of the minimal polynomials of
+$\alpha^1,\dots,\alpha^4$, of degree 8.
 
 - **Encoding:** systematic polynomial division, message bits first.
-- **Hard decoding:** syndromes at \(\alpha^1,\dots,\alpha^4\),
+- **Hard decoding:** syndromes at $\alpha^1,\dots,\alpha^4$,
   Berlekamp–Massey for the error-locator polynomial, Chien search for the
   positions, then flip the binary error positions.
 - **Soft decoding:** maximum likelihood over the 128 codewords, using the same
@@ -112,7 +112,7 @@ a scalable BCH soft decoder.
 `ReedSolomon(m=4, t=2)` is a systematic RS(15,11) code over GF(16), correcting
 two symbol errors.  Each symbol carries four bits.
 
-- **Encoding:** generator with roots \(\alpha^1,\dots,\alpha^4\), systematic
+- **Encoding:** generator with roots $\alpha^1,\dots,\alpha^4$, systematic
   polynomial division.
 - **Hard decoding:** Berlekamp–Massey, Chien search, and a small GF linear
   solve for the error values.  The linear solve replaces a Forney formula and
@@ -130,11 +130,11 @@ block.  The code is a lab code, not a standards-compliant RS implementation.
 `TCM8PSK` is a four-state, rate-2/3 trellis code mapped to Gray-labeled 8-PSK.
 Two information bits enter each step; one parity bit is appended:
 
-\[
+$$
 p = b_1 \oplus b_2 \oplus s_1 \oplus s_2,
-\]
+$$
 
-where \((s_1,s_2)\) is the previous input pair.  The decoder runs soft Viterbi
+where $(s_1,s_2)$ is the previous input pair.  The decoder runs soft Viterbi
 on Euclidean distance.  Both TCM and uncoded QPSK carry two information bits
 per symbol, so the comparison is at equal spectral efficiency.
 

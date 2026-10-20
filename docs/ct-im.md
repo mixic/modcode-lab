@@ -21,7 +21,7 @@ This note develops a concrete constant-weight version of the proposed CT-IM:
 - the index pattern is one of the seven weight-3 codewords of Hamming(7,4);
 - those seven words form a single cyclic orbit of size 7;
 - their minimum Hamming distance is 4, so one index-bit error is correctable;
-- the price is a smaller index alphabet: \(\log_2 7\approx2.807\) bits, not
+- the price is a smaller index alphabet: $\log_2 7\approx2.807$ bits, not
   the 4 bits of the full Hamming(7,4) code, and a measurable rate loss against
   unconstrained OFDM-IM.
 
@@ -47,10 +47,10 @@ BER/PAPR experiments listed at the end.
 
 ## 1. Classical OFDM-IM in one paragraph
 
-Split \(N\) subcarriers into groups of \(n\). In each group, activate
-\(k<n\) subcarriers and leave the rest silent. The active-set choice carries
-\(\lfloor\log_2\binom{n}{k}\rfloor\) index bits; the \(k\) QAM symbols carry
-\(k\log_2 M\) symbol bits. For \(n=7,k=3\), there are \(\binom{7}{3}=35\)
+Split $N$ subcarriers into groups of $n$. In each group, activate
+$k<n$ subcarriers and leave the rest silent. The active-set choice carries
+$\lfloor\log_2\binom{n}{k}\rfloor$ index bits; the $k$ QAM symbols carry
+$k\log_2 M$ symbol bits. For $n=7,k=3$, there are $\binom{7}{3}=35$
 patterns, so a practical power-of-two table uses 32 patterns and 5 index bits.
 
 The active-set choice is a combinatorial lookup. A single activity error moves
@@ -63,7 +63,7 @@ wrong, and there is no redundancy in the index space.
 
 ### 2.1 Hamming(7,4) weight spectrum
 
-The binary \([7,4,3]\) Hamming code has weight distribution
+The binary $[7,4,3]$ Hamming code has weight distribution
 
 | weight | number of words |
 |---:|---:|
@@ -85,40 +85,40 @@ The weight-3 words are the object of interest:
 ```
 
 They all have weight 3, so the number of active subcarriers is fixed at
-\(k=3\).
+$k=3$.
 
 ### 2.2 One cyclic orbit
 
-**Theorem 1 (cyclic closure).** The set \(W\) of seven weight-3 Hamming
-codewords is invariant under every cyclic shift, and the action of \(C_7\) on
-\(W\) is transitive.
+**Theorem 1 (cyclic closure).** The set $W$ of seven weight-3 Hamming
+codewords is invariant under every cyclic shift, and the action of $C_7$ on
+$W$ is transitive.
 
 *Proof.* Hamming(7,4) is a cyclic code, so a cyclic shift of a codeword is a
-codeword. A cyclic shift preserves Hamming weight, so it maps \(W\) into
-itself. The shift is invertible, hence a permutation of \(W\).
+codeword. A cyclic shift preserves Hamming weight, so it maps $W$ into
+itself. The shift is invertible, hence a permutation of $W$.
 
-It remains to see that \(W\) is one orbit. A word fixed by a nonzero cyclic
+It remains to see that $W$ is one orbit. A word fixed by a nonzero cyclic
 shift is constant on each cycle of that shift. Since 7 is prime, a nonzero
 shift is a 7-cycle, so a fixed binary word is either all zero or all one;
-neither has weight 3. Thus no nonzero shift fixes a word in \(W\). The orbit
+neither has weight 3. Thus no nonzero shift fixes a word in $W$. The orbit
 sizes therefore divide 7 and are not 1, so every orbit has size 7. Since
-\(|W|=7\), there is exactly one orbit. \(\square\)
+$|W|=7$, there is exactly one orbit. $\square$
 
 The set is not a linear subspace: it does not contain the zero word, and the
 sum of two distinct weight-3 words is a weight-4 word. It is a
 **constant-weight cyclic codebook** (a cyclic orbit), not a linear cyclic code
-in the sense of an ideal in \(\mathbb{F}_2[C_7]\).
+in the sense of an ideal in $\mathbb{F}_2[C_7]$.
 
 ### 2.3 Minimum distance and correction
 
-**Theorem 2 (distance).** Distinct words in \(W\) have Hamming distance 4.
+**Theorem 2 (distance).** Distinct words in $W$ have Hamming distance 4.
 
 *Proof.* The difference of two distinct binary words is a nonzero Hamming
 codeword. The nonzero Hamming weights are 3, 4, and 7. The sum of two words of
 odd weight 3 has even weight; the only even possibility is 4. Hence the
-distance is 4. \(\square\)
+distance is 4. $\square$
 
-A code with minimum distance \(d=4\) corrects \(t=\lfloor(d-1)/2\rfloor=1\)
+A code with minimum distance $d=4$ corrects $t=\lfloor(d-1)/2\rfloor=1$
 error. The decoder is a nearest-word search over the seven patterns; it is
 exact for one index-bit error and may tie for larger errors.
 
@@ -130,12 +130,12 @@ eight labels, so one label is reserved:
 | quantity | value |
 |---|---:|
 | index patterns | 7 |
-| index entropy | \(\log_2 7\approx2.807\) bits |
+| index entropy | $\log_2 7\approx2.807$ bits |
 | fixed-length label | 3 bits (label 7 reserved) |
 | active subcarriers | 3 |
 | QPSK symbol bits | 6 |
 | bits per 7-subcarrier block | 9 |
-| bits per subcarrier | \(9/7\approx1.286\) |
+| bits per subcarrier | $9/7\approx1.286$ |
 
 The effective index entropy is 2.807 bits, not 3; the 3-bit label is a
 convenient fixed-length interface with one forbidden word. A 4-bit index, as
@@ -146,7 +146,7 @@ a variable symbol budget.
 
 ## 3. The CT-IM mapper
 
-For QPSK (\(M=4\)):
+For QPSK ($M=4$):
 
 ```text
 input: 9 bits = 3 index bits + 6 symbol bits
@@ -171,21 +171,21 @@ is not a channel-aware activity detector.
 
 ## 4. Rate comparison
 
-Classical OFDM-IM with \(n=7,k=3\):
+Classical OFDM-IM with $n=7,k=3$:
 
 - 35 patterns, 5 index bits (32 used);
 - 3 QPSK symbols, 6 symbol bits;
-- 11 bits per block, \(11/7\approx1.571\) bits/subcarrier;
+- 11 bits per block, $11/7\approx1.571$ bits/subcarrier;
 - no index error correction.
 
 CT-IM:
 
-- 7 patterns, \(\log_2 7\approx2.807\) bits of index entropy;
+- 7 patterns, $\log_2 7\approx2.807$ bits of index entropy;
 - 3 QPSK symbols, 6 symbol bits;
-- 9 bits per block, \(9/7\approx1.286\) bits/subcarrier;
+- 9 bits per block, $9/7\approx1.286$ bits/subcarrier;
 - one index-bit error corrected.
 
-The rate cost is about \(0.285\) bits/subcarrier (18%) at QPSK. Whether the
+The rate cost is about $0.285$ bits/subcarrier (18%) at QPSK. Whether the
 index correction is worth that cost is exactly the experiment: under a channel
 where index errors dominate, it can win; under a clean high-SNR channel, the
 unconstrained alphabet wins on rate. The note does not assert a crossover
@@ -197,9 +197,9 @@ without BER data.
 
 ### 5.1 Every shift is a codeword
 
-**Theorem 3.** For every \(i\in W\) and every \(s\in\mathbb{Z}/7\mathbb{Z}\),
-the shifted word \(\sigma_s(i)\) is also in \(W\), and therefore
-\(H\sigma_s(i)^T=0\).
+**Theorem 3.** For every $i\in W$ and every $s\in\mathbb{Z}/7\mathbb{Z}$,
+the shifted word $\sigma_s(i)$ is also in $W$, and therefore
+$H\sigma_s(i)^T=0$.
 
 This is immediate from Theorem 1 and the definition of the parity check.
 
@@ -217,9 +217,9 @@ orbit.
 
 If the transmitter chooses a shift to minimize PAPR, the receiver must be told
 the shift (or must know it as a key). The side information costs
-\(\lceil\log_2 7\rceil=3\) bits per block. If those bits come from the same
+$\lceil\log_2 7\rceil=3$ bits per block. If those bits come from the same
 payload budget, the CT-IM payload falls from 9 to 6 bits per block
-(\(6/7\approx0.857\) bits/subcarrier), before any symbol-rate accounting.
+($6/7\approx0.857$ bits/subcarrier), before any symbol-rate accounting.
 A smaller shift set reduces the side information but also reduces the PAPR
 gain.
 
@@ -273,7 +273,7 @@ patent literature before any novelty claim. This note makes no such claim.
 
 ## 7. Limitations of the current implementation
 
-- Only \(n=7\), weight 3, and the Hamming(7,4) orbit are implemented.
+- Only $n=7$, weight 3, and the Hamming(7,4) orbit are implemented.
 - The index code is nonlinear; the decoder is a nearest-word search.
 - The activity detector is a fixed magnitude threshold; no channel estimation,
   fading, or noise-adaptive threshold.
@@ -293,7 +293,7 @@ patent literature before any novelty claim. This note makes no such claim.
 2. **Rayleigh:** the case where index correction is supposed to matter.
 3. **PAPR CCDF:** no shift, best shift with perfect side information, and
    best shift with a realistic side-information budget.
-4. **Constant-weight families:** the \([7,3,4]\) simplex code (weight 4),
+4. **Constant-weight families:** the $[7,3,4]$ simplex code (weight 4),
    shortened BCH codes, and other cyclic orbits.
 5. **Activity detection:** energy threshold versus ML over the codebook.
 6. **Trellis realization:** a minimal trellis for the seven-word orbit, if it

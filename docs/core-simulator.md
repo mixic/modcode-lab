@@ -12,24 +12,24 @@ extensions (interleaving, block Rayleigh, BCH/RS, TCM) are in
 
 ## 1. Signal and noise model
 
-A complex baseband symbol is \(x=I+jQ\).  The AWGN channel adds circular
+A complex baseband symbol is $x=I+jQ$.  The AWGN channel adds circular
 complex noise,
 
-\[
+$$
 y = x+n,
 \qquad
 n \sim \mathcal{CN}(0,2\sigma^2),
-\]
+$$
 
-so each real component has variance \(\sigma^2\).  The normalization used by
+so each real component has variance $\sigma^2$.  The normalization used by
 `AWGNChannel.noise_variance` is
 
-\[
+$$
 \sigma^2 = \frac{1}{2\,b\,R\,(E_b/N_0)},
-\]
+$$
 
-where \(b\) is the number of information bits per symbol and \(R\) is the FEC
-code rate.  The factor \(2\) accounts for the two real dimensions.
+where $b$ is the number of information bits per symbol and $R$ is the FEC
+code rate.  The factor $2$ accounts for the two real dimensions.
 
 ---
 
@@ -57,26 +57,26 @@ generic LLR method, but they are not part of the core BER claims.
 
 `soft_demodulate` returns
 
-\[
+$$
 L_k=\log\frac{P(b_k=0\mid y)}{P(b_k=1\mid y)}.
-\]
+$$
 
 Positive values favour bit 0.  This convention is used by every FEC
 `decode_soft` method and by `run_link`.
 
 The implementation uses the max-log approximation over the constellation:
 
-\[
+$$
 L_k \approx \frac{1}{2\sigma^2}
 \left(
 \min_{c:\,b_k=1}|y-c|^2
 -
 \min_{c:\,b_k=0}|y-c|^2
 \right).
-\]
+$$
 
-For BPSK this reduces to \(L=2y/\sigma^2\).  For QPSK the two axes give
-\(L_I=\sqrt2\,\Re(y)/\sigma^2\) and \(L_Q=\sqrt2\,\Im(y)/\sigma^2\).  For QAM
+For BPSK this reduces to $L=2y/\sigma^2$.  For QPSK the two axes give
+$L_I=\sqrt2\,\Re(y)/\sigma^2$ and $L_Q=\sqrt2\,\Im(y)/\sigma^2$.  For QAM
 the max-log form is an approximation to the exact log-sum-exp LLR; it is the
 standard practical choice and is adequate for the BER comparisons here.
 
@@ -84,8 +84,8 @@ standard practical choice and is adequate for the BER comparisons here.
 
 ## 3. Hamming(7,4)
 
-`Hamming74` is the cyclic \([7,4,3]\) code with generator
-\(g(x)=x^3+x+1\).  Data bits occupy the first four positions; the parity
+`Hamming74` is the cyclic $[7,4,3]$ code with generator
+$g(x)=x^3+x+1$.  Data bits occupy the first four positions; the parity
 checks are the three-bit remainder.
 
 ### 3.1 Hard decoding
@@ -99,14 +99,14 @@ vectorized step rather than looping over codewords.
 ### 3.2 Soft decoding
 
 `Hamming74.decode_soft` performs maximum-likelihood decoding over the 16
-codewords.  For codeword \(c\in\{0,1\}^7\), the correlation metric is
+codewords.  For codeword $c\in\{0,1\}^7$, the correlation metric is
 
-\[
+$$
 M(c)=\sum_{i=0}^{6}(1-2c_i)L_i,
-\]
+$$
 
 and the decoder returns the data word of the codeword with the largest
-\(M(c)\).  A positive LLR contributes positively to a 0 bit and negatively to
+$M(c)$.  A positive LLR contributes positively to a 0 bit and negatively to
 a 1 bit.  Soft decoding uses the reliability of every bit; hard decoding
 discards it before the syndrome step.
 
@@ -121,21 +121,21 @@ difference is visible.
 `ConvolutionalCode` is a terminated rate-1/2 code with constraint length 3,
 memory 2, and generators
 
-\[
+$$
 g_1=1+D+D^2 \quad(\text{octal }7),
 \qquad
 g_2=1+D^2 \quad(\text{octal }5).
-\]
+$$
 
 Each block of `block_bits` data bits is followed by two zero tail bits.  The
-encoded block length is \(2(\text{block\_bits}+2)\), so the rate is slightly
-below \(1/2\):
+encoded block length is $2(\text{block\_bits}+2)$, so the rate is slightly
+below $1/2$:
 
-\[
+$$
 R=\frac{\text{block\_bits}}{2(\text{block\_bits}+2)}.
-\]
+$$
 
-For the default `block_bits=64`, \(R=64/132\approx0.485\).
+For the default `block_bits=64`, $R=64/132\approx0.485$.
 
 ### 4.1 Trellis and Viterbi
 
@@ -148,9 +148,9 @@ For hard decisions the branch cost is the Hamming distance between the
 received bit pair and the expected pair.  For soft decisions it is the
 negative correlation between the expected bipolar pair and the two LLRs:
 
-\[
+$$
 \text{cost}(c)=-\sum_i (1-2c_i)L_i.
-\]
+$$
 
 Soft Viterbi is the main reason the core simulator is more than a Hamming
 demo.  On the fixed test in `tests/test_convolutional.py`, at 2 dB the soft
@@ -197,24 +197,24 @@ deliberate failure rather than a silent hard-decision fallback.
 `modcode.metrics.theory` supplies closed-form uncoded references:
 
 - BPSK and Gray-coded QPSK:
-  \[
+  $$
   P_b=Q\!\left(\sqrt{2E_b/N_0}\right).
-  \]
-- Square Gray-coded \(M\)-QAM, nearest-neighbour approximation:
-  \[
+  $$
+- Square Gray-coded $M$-QAM, nearest-neighbour approximation:
+  $$
   P_b\approx
   \frac{4}{\log_2 M}
   \left(1-\frac{1}{\sqrt M}\right)
   Q\!\left(
   \sqrt{\frac{3\log_2 M}{M-1}\frac{E_b}{N_0}}
   \right).
-  \]
+  $$
 
 The QAM expression is an approximation, not an exact bit-error probability.
 `plot_ber(..., theory=...)` draws the references as dashed gray curves; the
 measured curves use markers.  This makes a normalization error visible
 immediately: if the simulation and theory do not overlap at high SNR, the
-noise variance or the \(E_b/N_0\) convention is wrong.
+noise variance or the $E_b/N_0$ convention is wrong.
 
 ### 6.1 Adaptive stopping and confidence intervals
 

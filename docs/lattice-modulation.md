@@ -14,8 +14,8 @@ PAPR, and complexity costs measured in this repository.
 
 `modcode.modulation.LatticeModulation` supports:
 
-- **D4**: integer points in \(\mathbb R^4\) with even coordinate sum.
-- **E8**: integer points in \(\mathbb R^8\) with even sum, plus half-integer
+- **D4**: integer points in $\mathbb R^4$ with even coordinate sum.
+- **E8**: integer points in $\mathbb R^8$ with even sum, plus half-integer
   points with even sum.
 - Spherical cut: enumerate lattice points by squared norm, keep the `M`
   lowest-norm points, and normalize to unit average **symbol** energy.
@@ -30,13 +30,13 @@ therefore uses its own vector AWGN simulation in
 
 ### 1.1 Packing facts
 
-For D4 the minimum norm is \(\sqrt2\), so the packing radius is
-\(\sqrt2/2\); the fundamental cell volume is 2 and the center density is
-\(1/8\).
+For D4 the minimum norm is $\sqrt2$, so the packing radius is
+$\sqrt2/2$; the fundamental cell volume is 2 and the center density is
+$1/8$.
 
-For E8 the minimum norm is also \(\sqrt2\), so the packing radius is
-\(\sqrt2/2\); the fundamental cell volume is 1 and the center density is
-\(1/16\).  E8 is the densest lattice known in 8 dimensions (Viazovska 2016),
+For E8 the minimum norm is also $\sqrt2$, so the packing radius is
+$\sqrt2/2$; the fundamental cell volume is 1 and the center density is
+$1/16$.  E8 is the densest lattice known in 8 dimensions (Viazovska 2016),
 but that statement is about asymptotic packing, not about a particular
 small spherical cut.
 
@@ -45,14 +45,14 @@ small spherical cut.
 ## 2. The dimension-matching correction
 
 A D4-16 symbol carries 4 bits over 4 real dimensions, so it carries
-\(4/4=1\) bit per real dimension.  16-QAM carries 4 bits over 2 real
-dimensions, or \(4/2=2\) bits per real dimension.  Comparing D4-16 with
+$4/4=1$ bit per real dimension.  16-QAM carries 4 bits over 2 real
+dimensions, or $4/2=2$ bits per real dimension.  Comparing D4-16 with
 16-QAM at equal bits per **symbol** is therefore not a matched comparison: D4
 uses twice as many real dimensions for the same bits.
 
 The fair comparisons used here are:
 
-| Comparison | \(\eta=b/K\) | Why |
+| Comparison | $\eta=b/K$ | Why |
 |---|---:|---|
 | D4-16 vs QPSK | 1 | both carry 1 bit per real dimension |
 | D4-256 vs 16-QAM | 2 | both carry 2 bits per real dimension |
@@ -61,9 +61,9 @@ The fair comparisons used here are:
 The simulation normalizes every constellation to unit average energy per real
 dimension and uses
 
-\[
+$$
 \sigma^2=\frac{1}{2\eta\,(E_b/N_0)}
-\]
+$$
 
 per real dimension.  This is the only way the `d_min` comparison and the BER
 simulation answer the same question.
@@ -74,7 +74,7 @@ simulation answer the same question.
 
 At unit energy per real dimension:
 
-| Constellation | \(\eta\) | \(d_{\min}\) | Nominal gain vs 2D reference |
+| Constellation | $\eta$ | $d_{\min}$ | Nominal gain vs 2D reference |
 |---|---:|---:|---:|
 | QPSK | 1 | 2.000 | — |
 | D4-16 | 1 | 2.000 | 0 dB |
@@ -82,14 +82,14 @@ At unit energy per real dimension:
 | 16-QAM | 2 | 0.894 | — |
 | D4-256 | 2 | 1.069 | 1.55 dB |
 
-The D4-16 result is the important correction: its **raw** \(d_{\min}\) looks
+The D4-16 result is the important correction: its **raw** $d_{\min}$ looks
 larger than 16-QAM only because the dimensions are mismatched.  At equal
-\(\eta\) and equal energy per dimension it ties QPSK, and its BER is worse
+$\eta$ and equal energy per dimension it ties QPSK, and its BER is worse
 because the labeling is not Gray-optimal and the constellation has more
 nearest neighbours.
 
-The D4-256 and E8-256 rows are genuine \(d_{\min}\) gains at matched
-dimensions, but \(d_{\min}\) is an asymptotic proxy, not a BER result.
+The D4-256 and E8-256 rows are genuine $d_{\min}$ gains at matched
+dimensions, but $d_{\min}$ is an asymptotic proxy, not a BER result.
 
 ---
 
@@ -107,13 +107,13 @@ per-dimension noise for every scheme.  Selected values:
 
 What this shows:
 
-- **D4-16 is not a win.**  It ties QPSK in \(d_{\min}\) but loses in BER at
+- **D4-16 is not a win.**  It ties QPSK in $d_{\min}$ but loses in BER at
   low/moderate SNR because of its labelling and neighbour structure.
 - **E8-256 beats QPSK above roughly 5–6 dB**, but loses at 4 dB.  The measured
-  gain at \(10^{-3}\) is modest, well below the nominal 2.75 dB \(d_{\min}\)
+  gain at $10^{-3}$ is modest, well below the nominal 2.75 dB $d_{\min}$
   advantage.
 - **D4-256 beats 16-QAM only near 11–12 dB**, not across the waterfall.  The
-  nominal 1.55 dB \(d_{\min}\) advantage is asymptotic and the finite
+  nominal 1.55 dB $d_{\min}$ advantage is asymptotic and the finite
   constellation/labelling erodes it.
 
 These are measured results for this construction, not literature claims.
@@ -122,7 +122,7 @@ These are measured results for this construction, not literature claims.
 
 ## 5. PAPR diagnostic
 
-`examples/lattice_lab.py` treats each of the \(K/2\) complex component streams
+`examples/lattice_lab.py` treats each of the $K/2$ complex component streams
 as a separate OFDM block of 64 components and reports the maximum PAPR across
 streams.  This is a **diagnostic**, not a full system comparison: the streams
 could be interleaved, mapped to different time slots, or assigned different
@@ -154,10 +154,10 @@ symbol.  Measured on this machine with 2,000-symbol batches:
 | D4-256 | ~1.4 × 10⁵ symbols/s |
 | E8-256 | ~8 × 10⁴ symbols/s |
 
-The per-axis QAM slicer is vectorized and \(O(N)\), so the contrast is large
+The per-axis QAM slicer is vectorized and $O(N)$, so the contrast is large
 (roughly two orders of magnitude in this Python implementation).  Lattice-aware
 algorithms (Conway–Sloane for D4, sphere decoding for E8) can reduce this to
-\(O(K)\)-ish per symbol in hardware or optimized code, but those algorithms are
+$O(K)$-ish per symbol in hardware or optimized code, but those algorithms are
 **not implemented here**.  The table is the honest software cost of this
 appendix, and the exact throughput is machine-dependent.
 
@@ -167,15 +167,15 @@ appendix, and the exact throughput is machine-dependent.
 
 **Tested claims**
 
-- D4-16 and QPSK have the same \(d_{\min}\) at matched \(\eta\) and energy per
+- D4-16 and QPSK have the same $d_{\min}$ at matched $\eta$ and energy per
   dimension.
-- D4-256 has larger \(d_{\min}\) than 16-QAM at matched \(\eta\).
-- E8-256 has larger \(d_{\min}\) than QPSK at matched \(\eta\).
+- D4-256 has larger $d_{\min}$ than 16-QAM at matched $\eta$.
+- E8-256 has larger $d_{\min}$ than QPSK at matched $\eta$.
 - Round trips, unit average energy, and label uniqueness.
 
 **Measured, with caveats**
 
-- BER curves at matched \(\eta\) and per-dimension energy.
+- BER curves at matched $\eta$ and per-dimension energy.
 - A component-stream PAPR diagnostic.
 - Naive software demodulation throughput.
 

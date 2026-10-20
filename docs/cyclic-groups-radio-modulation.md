@@ -12,12 +12,12 @@ Four radio-engineering constructions are routinely described as “cyclic”:
 M-PSK constellations, cyclic group codes for differential space–time
 modulation, Zadoff–Chu (ZC) sequences, and cyclic error-correcting codes. Each
 statement contains a real algebraic structure. They are not, however, the same
-structure. M-PSK is the cyclic group \(C_M\) of \(M\)-th roots of unity under
+structure. M-PSK is the cyclic group $C_M$ of $M$-th roots of unity under
 multiplication. A space–time group code is a finite subgroup of unitary
 matrices. A ZC sequence is a quadratic-phase sequence whose cyclic
 autocorrelation vanishes at nonzero shifts; its “root” is an index, not a
 primitive root. A cyclic code is an ideal in the group algebra
-\(\mathbb{F}_q[C_n]\). The shared motif is a cyclic group action; the groups,
+$\mathbb{F}_q[C_n]$. The shared motif is a cyclic group action; the groups,
 actions, and guarantees differ.
 
 This note gives the precise statements, separates the genuine consequences
@@ -33,11 +33,11 @@ properties of cyclic group codes (they are simulation-specific).
 
 | Symbol | Meaning |
 |---|---|
-| \(\zeta_M\) | \(e^{2\pi j/M}\), a primitive \(M\)-th root of unity |
-| \(C_M\) | Cyclic group of order \(M\) |
-| \(U(N)\) | Group of \(N \times N\) unitary matrices |
-| \(\mathbb{F}_q[C_n]\) | Group algebra of \(C_n\) over \(\mathbb{F}_q\) |
-| \(s_q[n]\) | Zadoff–Chu sequence with root index \(q\) |
+| $\zeta_M$ | $e^{2\pi j/M}$, a primitive $M$-th root of unity |
+| $C_M$ | Cyclic group of order $M$ |
+| $U(N)$ | Group of $N \times N$ unitary matrices |
+| $\mathbb{F}_q[C_n]$ | Group algebra of $C_n$ over $\mathbb{F}_q$ |
+| $s_q[n]$ | Zadoff–Chu sequence with root index $q$ |
 
 Status labels used below:
 
@@ -59,47 +59,47 @@ but **which group acts on which set, and what does the action guarantee?**
 
 ### 1.1 The roots of unity
 
-With zero phase offset, the \(M\)-PSK constellation is
+With zero phase offset, the $M$-PSK constellation is
 
 $$
 \mathcal{S}_M = \{\zeta_M^k : k = 0,1,\dots,M-1\},
 \qquad \zeta_M = e^{2\pi j/M}.
 $$
 
-These are exactly the \(M\)-th roots of unity. Under complex multiplication,
+These are exactly the $M$-th roots of unity. Under complex multiplication,
 
 $$
 \zeta_M^k \cdot \zeta_M^{\ell} = \zeta_M^{(k+\ell) \bmod M},
 $$
 
-so \(\mathcal{S}_M\) is a cyclic group of order \(M\), isomorphic to
-\(\mathbb{Z}/M\mathbb{Z}\). Rotating a symbol by one constellation step is
-multiplication by \(\zeta_M\), which is addition by \(1\) in the exponent.
+so $\mathcal{S}_M$ is a cyclic group of order $M$, isomorphic to
+$\mathbb{Z}/M\mathbb{Z}$. Rotating a symbol by one constellation step is
+multiplication by $\zeta_M$, which is addition by $1$ in the exponent.
 
-| Scheme | \(M\) | Group | Phase step |
+| Scheme | $M$ | Group | Phase step |
 |---|---:|---|---:|
-| BPSK | 2 | \(C_2\) | \(180^\circ\) |
-| QPSK | 4 | \(C_4\) | \(90^\circ\) |
-| 8-PSK | 8 | \(C_8\) | \(45^\circ\) |
+| BPSK | 2 | $C_2$ | $180^\circ$ |
+| QPSK | 4 | $C_4$ | $90^\circ$ |
+| 8-PSK | 8 | $C_8$ | $45^\circ$ |
 
 **Caveat: a global phase offset makes the constellation a coset, not a
-subgroup.** A practical PSK constellation may be \(e^{j\phi}\mathcal{S}_M\).
-This set is still invariant under multiplication by \(\zeta_M\), but it is
-closed under multiplication only when \(e^{j\phi}\in\mathcal{S}_M\). The
+subgroup.** A practical PSK constellation may be $e^{j\phi}\mathcal{S}_M$.
+This set is still invariant under multiplication by $\zeta_M$, but it is
+closed under multiplication only when $e^{j\phi}\in\mathcal{S}_M$. The
 rotation symmetry survives; the group law is exact only up to that global
 phase.
 
 ### 1.2 The phase ambiguity, precisely
 
-Because \(\zeta_M \mathcal{S}_M = \mathcal{S}_M\), a carrier-recovery loop can
-lock with a phase offset of \(2\pi m/M\). For QPSK there are four possible
-offsets (\(0^\circ, 90^\circ, 180^\circ, 270^\circ\)); for BPSK there are two
-(\(0^\circ, 180^\circ\)). This is the “inherent \(\pi/2\) ambiguity” of QPSK.
+Because $\zeta_M \mathcal{S}_M = \mathcal{S}_M$, a carrier-recovery loop can
+lock with a phase offset of $2\pi m/M$. For QPSK there are four possible
+offsets ($0^\circ, 90^\circ, 180^\circ, 270^\circ$); for BPSK there are two
+($0^\circ, 180^\circ$). This is the “inherent $\pi/2$ ambiguity” of QPSK.
 
 The correct interpretation is important:
 
-- The receiver may lock with any of the \(M\) offsets; that is an **ambiguity to
-  resolve**, not \(M\) equally valid messages.
+- The receiver may lock with any of the $M$ offsets; that is an **ambiguity to
+  resolve**, not $M$ equally valid messages.
 - Differential encoding, pilot symbols, or a known unique word resolve it.
 - Differential PSK makes the ambiguity harmless because the data are carried by
   phase **differences**, not absolute phases.
@@ -113,11 +113,11 @@ Three common overstatements:
 
 1. **Bit labeling is not a group homomorphism.** Gray labeling maps bit
    patterns to phases to minimize bit errors between adjacent symbols. That map
-   is a labeling convention, not a homomorphism from \((\mathbb{Z}/2)^m\) to
-   \(C_M\). The group acts on the constellation; the bit mapping rides on top of
+   is a labeling convention, not a homomorphism from $(\mathbb{Z}/2)^m$ to
+   $C_M$. The group acts on the constellation; the bit mapping rides on top of
    it.
 2. **The channel is additive, not multiplicative.** The received signal is
-   \(y = x + n\). The multiplicative group \(C_M\) is a symmetry of the
+   $y = x + n$. The multiplicative group $C_M$ is a symmetry of the
    noiseless constellation and of circularly symmetric phase noise, but
    Euclidean distance and additive Gaussian noise are separate structures.
 3. **Not every constellation is a group.** PSK is special because all points
@@ -128,15 +128,15 @@ Three common overstatements:
 
 ### 1.4 Differential PSK: the group action in practice
 
-For DPSK, the transmitted symbol is \(s_k = s_{k-1} d_k\), with
+For DPSK, the transmitted symbol is $s_k = s_{k-1} d_k$, with
 
 $$
 d_k = s_k s_{k-1}^{*} = \zeta_M^{m_k}, \qquad m_k \in \{0,\dots,M-1\}.
 $$
 
-The data are the exponent \(m_k\), i.e. the phase difference. A common phase
-rotation \(e^{j\phi}\) cancels in \(s_k s_{k-1}^{*}\), which is exactly the
-practical value of the \(C_M\) structure. This is a genuine, deployed use of
+The data are the exponent $m_k$, i.e. the phase difference. A common phase
+rotation $e^{j\phi}$ cancels in $s_k s_{k-1}^{*}$, which is exactly the
+practical value of the $C_M$ structure. This is a genuine, deployed use of
 the cyclic group, not an analogy.
 
 ---
@@ -146,34 +146,34 @@ the cyclic group, not an analogy.
 ### 2.1 Differential space–time modulation
 
 In differential space–time modulation (DSTM), the transmitter sends matrices
-\(V[t]\) and encodes data differentially:
+$V[t]$ and encodes data differentially:
 
 $$
 V[t] = V[t-1] X[t],
 $$
 
-where \(X[t]\) is a unitary data matrix. For a constant channel matrix \(H\),
+where $X[t]$ is a unitary data matrix. For a constant channel matrix $H$,
 the received blocks satisfy
 
 $$
 Y[t] = H V[t] = H V[t-1] X[t] = Y[t-1] X[t]
 $$
 
-in the noise-free case. Differential detection therefore decides \(X[t]\) by
-comparing \(Y[t]\) with \(Y[t-1] X\) over candidate matrices \(X\), without
-estimating \(H\). This is the standard DSTM idea; the classic references are
+in the noise-free case. Differential detection therefore decides $X[t]$ by
+comparing $Y[t]$ with $Y[t-1] X$ over candidate matrices $X$, without
+estimating $H$. This is the standard DSTM idea; the classic references are
 Hughes and Hochwald–Sweldens.
 
 ### 2.2 Group codes are matrix groups
 
-A **group code** is a finite group \(\mathcal{G}\) of unitary matrices,
+A **group code** is a finite group $\mathcal{G}$ of unitary matrices,
 
 $$
 \mathcal{G} \subset U(N_t), \qquad |\mathcal{G}| = M,
 $$
 
-used as the set of data matrices \(X[t]\). The codewords are **matrices**, not
-scalar PSK symbols. Their entries may be drawn from an \(M\)-PSK constellation,
+used as the set of data matrices $X[t]$. The codewords are **matrices**, not
+scalar PSK symbols. Their entries may be drawn from an $M$-PSK constellation,
 but the group operation is matrix multiplication, and the group order is the
 number of codewords, not the PSK alphabet size.
 
@@ -190,19 +190,19 @@ G = \operatorname{diag}(1, \zeta_M),
 \mathcal{G} = \langle G \rangle = \{I, G, G^2, \dots, G^{M-1}\}.
 $$
 
-Here \(\mathcal{G}\) is cyclic of order \(M\), each codeword is diagonal, and
+Here $\mathcal{G}$ is cyclic of order $M$, each codeword is diagonal, and
 each nonzero entry is a PSK symbol. The data select the exponent.
 
 ### 2.3 Cyclic group codes and differential encoding
 
-If \(\mathcal{G} = \langle G \rangle\), then \(X[t] = G^{m_t}\) for some
-\(m_t \in \{0,\dots,M-1\}\). The differential product
+If $\mathcal{G} = \langle G \rangle$, then $X[t] = G^{m_t}$ for some
+$m_t \in \{0,\dots,M-1\}$. The differential product
 
 $$
 V[t] = V[t-1] G^{m_t}
 $$
 
-stays in the group generated by \(G\). This is the algebraic reason a
+stays in the group generated by $G$. This is the algebraic reason a
 differential detector can recover the exponent: the code is closed under the
 operation the differential encoder performs.
 
@@ -213,7 +213,7 @@ not a synonym for “any group code.”
 ### 2.4 The 12 dB / 3 dB claim
 
 Specific comparisons sometimes quote roughly 12 dB gain for BPSK and 3 dB for
-QPSK at BER \(10^{-6}\) for cyclic group coding over uncoded differential
+QPSK at BER $10^{-6}$ for cyclic group coding over uncoded differential
 modulation. Those numbers are **not** a general property of cyclic group codes.
 The gain depends on:
 
@@ -234,8 +234,8 @@ its gains are tied to that model.
 
 There are two different cyclic objects in a PSK-based space–time system:
 
-- the scalar PSK constellation \(C_M\), and
-- the matrix group code \(\mathcal{G} \subset U(N_t)\).
+- the scalar PSK constellation $C_M$, and
+- the matrix group code $\mathcal{G} \subset U(N_t)$.
 
 They may both be cyclic, but they are not the same group, and a cyclic code is
 not automatically a cyclic PSK constellation. This is the first place where
@@ -247,7 +247,7 @@ not automatically a cyclic PSK constellation. This is the first place where
 
 ### 3.1 Definition
 
-For odd length \(N\) and integer root index \(q\) with \(\gcd(q,N)=1\), the
+For odd length $N$ and integer root index $q$ with $\gcd(q,N)=1$, the
 Zadoff–Chu sequence is
 
 $$
@@ -255,16 +255,16 @@ s_q[n] = \exp\left(-j\pi q\,\frac{n(n+1)}{N}\right),
 \qquad n = 0,1,\dots,N-1.
 $$
 
-For prime \(N\), every \(q = 1,\dots,N-1\) is coprime to \(N\), and the family
-has \(N-1\) sequences. The sequence has unit amplitude; only its phase changes
-with \(n\).
+For prime $N$, every $q = 1,\dots,N-1$ is coprime to $N$, and the family
+has $N-1$ sequences. The sequence has unit amplitude; only its phase changes
+with $n$.
 
 (Even-length ZC sequences exist with a different phase formula. The odd-length
 form above is the standard one in cellular systems.)
 
 ### 3.2 The correlation properties
 
-Let \(N\) be odd and \(\gcd(q,N)=1\). The periodic autocorrelation is a delta:
+Let $N$ be odd and $\gcd(q,N)=1$. The periodic autocorrelation is a delta:
 
 $$
 R_{ss}[\tau]
@@ -272,14 +272,14 @@ R_{ss}[\tau]
 = N\,\delta[\tau].
 $$
 
-Normalized, \(R_{ss}[0]=1\) and \(R_{ss}[\tau]=0\) for \(\tau \ne 0\). This is
+Normalized, $R_{ss}[0]=1$ and $R_{ss}[\tau]=0$ for $\tau \ne 0$. This is
 the “perfect cyclic autocorrelation” that makes ZC sequences useful for timing
-and random access. Prime \(N\) is the common case; it also guarantees that
-every nonzero \(q\) is a valid root.
+and random access. Prime $N$ is the common case; it also guarantees that
+every nonzero $q$ is a valid root.
 
-For two distinct roots \(q_1 \ne q_2\), the normalized cyclic cross-correlation
-has magnitude \(1/\sqrt{N}\) when \(\gcd(q_1-q_2,N)=1\), which is automatic
-when \(N\) is prime. If that coprimality fails, the cross-correlation can be
+For two distinct roots $q_1 \ne q_2$, the normalized cyclic cross-correlation
+has magnitude $1/\sqrt{N}$ when $\gcd(q_1-q_2,N)=1$, which is automatic
+when $N$ is prime. If that coprimality fails, the cross-correlation can be
 larger. For composite lengths, the family guarantee weakens: distinct roots
 require the coprimality condition, and fewer roots satisfy it. Practical
 systems therefore favor prime lengths, or accept cyclically extended/truncated
@@ -288,30 +288,30 @@ systems therefore favor prime lengths, or accept cyclically extended/truncated
 ### 3.3 Where the perfect autocorrelation comes from
 
 The autocorrelation sum is a **quadratic exponential sum** (a Gauss sum). For
-prime \(N\) and nonzero \(q\), the quadratic phase \(n(n+1)\) causes exact
+prime $N$ and nonzero $q$, the quadratic phase $n(n+1)$ causes exact
 cancellation at every nonzero shift. The same Gauss-sum mechanism gives the
-\(1/\sqrt{N}\) cross-correlation between distinct roots.
+$1/\sqrt{N}$ cross-correlation between distinct roots.
 
-The “root” \(q\) is a **root index** or phase coefficient. It is not a
-primitive root modulo \(N\). In particular:
+The “root” $q$ is a **root index** or phase coefficient. It is not a
+primitive root modulo $N$. In particular:
 
-- ZC generation does not require \(q\) to generate
-  \((\mathbb{Z}/N\mathbb{Z})^{\times}\).
+- ZC generation does not require $q$ to generate
+  $(\mathbb{Z}/N\mathbb{Z})^{\times}$.
 - The perfect autocorrelation does not come from the multiplicative order of a
   base.
-- There is no construction here from the decimal repetend of \(1/7\) or from
-  the full-reptend prime \(7\).
+- There is no construction here from the decimal repetend of $1/7$ or from
+  the full-reptend prime $7$.
 
 The word “root” is shared with number theory, but the objects are different.
 This is the central correction to the claimed chain
 “primitive root → cyclic number → ZC sequence.” A maximum-length sequence
-(m-sequence), built from a primitive polynomial over \(\mathbb{F}_2\), is a
-different family: its periodic autocorrelation is two-valued (peak \(N\),
-off-peak \(-1\)), not a delta.
+(m-sequence), built from a primitive polynomial over $\mathbb{F}_2$, is a
+different family: its periodic autocorrelation is two-valued (peak $N$,
+off-peak $-1$), not a delta.
 
 ### 3.4 Cyclic shifts are index rotations with a phase ramp
 
-A cyclic shift of \(s_q\) is
+A cyclic shift of $s_q$ is
 
 $$
 s_q[(n+\tau)\bmod N]
@@ -319,16 +319,16 @@ s_q[(n+\tau)\bmod N]
 \exp\left(-j\pi q\,\frac{2n\tau+\tau^2+\tau}{N}\right).
 $$
 
-The extra factor is a linear phase in \(n\), i.e. a frequency shift. So a cyclic
+The extra factor is a linear phase in $n$, i.e. a frequency shift. So a cyclic
 shift is an index rotation, but in the value domain it is not a pure rotation of
-the sequence: it adds a phase ramp. The set of \(N\) shifts forms a \(C_N\)
+the sequence: it adds a phase ramp. The set of $N$ shifts forms a $C_N$
 orbit, and the shifted sequences are orthogonal to the original. This is the
 correct sense in which ZC sequences “mirror” a cyclic group.
 
 ### 3.5 Where ZC sequences are actually used
 
-- **LTE primary synchronization signal (PSS):** ZC with \(N=63\), root indices
-  \(q=29,34,25\).
+- **LTE primary synchronization signal (PSS):** ZC with $N=63$, root indices
+  $q=29,34,25$.
 - **5G NR PSS:** not a ZC sequence; it uses a length-127 m-sequence. This is a
   common confusion worth stating explicitly.
 - **Random access preambles (PRACH):** ZC sequences in LTE and 5G NR; 5G NR uses
@@ -351,22 +351,22 @@ full-reptend prime → cyclic decimal number → ZC sequence
 ```
 
 is not a mathematical implication. The first two arrows belong to the
-multiplicative-order story of \(1/p\); the ZC arrow belongs to quadratic Gauss
-sums over \(\mathbb{Z}/N\mathbb{Z}\). The shared word “cyclic” refers to
+multiplicative-order story of $1/p$; the ZC arrow belongs to quadratic Gauss
+sums over $\mathbb{Z}/N\mathbb{Z}$. The shared word “cyclic” refers to
 different structures:
 
-- a cyclic **decimal block** generated by \(10^k \bmod p\),
-- a cyclic **index shift** generated by \(n \mapsto n+\tau \bmod N\),
-- a cyclic **group** \(C_M\) of phase rotations.
+- a cyclic **decimal block** generated by $10^k \bmod p$,
+- a cyclic **index shift** generated by $n \mapsto n+\tau \bmod N$,
+- a cyclic **group** $C_M$ of phase rotations.
 
 A concrete check makes the gap visible. The periodic autocorrelation of the
-digit sequence \(142857\) at shift one is
+digit sequence $142857$ at shift one is
 
 $$
 1\cdot4 + 4\cdot2 + 2\cdot8 + 8\cdot5 + 5\cdot7 + 7\cdot1 = 110 \ne 0.
 $$
 
-So \(142857\) is not a ZC sequence, and the fact that both are called “cyclic”
+So $142857$ is not a ZC sequence, and the fact that both are called “cyclic”
 does not connect them.
 
 ---
@@ -375,22 +375,22 @@ does not connect them.
 
 ### 4.1 Definition and group algebra
 
-Let \(C \subseteq \mathbb{F}_q^n\) be a linear code. It is **cyclic** if every
+Let $C \subseteq \mathbb{F}_q^n$ be a linear code. It is **cyclic** if every
 cyclic shift of a codeword is a codeword. Identify a word with a polynomial in
-\(R = \mathbb{F}_q[x]/(x^n-1)\). Then a cyclic code is an ideal of \(R\), and
+$R = \mathbb{F}_q[x]/(x^n-1)$. Then a cyclic code is an ideal of $R$, and
 
 $$
 C = \langle g(x) \rangle, \qquad g(x) \mid x^n-1,
 $$
 
-with \(\deg g = n-k\) for a \(k\)-dimensional code. This is the group-algebra
-statement: \(R \cong \mathbb{F}_q[C_n]\), where \(C_n\) is the cyclic group of
-coordinate shifts. Encoding is multiplication by \(g\), or systematic division
-by \(g\); the syndrome is \(r(x)\bmod g(x)\).
+with $\deg g = n-k$ for a $k$-dimensional code. This is the group-algebra
+statement: $R \cong \mathbb{F}_q[C_n]$, where $C_n$ is the cyclic group of
+coordinate shifts. Encoding is multiplication by $g$, or systematic division
+by $g$; the syndrome is $r(x)\bmod g(x)$.
 
 ### 4.2 Hamming(7,4)
 
-The binary \([7,4,3]\) Hamming code has the cyclic representation
+The binary $[7,4,3]$ Hamming code has the cyclic representation
 
 $$
 g(x) = x^3+x+1, \qquad
@@ -398,9 +398,9 @@ x^7-1 = (x+1)(x^3+x+1)(x^3+x^2+1) \quad \text{over } \mathbb{F}_2.
 $$
 
 It has 16 codewords, minimum distance 3, and is perfect:
-\(16\cdot(1+7)=128=2^7\). Every cyclic shift of every codeword is again a
+$16\cdot(1+7)=128=2^7$. Every cyclic shift of every codeword is again a
 codeword, which is why a single linear-feedback shift register can compute the
-syndrome by dividing by \(g(x)\).
+syndrome by dividing by $g(x)$.
 
 A nuance: the **syndrome table** is a consequence of linearity; the **cyclic
 structure** is what makes the syndrome of a shifted error a shifted syndrome,
@@ -425,7 +425,7 @@ on which coordinates?*
 ### 4.4 BCH and Reed–Solomon
 
 Standard BCH and Reed–Solomon codes are cyclic: their generator polynomial
-divides \(x^n-1\), and the code is an ideal in \(\mathbb{F}_q[C_n]\).
+divides $x^n-1$, and the code is an ideal in $\mathbb{F}_q[C_n]$.
 Reed–Solomon codes are MDS; BCH codes are designed with a prescribed BCH bound.
 They are used in DVB, QR codes, deep-space links, NAND flash, and satellite
 systems.
@@ -438,11 +438,11 @@ for every code that carries the RS name.
 Quantum stabilizer codes can also be organized with a **cyclic topology**.
 Simakov and Besedin arrange alternating data and ancilla qubits on a ring and
 generate the stabilizers by cyclic permutations of a base generator; for
-distances \(d=3,5,7,9\), the physical-qubit count scales linearly as
-\(N=8d-14\), with an iSWAP/SWAP syndrome-extraction circuit and an LSTM decoder
+distances $d=3,5,7,9$, the physical-qubit count scales linearly as
+$N=8d-14$, with an iSWAP/SWAP syndrome-extraction circuit and an LSTM decoder
 supported by a lookup-table decoder [Simakov & Besedin 2025]. This is a
 structural cousin of the classical cyclic code, not an instance of the
-ideal-in-\(\mathbb{F}_q[C_n]\) construction: the quantum code is a subspace of
+ideal-in-$\mathbb{F}_q[C_n]$ construction: the quantum code is a subspace of
 a tensor-product Hilbert space stabilized by Pauli operators, and “cyclic”
 refers to the ring layout and the cyclic permutation of stabilizer supports.
 
@@ -453,10 +453,10 @@ refers to the ring layout and the cyclic permutation of stabilizer supports.
 ### 5.1 DLP, Diffie–Hellman, and ECC
 
 The discrete logarithm problem (DLP) is defined in a cyclic group
-\(G = \langle g \rangle\): given \(h = g^x\), find \(x\). Diffie–Hellman uses
-\(g^a\) and \(g^b\) to agree on \(g^{ab}\). In \((\mathbb{Z}/p\mathbb{Z})^{\times}\)
-the group is cyclic of order \(p-1\); practical systems use a prime-order
-subgroup. In ECC, \(E(\mathbb{F}_q)\) is a finite abelian group, not necessarily
+$G = \langle g \rangle$: given $h = g^x$, find $x$. Diffie–Hellman uses
+$g^a$ and $g^b$ to agree on $g^{ab}$. In $(\mathbb{Z}/p\mathbb{Z})^{\times}$
+the group is cyclic of order $p-1$; practical systems use a prime-order
+subgroup. In ECC, $E(\mathbb{F}_q)$ is a finite abelian group, not necessarily
 cyclic; cryptographic systems use a prime-order subgroup.
 
 This is genuinely the same *abstract* object — a cyclic group — as the PSK
@@ -490,7 +490,7 @@ KHAN may use full-reptend primes; ZC sequences use quadratic phases. The claim
 that “the same primitive-root structure produces perfect cyclic autocorrelation
 in ZC sequences and pseudorandom keystreams in KHAN” is not correct:
 
-- ZC generation uses a root index \(q\) and the quadratic phase \(n(n+1)\);
+- ZC generation uses a root index $q$ and the quadratic phase $n(n+1)$;
   there is no primitive root or multiplicative order in the construction.
 - KHAN uses decimal/cyclic sequences from full-reptend primes; that is a
   different number-theoretic mechanism.
@@ -503,10 +503,10 @@ in ZC sequences and pseudorandom keystreams in KHAN” is not correct:
 
 | Domain | Cyclic group | Action | What it buys | What it does not buy |
 |---|---|---|---|---|
-| PSK | \(C_M\) | multiplication by \(\zeta_M\) | phase symmetry, differential PSK | a bit-label homomorphism |
+| PSK | $C_M$ | multiplication by $\zeta_M$ | phase symmetry, differential PSK | a bit-label homomorphism |
 | Space–time | finite unitary group, possibly cyclic | matrix multiplication | differential encoding, diversity | scalar PSK group structure |
-| ZC | \(C_N\) | index shift | zero autocorrelation of shifts | a primitive-root construction |
-| FEC | \(C_n\) | coordinate shift | ideal in \(\mathbb{F}_q[C_n]\), LFSR syndrome | the multiplicative group of a field |
+| ZC | $C_N$ | index shift | zero autocorrelation of shifts | a primitive-root construction |
+| FEC | $C_n$ | coordinate shift | ideal in $\mathbb{F}_q[C_n]$, LFSR syndrome | the multiplicative group of a field |
 | Cryptography | prime-order subgroup | exponentiation | DLP-based protocols | coding gain or autocorrelation |
 
 The honest synthesis is:
@@ -602,15 +602,15 @@ assert dh.shared_secret(6, dh.public_key(15)) == dh.shared_secret(
 
 | Claim | Status | Comment |
 |---|---|---|
-| M-PSK points form a cyclic group | true | \(C_M\) under multiplication, with zero phase offset; an offset gives a coset |
-| QPSK has an inherent \(90^\circ\) phase ambiguity | true | \(C_4\) invariance; differential encoding or pilots resolve it |
+| M-PSK points form a cyclic group | true | $C_M$ under multiplication, with zero phase offset; an offset gives a coset |
+| QPSK has an inherent $90^\circ$ phase ambiguity | true | $C_4$ invariance; differential encoding or pilots resolve it |
 | The receiver can “lock onto any of the four rotations” | misleading | It can lock with an offset; the offset is an ambiguity, not four valid messages |
-| Cyclic group codes give 12 dB (BPSK) and 3 dB (QPSK) at BER \(10^{-6}\) | unverified | Simulation-specific; depends on antennas, rate, channel, baseline |
-| ZC autocorrelation is zero at every nonzero shift | true with conditions | For odd \(N\) with \(\gcd(q,N)=1\); prime \(N\) is the common case. Truncated/cyclically extended variants weaken the guarantee |
-| ZC sequences are generated by a primitive root | false | They use a quadratic phase with root index \(q\); \(q\) is not a primitive root |
+| Cyclic group codes give 12 dB (BPSK) and 3 dB (QPSK) at BER $10^{-6}$ | unverified | Simulation-specific; depends on antennas, rate, channel, baseline |
+| ZC autocorrelation is zero at every nonzero shift | true with conditions | For odd $N$ with $\gcd(q,N)=1$; prime $N$ is the common case. Truncated/cyclically extended variants weaken the guarantee |
+| ZC sequences are generated by a primitive root | false | They use a quadratic phase with root index $q$; $q$ is not a primitive root |
 | A ZC shift is “simply a rotation” | partially true | It is an index rotation, but it adds a linear phase (frequency shift) |
-| Cyclic codes are ideals in \(\mathbb{F}_q[C_n]\) | true | \(g(x)\mid x^n-1\) |
-| Hamming(7,4) has \(g=x^3+x+1\) | true | \(x^7-1=(x+1)(x^3+x+1)(x^3+x^2+1)\) over \(\mathbb{F}_2\) |
+| Cyclic codes are ideals in $\mathbb{F}_q[C_n]$ | true | $g(x)\mid x^n-1$ |
+| Hamming(7,4) has $g=x^3+x+1$ | true | $x^7-1=(x+1)(x^3+x+1)(x^3+x^2+1)$ over $\mathbb{F}_2$ |
 | “Semi-cyclic” is the standard name for shortened cyclic codes | false | The standard term is shortened cyclic; “semi-cyclic” is not standard |
 | BCH and RS codes are cyclic | true for standard constructions | Generalized/punctured variants may not be |
 | KHAN is a full-reptend-based cryptographic construction | true as a proposal | 2024 ePrint; not standardized; independent cryptanalysis needed |
