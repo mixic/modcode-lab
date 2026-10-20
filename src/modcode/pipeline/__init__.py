@@ -10,5 +10,6 @@
 """End-to-end communication link simulation."""
 
 from modcode.pipeline.chain import Link, LinkResult, run_link
+from modcode.pipeline.interleaver import PermutationInterleaver
 
-__all__ = ["Link", "LinkResult", "run_link"]
+__all__ = ["Link", "LinkResult", "PermutationInterleaver", "run_link"]

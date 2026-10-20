@@ -13,10 +13,12 @@ import math
 from dataclasses import dataclass
 
 import numpy as np
+from numpy.typing import NDArray
 
 from modcode.channel.base import Channel
 from modcode.fec.base import FEC
 from modcode.modulation.base import BitArray, Modulation, SymbolArray
+from modcode.pipeline.interleaver import PermutationInterleaver
 
 
 @dataclass(frozen=True)
@@ -27,10 +29,13 @@ class Link:
     channel: Channel
     fec: FEC | None = None
     decoding: str = "auto"
+    interleaver: PermutationInterleaver | None = None
 
     def __post_init__(self) -> None:
         if self.decoding not in {"auto", "hard", "soft"}:
             raise ValueError("decoding must be 'auto', 'hard', or 'soft'")
+        if self.interleaver is not None and self.fec is None:
+            raise ValueError("an interleaver requires an FEC code")
 
 
 @dataclass(frozen=True)
@@ -62,24 +67,25 @@ def _decode(
     if link.fec is None:
         return link.modulation.demodulate(received_symbols), "hard"
 
+    def deinterleave(values: NDArray) -> NDArray:
+        if link.interleaver is None:
+            return values
+        return link.interleaver.deinterleave(values)
+
     if link.decoding == "hard":
-        return (
-            link.fec.decode(link.modulation.demodulate(received_symbols)),
-            "hard",
-        )
+        hard = deinterleave(link.modulation.demodulate(received_symbols))
+        return link.fec.decode(hard), "hard"
 
     try:
         llrs = link.modulation.soft_demodulate(received_symbols, variance)
-        return link.fec.decode_soft(llrs), "soft"
+        return link.fec.decode_soft(deinterleave(llrs)), "soft"
     except NotImplementedError:
         if link.decoding == "soft":
             raise ValueError(
                 f"{type(link.fec).__name__} does not implement soft decoding"
             ) from None
-        return (
-            link.fec.decode(link.modulation.demodulate(received_symbols)),
-            "hard",
-        )
+        hard = deinterleave(link.modulation.demodulate(received_symbols))
+        return link.fec.decode(hard), "hard"
 
 
 def run_link(
@@ -105,6 +111,8 @@ def run_link(
     padded_size = math.ceil(n_bits / block_size) * block_size
     padded = np.pad(source, (0, padded_size - n_bits))
     transmitted = link.fec.encode(padded) if link.fec else padded
+    if link.interleaver is not None:
+        transmitted = link.interleaver.interleave(transmitted)
     tx_symbols = link.modulation.modulate(transmitted)
     try:
         variance = link.channel.noise_variance(

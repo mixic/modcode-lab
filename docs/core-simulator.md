@@ -4,7 +4,9 @@ This note is the technical reference for the **core** of `modcode-lab`:
 the path from source bits through forward error correction, modulation, an
 AWGN channel, soft or hard demodulation, FEC decoding, and bit-error
 measurement.  The exploratory modules are deliberately not part of this
-document; see [`exploratory-labs.md`](exploratory-labs.md).
+document; see [`exploratory-labs.md`](exploratory-labs.md).  The coding
+extensions (interleaving, block Rayleigh, BCH/RS, TCM) are in
+[`advanced-coding.md`](advanced-coding.md).
 
 ---
 

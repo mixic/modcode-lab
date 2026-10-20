@@ -10,7 +10,11 @@
 """Communication performance metrics."""
 
 from modcode.metrics.ber import BERCurve, ber_sweep, ber_sweep_detailed
-from modcode.metrics.theory import q_function, theoretical_ber
+from modcode.metrics.theory import (
+    q_function,
+    theoretical_ber,
+    theoretical_rayleigh_ber,
+)
 
 __all__ = [
     "BERCurve",
@@ -18,4 +22,5 @@ __all__ = [
     "ber_sweep_detailed",
     "q_function",
     "theoretical_ber",
+    "theoretical_rayleigh_ber",
 ]

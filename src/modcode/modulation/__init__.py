@@ -24,6 +24,7 @@ from modcode.modulation.involution import (
 )
 from modcode.modulation.qam import QAM
 from modcode.modulation.qpsk import QPSK
+from modcode.modulation.tcm import TCM8PSK
 
 __all__ = [
     "APSK",
@@ -33,6 +34,7 @@ __all__ = [
     "Modulation",
     "QAM",
     "QPSK",
+    "TCM8PSK",
     "TailBitingTCM8PSK",
     "block_tau_hypothesis",
     "correct_tau",

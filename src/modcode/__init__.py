@@ -10,23 +10,35 @@
 """Digital modulation and forward-error-correction simulation tools."""
 
 from modcode.channel.awgn import AWGNChannel
+from modcode.channel.burst import BurstChannel
 from modcode.channel.phase_imbalance import PhaseImbalanceChannel
+from modcode.channel.rayleigh import BlockRayleighChannel
+from modcode.fec.bch import BCH15
 from modcode.fec.convolutional import ConvolutionalCode
 from modcode.fec.hamming import Hamming74
+from modcode.fec.reed_solomon import ReedSolomon
 from modcode.modulation.bpsk import BPSK
 from modcode.modulation.qam import QAM
 from modcode.modulation.qpsk import QPSK
+from modcode.modulation.tcm import TCM8PSK
 from modcode.pipeline.chain import Link, LinkResult, run_link
+from modcode.pipeline.interleaver import PermutationInterleaver
 
 __all__ = [
     "AWGNChannel",
+    "BCH15",
     "BPSK",
+    "BlockRayleighChannel",
+    "BurstChannel",
     "ConvolutionalCode",
     "Hamming74",
     "Link",
     "LinkResult",
+    "PermutationInterleaver",
     "PhaseImbalanceChannel",
     "QAM",
     "QPSK",
+    "ReedSolomon",
+    "TCM8PSK",
     "run_link",
 ]

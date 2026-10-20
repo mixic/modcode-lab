@@ -47,8 +47,10 @@ path to a BER curve, read the quickstart below.
 |---|---|
 | **Modulation** | BPSK, Gray-mapped QPSK, square Gray-mapped QAM (4, 16, 64, 256, ...); unit average energy |
 | **Soft demodulation** | Max-log bit LLRs for every finite constellation; positive means bit 0 |
-| **FEC** | Hamming(7,4) with syndrome decoding and soft ML over 16 codewords; rate-1/2 constraint-length-3 convolutional code with hard and soft Viterbi |
-| **Channels** | AWGN with information-bit Eb/N0 normalization |
+| **FEC** | Hamming(7,4) with syndrome/soft ML; rate-1/2 convolutional code with hard/soft Viterbi; BCH(15,7) hard Berlekamp–Massey + soft ML; RS(15,11) hard Berlekamp–Massey/Chien |
+| **TCM** | Four-state rate-2/3 8-PSK trellis-coded modulation with soft Viterbi |
+| **Interleaving** | Deterministic bit permutation; hard/soft deinterleaving in the link |
+| **Channels** | AWGN; block Rayleigh fading with known CSI; synthetic burst channel |
 | **Pipeline** | `Link` with `decoding="auto"`, `"hard"`, or `"soft"`; `LinkResult.decoding` records the path |
 | **Metrics** | Simulated BER with adaptive stopping and Wilson confidence intervals, plus closed-form BPSK/QPSK/QAM references |
 | **Plots** | Constellations and BER curves with dashed theory overlays |
@@ -148,12 +150,36 @@ from modcode import Hamming74
 coded = Link(BPSK(), AWGNChannel(), Hamming74(), decoding="soft")
 ```
 
+BCH and Reed–Solomon use the same interface:
+
+```python
+from modcode import BCH15, ReedSolomon
+
+bch = Link(BPSK(), AWGNChannel(), BCH15(), decoding="soft")
+rs = Link(BPSK(), AWGNChannel(), ReedSolomon(), decoding="hard")
+```
+
+An interleaver is selected on the `Link`:
+
+```python
+from modcode.pipeline import PermutationInterleaver
+
+coded = Link(
+    BPSK(), AWGNChannel(), Hamming74(),
+    decoding="soft", interleaver=PermutationInterleaver(seed=7),
+)
+```
+
 ### 3. Run the examples
 
 ```bash
 # core
 python examples/run_ber_sweep.py       # BER + theory overlays
 python examples/soft_decision_lab.py   # Hamming/convolutional hard vs soft
+python examples/interleaver_lab.py     # bursts with/without interleaving
+python examples/fading_lab.py          # block Rayleigh + FEC
+python examples/bch_rs_lab.py          # BCH, RS, Hamming, convolutional
+python examples/tcm_lab.py             # TCM 8-PSK vs QPSK
 python examples/hamming_demo.py
 
 # exploratory appendices
@@ -172,12 +198,12 @@ python examples/phase_imbalance_lab.py
 
 | Module | Purpose | Main entry points |
 |---|---|---|
-| `modcode` | Convenience exports | `BPSK`, `QPSK`, `QAM`, `Hamming74`, `ConvolutionalCode`, `AWGNChannel`, `Link`, `run_link` |
-| `modcode.modulation` | Constellations and LLRs | `BPSK`, `QPSK`, `QAM`, `Modulation.soft_demodulate` |
-| `modcode.fec` | FEC codes | `Hamming74` (hard + `decode_soft`), `ConvolutionalCode` (hard/soft Viterbi), `CRC`, `PolarBEC` |
-| `modcode.channel` | Core channel | `AWGNChannel`; `PhaseImbalanceChannel` is an exploratory appendix |
-| `modcode.pipeline` | Link composition | `Link(..., decoding="auto"/"hard"/"soft")`, `LinkResult`, `run_link` |
-| `modcode.metrics` | BER and theory | `ber_sweep`, `ber_sweep_detailed`, `BERCurve`, `theoretical_ber`, `q_function` |
+| `modcode` | Convenience exports | `BPSK`, `QPSK`, `QAM`, `BCH15`, `ReedSolomon`, `ConvolutionalCode`, `TCM8PSK`, `Hamming74`, `AWGNChannel`, `BlockRayleighChannel`, `Link`, `run_link` |
+| `modcode.modulation` | Constellations, LLRs, TCM | `BPSK`, `QPSK`, `QAM`, `TCM8PSK`, `Modulation.soft_demodulate` |
+| `modcode.fec` | FEC codes | `Hamming74`, `ConvolutionalCode`, `BCH15`, `ReedSolomon`, `CRC`, `PolarBEC` |
+| `modcode.channel` | Channels | `AWGNChannel`, `BlockRayleighChannel`, `BurstChannel`; `PhaseImbalanceChannel` is an exploratory appendix |
+| `modcode.pipeline` | Link composition | `Link(..., decoding="auto"/"hard"/"soft", interleaver=...)`, `PermutationInterleaver`, `LinkResult`, `run_link` |
+| `modcode.metrics` | BER and theory | `ber_sweep`, `ber_sweep_detailed`, `BERCurve`, `theoretical_ber`, `theoretical_rayleigh_ber`, `q_function` |
 | `modcode.viz` | Plots | `plot_constellation`, `plot_ber(..., theory=...)` |
 
 The full API and derivations are in [`docs/core-simulator.md`](docs/core-simulator.md).
@@ -189,6 +215,7 @@ The full API and derivations are in [`docs/core-simulator.md`](docs/core-simulat
 | Document | Contents |
 |---|---|
 | [`core-simulator.md`](docs/core-simulator.md) | Signal model, LLR convention, Hamming hard/soft, convolutional trellis/Viterbi, pipeline modes, theoretical BER |
+| [`advanced-coding.md`](docs/advanced-coding.md) | Interleaving, block Rayleigh, BCH/RS, TCM, and their limits |
 | [`exploratory-labs.md`](docs/exploratory-labs.md) | One place for the appendices: optical, arrays/QFC, PQC, number theory, CT-IM, phase involution |
 | [`figures.md`](docs/figures.md) | Core BER figures and the complete exploratory gallery |
 | [`ct-im.md`](docs/ct-im.md) | CT-IM constant-weight note and milestone status |
@@ -204,6 +231,7 @@ The full API and derivations are in [`docs/core-simulator.md`](docs/core-simulat
 modcode-lab/
 ├── docs/
 │   ├── core-simulator.md
+│   ├── advanced-coding.md
 │   ├── exploratory-labs.md
 │   ├── figures.md
 │   ├── ct-im.md
@@ -246,6 +274,9 @@ Core tests include:
 - `tests/test_ber_awgn.py` — noise normalization, Q-function comparison, adaptive stopping, and confidence intervals;
 - `tests/test_soft_decision.py` — LLR sign/scale, Hamming soft ML, theory values;
 - `tests/test_convolutional.py` — hard/soft Viterbi and the soft-decoding gain;
+- `tests/test_interleaver.py`, `tests/test_burst_channel.py` — permutation inverse and burst spreading;
+- `tests/test_rayleigh.py` — block fading against the known-CSI reference;
+- `tests/test_bch_rs.py`, `tests/test_tcm.py` — BCH/RS correction and TCM gain;
 - `tests/test_hamming.py`, `tests/test_qam_gray.py` — code and constellation structure.
 
 The core figures are generated by:
@@ -270,11 +301,13 @@ The core roadmap is intentionally short.  The appendices are not on it.
 | P0 | ✅ | Rate-1/2 convolutional code with hard/soft Viterbi |
 | P0 | ✅ | Theoretical BER overlays for BPSK/QPSK/QAM |
 | P0 | ✅ | O(N) QAM slicing, vectorized Hamming LUT, adaptive BER with Wilson intervals |
-| P1 | ⬜ | Rayleigh/block-fading channel and CSI assumptions |
-| P1 | ⬜ | Bit interleaving across FEC blocks and QAM symbols |
-| P1 | ⬜ | BCH and Reed–Solomon codes |
-| P2 | ⬜ | TCM / C-TCM over 8-PSK |
-| P2 | ⬜ | Documentation site, notebooks, and more channel models |
+| P1 | ✅ | Block Rayleigh fading with known CSI (hard decoding) |
+| P1 | ✅ | Bit interleaving across FEC blocks and QAM symbols |
+| P1 | ✅ | BCH(15,7) and Reed–Solomon RS(15,11) codes |
+| P2 | ✅ | Four-state 8-PSK TCM example with soft Viterbi |
+| P2 | ⬜ | Soft LLRs for equalized fading (per-symbol variance) |
+| P2 | ⬜ | Multipath/Doppler channels and channel estimation |
+| P2 | ⬜ | Documentation site and notebooks |
 
 Not planned as core: QKD, optical hardware, quantum transduction, post-quantum
 security proofs, or a proof of RH.

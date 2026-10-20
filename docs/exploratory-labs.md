@@ -54,9 +54,13 @@ constellation is **not** asserted to be a group under complex multiplication;
 the code documents the ring action separately.
 
 `TailBitingTCM8PSK` is a small rate-2/3 8-PSK example with pair-rotation
-equivariance.  It is a demonstration of trellis structure, not a competitive
-TCM design.  `modcode.shaping` implements Maxwell–Boltzmann probabilities and
-periodic autocorrelation for shaped symbols.
+equivariance.  It is a demonstration of tail-biting trellis structure, not a
+competitive TCM design.  The core four-state TCM example is `TCM8PSK`,
+documented in [`advanced-coding.md`](advanced-coding.md); the tail-biting
+variant remains an appendix.
+
+`modcode.shaping` implements Maxwell–Boltzmann probabilities and periodic
+autocorrelation for shaped symbols.
 
 See `examples/explore_cyclic_structures.py` and `tests/test_apsk.py`,
 `tests/test_cyclic_tcm.py`, `tests/test_shaping.py`.

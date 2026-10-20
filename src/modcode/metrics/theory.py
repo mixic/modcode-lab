@@ -72,4 +72,25 @@ def theoretical_ber(
     )
 
 
-__all__ = ["q_function", "theoretical_ber"]
+def theoretical_rayleigh_ber(
+    modulation: Modulation, ebn0_db: ArrayLike
+) -> NDArray[np.float64]:
+    """Return the uncoded flat-Rayleigh BER with known CSI.
+
+    BPSK and Gray-coded QPSK have the same per-bit expression,
+    ``0.5 * (1 - sqrt(gamma / (1 + gamma)))`` with ``gamma = Eb/N0``.
+    """
+    points = np.asarray(ebn0_db, dtype=np.float64)
+    if points.ndim != 1 or points.size == 0:
+        raise ValueError("ebn0_db must be a non-empty one-dimensional sequence")
+    if not np.all(np.isfinite(points)):
+        raise ValueError("ebn0_db values must be finite")
+    if not isinstance(modulation, (BPSK, QPSK)):
+        raise ValueError(
+            f"no Rayleigh reference for {type(modulation).__name__}"
+        )
+    ebn0 = 10.0 ** (points / 10.0)
+    return 0.5 * (1.0 - np.sqrt(ebn0 / (1.0 + ebn0)))
+
+
+__all__ = ["q_function", "theoretical_ber", "theoretical_rayleigh_ber"]
