@@ -6,7 +6,9 @@ NR LDPC implementation.*
 The convolutional code in the core is a low-latency, low-complexity baseline.
 The natural next comparison is an iteratively decoded code.  This note adds a
 short regular (3,6) LDPC code and a normalized min-sum decoder, then compares
-it with the convolutional code in the existing `Link` pipeline.
+it with the convolutional code in the existing `Link` pipeline.  The other
+family used in 5G, polar coding with successive-cancellation list decoding, is
+documented in [`polar.md`](polar.md).
 
 ---
 

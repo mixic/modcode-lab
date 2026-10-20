@@ -52,7 +52,7 @@ repository, pick one of the [learning paths](docs/learning-paths.md).
 |---|---|
 | **Modulation** | BPSK, Gray-mapped QPSK, square Gray-mapped QAM (4, 16, 64, 256, ...); unit average energy |
 | **Soft demodulation** | Max-log bit LLRs for every finite constellation; positive means bit 0 |
-| **FEC** | Hamming(7,4) with syndrome/soft ML; rate-1/2 convolutional code with hard/soft Viterbi; BCH(15,7) hard Berlekamp–Massey + soft ML; RS(15,11) hard Berlekamp–Massey/Chien; LDPC(1008,506) with normalized min-sum belief propagation |
+| **FEC** | Hamming(7,4) with syndrome/soft ML; rate-1/2 convolutional code with hard/soft Viterbi; BCH(15,7) hard Berlekamp–Massey + soft ML; RS(15,11) hard Berlekamp–Massey/Chien; LDPC(1008,506) with normalized min-sum belief propagation; Polar(1024,512) with SC, SCL, and CRC-aided list decoding |
 | **TCM** | Four-state rate-2/3 8-PSK trellis-coded modulation with soft Viterbi |
 | **Interleaving** | Deterministic bit permutation; hard/soft deinterleaving in the link |
 | **Channels** | AWGN; block Rayleigh fading with known CSI; synthetic burst channel |
@@ -174,6 +174,22 @@ from modcode import LDPC36
 ldpc = Link(BPSK(), AWGNChannel(), LDPC36(), decoding="soft")
 ```
 
+Polar uses successive cancellation, list decoding, and an optional CRC:
+
+```python
+from modcode import PolarAWGN
+from modcode.fec.crc import CRC8
+
+# list_size=1 is plain SC; list_size>1 is SCL
+scl = Link(BPSK(), AWGNChannel(), PolarAWGN(1024, 512, list_size=4), decoding="soft")
+
+# CRC-aided SCL: the CRC selects among the surviving list paths
+ca_scl = Link(
+    BPSK(), AWGNChannel(),
+    PolarAWGN(1024, 512, crc=CRC8, list_size=4), decoding="soft",
+)
+```
+
 An interleaver is selected on the `Link`:
 
 ```python
@@ -195,6 +211,7 @@ python examples/interleaver_lab.py     # bursts with/without interleaving
 python examples/fading_lab.py          # block Rayleigh + FEC
 python examples/bch_rs_lab.py          # BCH, RS, Hamming, convolutional
 python examples/ldpc_lab.py            # LDPC min-sum vs convolutional
+python examples/polar_lab.py           # polar SC/SCL/CA-SCL vs LDPC
 python examples/tcm_lab.py             # TCM 8-PSK vs QPSK
 python examples/hamming_demo.py
 
@@ -216,9 +233,9 @@ python examples/tau_invariant_lab.py
 
 | Module | Purpose | Main entry points |
 |---|---|---|
-| `modcode` | Convenience exports | `BPSK`, `QPSK`, `QAM`, `BCH15`, `ReedSolomon`, `LDPC36`, `ConvolutionalCode`, `TCM8PSK`, `Hamming74`, `AWGNChannel`, `BlockRayleighChannel`, `Link`, `run_link` |
+| `modcode` | Convenience exports | `BPSK`, `QPSK`, `QAM`, `BCH15`, `ReedSolomon`, `LDPC36`, `PolarAWGN`, `ConvolutionalCode`, `TCM8PSK`, `Hamming74`, `AWGNChannel`, `BlockRayleighChannel`, `Link`, `run_link` |
 | `modcode.modulation` | Constellations, LLRs, TCM | `BPSK`, `QPSK`, `QAM`, `TCM8PSK`, `Modulation.soft_demodulate` |
-| `modcode.fec` | FEC codes | `Hamming74`, `ConvolutionalCode`, `BCH15`, `ReedSolomon`, `LDPC36`, `CRC`, `PolarBEC` |
+| `modcode.fec` | FEC codes | `Hamming74`, `ConvolutionalCode`, `BCH15`, `ReedSolomon`, `LDPC36`, `PolarAWGN`, `CRC`, `PolarBEC` |
 | `modcode.channel` | Channels | `AWGNChannel`, `BlockRayleighChannel`, `BurstChannel`; `PhaseImbalanceChannel` is an exploratory appendix |
 | `modcode.pipeline` | Link composition | `Link(..., decoding="auto"/"hard"/"soft", interleaver=...)`, `PermutationInterleaver`, `LinkResult`, `run_link` |
 | `modcode.metrics` | BER and theory | `ber_sweep`, `ber_sweep_detailed`, `BERCurve`, `theoretical_ber`, `theoretical_rayleigh_ber`, `q_function` |
@@ -236,6 +253,7 @@ The full API and derivations are in [`docs/core-simulator.md`](docs/core-simulat
 | [`core-simulator.md`](docs/core-simulator.md) | Signal model, LLR convention, Hamming hard/soft, convolutional trellis/Viterbi, pipeline modes, theoretical BER |
 | [`advanced-coding.md`](docs/advanced-coding.md) | Interleaving, block Rayleigh, BCH/RS, TCM, and their limits |
 | [`ldpc.md`](docs/ldpc.md) | LDPC(1008,506) construction, min-sum decoding, and finite-length comparison |
+| [`polar.md`](docs/polar.md) | Polar(1024,512) construction, SC/SCL/CA-SCL decoding, and the list-size trade-off |
 | [`exploratory-labs.md`](docs/exploratory-labs.md) | One place for the appendices: optical, arrays/QFC, PQC, number theory, CT-IM, phase involution |
 | [`figures.md`](docs/figures.md) | Core BER figures and the complete exploratory gallery |
 | [`ct-im.md`](docs/ct-im.md) | CT-IM constant-weight note and milestone status |
@@ -256,6 +274,7 @@ modcode-lab/
 │   ├── core-simulator.md
 │   ├── advanced-coding.md
 │   ├── ldpc.md
+│   ├── polar.md
 │   ├── exploratory-labs.md
 │   ├── figures.md
 │   ├── ct-im.md
@@ -305,6 +324,7 @@ Core tests include:
 - `tests/test_rayleigh.py` — block fading against the known-CSI reference;
 - `tests/test_bch_rs.py`, `tests/test_tcm.py` — BCH/RS correction and TCM gain;
 - `tests/test_ldpc.py` — (3,6) regularity, rank, generator orthogonality, and min-sum decoding;
+- `tests/test_polar_awgn.py` — GA construction, SC agreement with an independent reference, SCL work scaling, and list-decoding error reduction;
 - `tests/test_tau_invariant.py` — RM(1,3) invariance, non-cyclicity, ML, and FHT decoding;
 - `tests/test_hamming.py`, `tests/test_qam_gray.py` — code and constellation structure.
 
@@ -334,6 +354,7 @@ The core roadmap is intentionally short.  The appendices are not on it.
 | P0 | ✅ | Theoretical BER overlays for BPSK/QPSK/QAM |
 | P0 | ✅ | O(N) QAM slicing, vectorized Hamming LUT, adaptive BER with Wilson intervals |
 | P0 | ✅ | LDPC(1008,506) with normalized min-sum belief propagation |
+| P0 | ✅ | Polar(1024,512) with SC, SCL, and CRC-aided list decoding |
 | P1 | ✅ | Block Rayleigh fading with known CSI (hard decoding) |
 | P1 | ✅ | Bit interleaving across FEC blocks and QAM symbols |
 | P1 | ✅ | BCH(15,7) and Reed–Solomon RS(15,11) codes |

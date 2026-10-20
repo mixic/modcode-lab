@@ -34,6 +34,10 @@ tests/test_convolutional.py -q` should pass.
 [`ldpc.md`](ldpc.md). This is the natural comparison to Viterbi: a different
 graph, a different decoder, and a measured finite-length gain.
 
+**Next, list decoding:** run `python examples/polar_lab.py` and read
+[`polar.md`](polar.md). Successive cancellation, list decoding, and CRC-aided
+list decoding put the complexity-versus-performance trade-off on one figure.
+
 **Optional FEC detour (10 minutes):** `python examples/hamming_demo.py` →
 [`tests/test_hamming.py`](../tests/test_hamming.py) → [the Hamming
 section](core-simulator.md#3-hamming74). This shows the block-code side before
@@ -103,9 +107,10 @@ read as an appendix.
 
 - **Core:** modulation, FEC, AWGN/known-CSI fading, LLRs, decoding, BER, theory
   overlays.  The core path is Paths 1 and 2.
-- **Coding extensions:** interleaving, Rayleigh, BCH/RS, TCM.  These are
-  documented in [`advanced-coding.md`](advanced-coding.md) and are still
-  pedagogical, but they are part of the core-facing material.
+- **Coding extensions:** interleaving, Rayleigh, BCH/RS, TCM, LDPC, and polar.
+  These are documented in [`advanced-coding.md`](advanced-coding.md),
+  [`ldpc.md`](ldpc.md), and [`polar.md`](polar.md); they are still pedagogical,
+  but they are part of the core-facing material.
 - **Appendices:** optical, arrays/QFC, PQC, number theory, CT-IM, phase
   involution.  These are Path 3 and are not required for the core claims.
 
