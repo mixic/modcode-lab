@@ -534,6 +534,30 @@ subspace of a tensor-product Hilbert space stabilized by Pauli operators, and
 supports. The shared design principle is symmetry; the algebraic objects and
 the error model are different.
 
+### 3.7 CRC and quasi-cyclic codes in post-quantum cryptography
+
+A CRC is a systematic cyclic code used for detection: the parity bits are the
+remainder of \(x^r m(x)\) modulo a generator \(g(x)\). A degree-\(r\) CRC
+detects every single-bit error and every burst whose length does not exceed
+\(r\), but it does not correct them [Peterson & Brown 1961].
+
+QC-LDPC and QC-MDPC use the same block-circulant idea. In a QC-MDPC
+McEliece-style scheme, the parity check is \(H = [H_0 \mid H_1]\) with
+circulant blocks, and the public generator is \(G = [I \mid Q]\) with
+\(Q = (H_1^{-1} H_0)^T\), also circulant. A dense \(Q\) needs \(n^2\) bits; a
+circulant \(Q\) is determined by its first row, so \(n\) bits suffice. The
+private sparse blocks are described by their nonzero positions. This is the
+key-size argument that makes code-based post-quantum proposals attractive
+[Misoczki et al. 2013; BIKE].
+
+The security assumption is the hardness of decoding a random quasi-cyclic
+code, not the circulant structure by itself. The structure is both an
+efficiency feature and a cryptanalytic target: highly structured codes can be
+weaker than random ones, so parameter and decoder design matter. The toy
+`modcode.pqc.QCMDPC` demonstrates the layout, key-size scaling, and a small
+bit-flipping decoder; its parameters are far too small to be secure, and it is
+not BIKE.
+
 ---
 
 ## 4. Cyclic groups in cryptography
@@ -847,3 +871,10 @@ assert dh.shared_secret(alice, dh.public_key(bob)) == dh.shared_secret(
     <https://arxiv.org/abs/2610.15291>
 21. M. Visser, "Primes between 8th powers?", arXiv:2610.20058, 2026.
     <https://arxiv.org/abs/2610.20058>
+22. W. W. Peterson and D. T. Brown, "Cyclic Codes for Error Detection",
+    *Proceedings of the IRE* **49** (1961), 228–235.
+23. R. Misoczki, J.-P. Tillich, N. Sendrier, and P. S. L. M. Barreto,
+    "MDPC-McEliece: New McEliece variants from moderate density parity-check
+    codes", *Proc. IEEE ISIT* (2013).
+24. BIKE team, *BIKE: Bit Flipping Key Encapsulation*, specification,
+    <https://bikesuite.org/>.

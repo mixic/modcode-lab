@@ -80,6 +80,8 @@ It's the missing bridge between a lecture on cyclic groups and a real link-budge
 | **Phased arrays** | Linear-array wavefront synthesis with cyclic phase quantisation |
 | **Quantum transduction** | Photon/thermal budgets, QFC noise, transport-loss comparison |
 | **Waveforms** | PSK constellations, Zadoff–Chu generation, periodic autocorrelation |
+| **CRC** | Systematic CRC-8/16/32 encoding, detection, and division traces |
+| **Post-quantum structure** | Toy QC-MDPC McEliece-style circulant blocks and key-size scaling |
 | **Number theory** | Full-reptend primes, cyclic multiples, multiplicative orders |
 | **Cryptography** | Toy Diffie–Hellman in a prime field |
 | **Optical IM/DD** | OOK, nonnegative PAM, impairment experiments |
@@ -127,6 +129,7 @@ python examples/explore_cyclic_structures.py
 python examples/explore_qc_polar.py
 python examples/qc_ldpc_shift_demo.py
 python examples/wavefront_qfc_lab.py
+python examples/cyclic_codes_pqc_lab.py
 ```
 
 | Script | What it demonstrates |
@@ -137,6 +140,7 @@ python examples/wavefront_qfc_lab.py
 | `explore_qc_polar.py` | QC-LDPC lifting and exact BEC Polar construction |
 | `qc_ldpc_shift_demo.py` | A small shift-value base matrix and its lifted parity-check matrix |
 | `wavefront_qfc_lab.py` | Wavefront steering, cyclic phase quantisation, and QFC transport/noise figures |
+| `cyclic_codes_pqc_lab.py` | CRC detection and the circulant-block structure of a toy QC-MDPC code |
 
 Run the test suite with:
 
@@ -228,6 +232,22 @@ coset, not a subgroup. ZC sequences use the quadratic phase
 zero periodic autocorrelation at every nonzero shift. The ZC root index is a
 phase coefficient, not a primitive root. The checks live in
 `tests/test_waveforms.py`.
+
+### CRC and quasi-cyclic post-quantum structures
+
+`modcode.fec.crc` provides systematic CRC-8/16/32 encoding and detection. A
+CRC appends the remainder of `x**r * m(x)` modulo a generator polynomial
+`g(x)`; it is a cyclic code used for detection rather than correction.
+`division_trace` exposes the shift-register states for plotting.
+
+`modcode.pqc.QCMDPC` is a deliberately tiny QC-MDPC McEliece-style
+demonstration. Its parity check is `H = [H0 | H1]` with circulant blocks, so
+the public `Q` block is determined by one row (`n` bits) instead of a dense
+`n x n` matrix (`n^2` bits). The same circulant structure used for QC-LDPC
+error correction is therefore reused for key-size reduction in code-based
+post-quantum cryptography. The security assumption is the hardness of decoding
+a random quasi-cyclic code; the module’s parameters and toy decoder are **not
+secure** and are included only to make the structure visible.
 
 ### Optical IM/DD experiments
 
@@ -474,6 +494,18 @@ contains a hyphen.
 | <a href="src/modcode/cyclic-5g/figures/qfc_transduction.png"><img src="src/modcode/cyclic-5g/figures/qfc_transduction.png" alt="Legacy QFC transport and noise figure" width="440"></a> | <a href="src/modcode/cyclic-5g/figures/beam_patterns.png"><img src="src/modcode/cyclic-5g/figures/beam_patterns.png" alt="Legacy polar beam patterns, quantisation damage, and phase ramps" width="440"></a> |
 | <sub><b>Figure 8.</b> Original scratch-lab QFC transport and transduction-noise figure.</sub> | <sub><b>Figure 9.</b> Original scratch-lab polar patterns, quantisation damage, and phase ramps.</sub> |
 
+### Cyclic coding and post-quantum structure
+
+| CRC detection | QC-MDPC matrix |
+|---|---|
+| <a href="examples/figures/crc_encoding.png"><img src="examples/figures/crc_encoding.png" alt="CRC-8 codeword with an error, division register trace, and single-bit error syndromes" width="440"></a> | <a href="examples/figures/qc_mdpc_matrix.png"><img src="examples/figures/qc_mdpc_matrix.png" alt="QC-MDPC parity check with two circulant blocks, one block, and key-size scaling" width="440"></a> |
+| <sub><b>Figure 10.</b> CRC-8 frame with one error, the remainder-register trace, and the nonzero remainder left by every single-bit error.</sub> | <sub><b>Figure 11.</b> The toy QC-MDPC check `H = [H0 | H1]`, the circulant block `H0`, and the linear key-size scaling from `n` bits instead of `n²`.</sub> |
+
+<p align="center">
+  <a href="examples/figures/qc_mdpc_decoding.png"><img src="examples/figures/qc_mdpc_decoding.png" alt="Injected QC-MDPC error, syndrome before decoding, and bit-flipping syndrome weight" width="900"></a>
+</p>
+<p align="center"><sub><b>Figure 12.</b> A weight-two QC-MDPC error, its syndrome, and the syndrome weight falling to zero during bit-flipping.</sub></p>
+
 ## Module reference
 
 | Module | Purpose | Main entry points |
@@ -481,11 +513,12 @@ contains a hyphen.
 | `modcode` | Core convenience exports | `BPSK`, `QPSK`, `QAM`, `Hamming74`, `AWGNChannel`, `Link`, `LinkResult`, `run_link` |
 | `modcode.modulation` | Modulation families and the shared interface | `BPSK`, `QPSK`, `QAM`, `APSK`, `TailBitingTCM8PSK`, `Modulation` |
 | `modcode.waveforms` | PSK and Zadoff–Chu generation, periodic correlation | `psk_constellation`, `zadoff_chu`, `periodic_autocorrelation`, `cyclic_cross_correlation` |
-| `modcode.fec` | Block-code interface and standard codes | `FEC`, `Hamming74`, `PolarBEC`; `modcode.fec.cyclic` (`cyclic_shift`), `modcode.fec.qc_ldpc` (`expand_qc_base_matrix`) |
+| `modcode.fec` | Block-code interface, CRC, Hamming, and Polar | `FEC`, `CRC`, `Hamming74`, `PolarBEC`; `modcode.fec.cyclic` (`cyclic_shift`), `modcode.fec.qc_ldpc` (`expand_qc_base_matrix`) |
+| `modcode.pqc` | Toy QC-MDPC McEliece-style structure | `QCMDPC`, `DecodeResult`, `circulant`, `is_circulant` |
 | `modcode.channel` | Channel models | `AWGNChannel` |
 | `modcode.pipeline` | End-to-end link simulation | `Link`, `LinkResult`, `run_link` |
 | `modcode.metrics` | BER measurement | `ber_sweep` |
-| `modcode.viz` | Constellation, BER, array, and QFC plotting | `plot_constellation`, `plot_ber`, `plot_wavefront`, `plot_pattern`, `plot_phase_ramp`, `plot_squint`, `plot_transport_budget`, `plot_noise_budget`, `plot_wigner` |
+| `modcode.viz` | Constellation, BER, array, CRC, PQC, and QFC plotting | `plot_constellation`, `plot_ber`, `plot_wavefront`, `plot_pattern`, `plot_phase_ramp`, `plot_squint`, `plot_crc_frame`, `plot_crc_division`, `plot_crc_syndromes`, `plot_parity_check`, `plot_circulant_block`, `plot_key_scaling`, `plot_transport_budget`, `plot_noise_budget`, `plot_wigner` |
 | `modcode.phasedarray` | Array geometry and cyclic phase quantisation | `LinearArray`, `quantize_phases`, `squint_angle`, `grating_lobe_limit` |
 | `modcode.qfc` | QFC noise, quantum states, and link budgets | `Transducer`, `thermal_occupation`, `transport_budget`, `wigner_function`, `covariance_squeezing_db` |
 | `modcode.optical` | IM/DD experiments | `OOK`, `IntensityPAM`, `NonUniformPAM`, `IMDDChannel`, `optimize_pam_levels`, `ber_sweep_imdd` |
@@ -500,7 +533,7 @@ The README is the map; the long-form notes are in `docs/`:
 
 - [Cyclic numbers, the Riemann Hypothesis, cyclic codes, and cryptography](docs/cyclic-numbers-rh-fec-cryptography.md)
   — full-reptend primes, Artin/GRH, quasi-RH caveats, cyclic codes, DLP,
-  quantum cyclic topology, and a claims audit.
+  quasi-cyclic post-quantum codes, quantum cyclic topology, and a claims audit.
 - [Cyclic groups in radio: PSK, space–time codes, and Zadoff–Chu](docs/cyclic-groups-radio-modulation.md)
   — PSK as `C_M`, unitary group codes, ZC autocorrelation, the KHAN proposal,
   and runnable checks backed by `modcode.waveforms`.
@@ -516,10 +549,14 @@ modcode-lab/
 ├── examples/
 │   ├── figures/
 │   │   ├── beam_squint.png
+│   │   ├── crc_encoding.png
 │   │   ├── phase_quantization.png
+│   │   ├── qc_mdpc_decoding.png
+│   │   ├── qc_mdpc_matrix.png
 │   │   ├── qfc_state.png
 │   │   ├── qfc_transport.png
 │   │   └── wavefront_steering.png
+│   ├── cyclic_codes_pqc_lab.py
 │   ├── explore_cyclic_structures.py
 │   ├── explore_qc_polar.py
 │   ├── hamming_demo.py
@@ -548,6 +585,7 @@ modcode-lab/
 │   ├── fec/
 │   │   ├── __init__.py
 │   │   ├── base.py
+│   │   ├── crc.py
 │   │   ├── cyclic.py
 │   │   ├── hamming.py
 │   │   ├── polar.py
@@ -577,6 +615,9 @@ modcode-lab/
 │   ├── pipeline/
 │   │   ├── __init__.py
 │   │   └── chain.py
+│   ├── pqc/
+│   │   ├── __init__.py
+│   │   └── qc_mdpc.py
 │   ├── qfc/
 │   │   ├── __init__.py
 │   │   ├── link.py
@@ -585,8 +626,10 @@ modcode-lab/
 │   │   ├── __init__.py
 │   │   ├── ber_plot.py
 │   │   ├── constellation.py
+│   │   ├── crc.py
 │   │   ├── optical.py
 │   │   ├── phasedarray.py
+│   │   ├── pqc.py
 │   │   └── qfc.py
 │   └── waveforms/
 │       ├── __init__.py
@@ -594,6 +637,7 @@ modcode-lab/
 ├── tests/
 │   ├── test_apsk.py
 │   ├── test_ber_awgn.py
+│   ├── test_crc.py
 │   ├── test_cyclic_fec.py
 │   ├── test_cyclic_tcm.py
 │   ├── test_full_reptend.py
@@ -603,6 +647,7 @@ modcode-lab/
 │   ├── test_polar_bec.py
 │   ├── test_qam_gray.py
 │   ├── test_qc_ldpc.py
+│   ├── test_qc_mdpc.py
 │   ├── test_qfc.py
 │   ├── test_shaping.py
 │   ├── test_toy_dh.py
@@ -623,15 +668,17 @@ and `modcode.qfc`, exercised by `examples/wavefront_qfc_lab.py`.
 ```bash
 python -m pytest          # full test suite
 ruff check .              # lint
-python examples/wavefront_qfc_lab.py  # regenerate the five maintained figures
+python examples/wavefront_qfc_lab.py     # wavefront/QFC figures
+python examples/cyclic_codes_pqc_lab.py # CRC and QC-MDPC figures
 ```
 
-The suite covers modulation geometry, Gray labeling, AWGN BER, Hamming and
-QC-LDPC structure, Polar BEC construction, optical IM/DD, full-reptend
-arithmetic, toy Diffie–Hellman, phased-array synthesis, QFC noise, and the
-PSK/ZC waveform checks. The figure-producing script is deterministic given its
-fixed seeds and constants; the numeric report it prints is the same one the
-tests pin down.
+The suite covers modulation geometry, Gray labeling, AWGN BER, CRC detection,
+Hamming and QC-LDPC structure, Polar BEC construction, optical IM/DD,
+full-reptend arithmetic, toy Diffie–Hellman, phased-array synthesis, QFC noise,
+PSK/ZC waveforms, and the toy QC-MDPC key structure/decoder. The
+figure-producing scripts are deterministic given their fixed seeds and
+constants; the numeric reports they print are the same ones the tests pin
+down.
 
 ## Extending modcode-lab
 
@@ -663,6 +710,13 @@ for new modulation, coding, and channel behavior.
 - Proakis and Salehi, *Digital Communications*, 5th edition.
 - Sklar, *Digital Communications: Fundamentals and Applications*, 2nd edition.
 - Lin and Costello, *Error Control Coding*, 2nd edition.
+- W. W. Peterson and D. T. Brown, “Cyclic Codes for Error Detection,”
+  *Proceedings of the IRE* **49** (1961), 228–235.
+- R. Misoczki, J.-P. Tillich, N. Sendrier, and P. S. L. M. Barreto,
+  “MDPC-McEliece: New McEliece variants from moderate density parity-check
+  codes,” *Proc. IEEE ISIT* (2013).
+- BIKE team, *BIKE: Bit Flipping Key Encapsulation*, specification,
+  <https://bikesuite.org/>.
 - I. A. Simakov and I. S. Besedin, “Low-overhead quantum error correction
   codes with a cyclic topology,” *Physical Review A* **111**, 012444 (2025);
   [arXiv:2211.03094](https://arxiv.org/abs/2211.03094).
