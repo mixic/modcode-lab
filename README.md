@@ -21,21 +21,32 @@ Want to see why soft decoding beats hard decoding by 2 dB, or how Hamming(7,4)
 turns a 3-bit syndrome into an error location? This lab reproduces those
 results end-to-end, with theory overlays that let you check the answer.
 
-`modcode-lab` is a small simulator for the **core** of a digital communication
-link:
+`modcode-lab` is a reproducible lab for the **core** of a digital
+communication link:
 
 - map bits to BPSK, QPSK, or square QAM symbols;
-- optionally protect them with a block or convolutional code;
-- pass them through AWGN;
-- decode with hard decisions or **soft LLRs**;
-- measure BER and compare it with the closed-form uncoded reference.
+- protect them with one of seven families — Hamming(7,4), a K=3 convolutional
+  code, BCH(15,7), Reed–Solomon(15,11), LDPC(1008,506), polar(1024,512), or
+  four-state 8-PSK TCM;
+- pass them through AWGN, block Rayleigh fading, or bursts;
+- decode with hard decisions or **soft LLRs**, from syndrome lookup through
+  Viterbi to min-sum belief propagation and successive-cancellation list
+  decoding;
+- measure BER and compare it with the closed-form references.
 
-The core is deliberately narrow: modulation, coding, channel, LLRs, decoding,
-and BER.  The repository also contains **exploratory appendices** — optical
-IM/DD, phased arrays, quantum frequency conversion, post-quantum toy codes,
-number theory, CT-IM, and an I/Q phase-involution note.  They are worked
-examples, not part of the core simulator and not required for the core BER
-claims.  See [`docs/exploratory-labs.md`](docs/exploratory-labs.md).
+The core now spans the classical block codes, the convolutional baseline, and
+both modern families (LDPC and polar), so the trade-offs are measured in one
+pipeline rather than quoted: the LDPC-versus-polar BER and decoding-cost
+comparison is Figure 21 in [`docs/figures.md`](docs/figures.md).  The boundary
+is still a boundary: these are small pedagogical codes with explicit
+[non-claims](docs/polar.md#6-what-is-claimed-measured-and-not-claimed), not
+3GPP implementations.
+
+The repository also contains **exploratory appendices** — optical IM/DD,
+phased arrays, quantum frequency conversion, post-quantum toy codes, number
+theory, CT-IM, and an I/Q phase-involution note.  They are worked examples, not
+part of the core simulator and not required for the core BER claims.  See
+[`docs/exploratory-labs.md`](docs/exploratory-labs.md).
 
 If you want the theory behind the core, read
 [`docs/core-simulator.md`](docs/core-simulator.md).  If you want the quickest
@@ -249,7 +260,7 @@ The full API and derivations are in [`docs/core-simulator.md`](docs/core-simulat
 
 | Document | Contents |
 |---|---|
-| [`learning-paths.md`](docs/learning-paths.md) | Three guided routes: FEC, modulation, and the appendices |
+| [`learning-paths.md`](docs/learning-paths.md) | Four guided routes: soft decoding, modulation, modern codes (LDPC and polar), and the appendices |
 | [`core-simulator.md`](docs/core-simulator.md) | Signal model, LLR convention, Hamming hard/soft, convolutional trellis/Viterbi, pipeline modes, theoretical BER |
 | [`advanced-coding.md`](docs/advanced-coding.md) | Interleaving, block Rayleigh, BCH/RS, TCM, and their limits |
 | [`ldpc.md`](docs/ldpc.md) | LDPC(1008,506) construction, min-sum decoding, and finite-length comparison |

@@ -1,8 +1,8 @@
 # Learning paths
 
 `modcode-lab` has a stable core and a set of exploratory appendices.  The
-three routes below are the shortest paths through the material.  Each route is
-a sequence, not a syllabus; run the commands from the repository root.
+four routes below are the shortest paths through the material.  Each route is a
+sequence, not a syllabus; run the commands from the repository root.
 
 If you only have ten minutes, read the route headings and pick one.  If you
 are new to the project, start with the core route that matches your question,
@@ -30,13 +30,9 @@ uncoded even when the decoder is correct.
 **Checkpoint:** `python -m pytest tests/test_soft_decision.py
 tests/test_convolutional.py -q` should pass.
 
-**Next, iterative decoding:** run `python examples/ldpc_lab.py` and read
-[`ldpc.md`](ldpc.md). This is the natural comparison to Viterbi: a different
-graph, a different decoder, and a measured finite-length gain.
-
-**Next, list decoding:** run `python examples/polar_lab.py` and read
-[`polar.md`](polar.md). Successive cancellation, list decoding, and CRC-aided
-list decoding put the complexity-versus-performance trade-off on one figure.
+**Next, the modern codes:** Path 3 below is the guided route through LDPC and
+polar: `python examples/ldpc_lab.py` → [`ldpc.md`](ldpc.md) →
+`python examples/polar_lab.py` → [`polar.md`](polar.md).
 
 **Optional FEC detour (10 minutes):** `python examples/hamming_demo.py` →
 [`tests/test_hamming.py`](../tests/test_hamming.py) → [the Hamming
@@ -73,7 +69,33 @@ tail.
 
 ---
 
-## Path 3 — "I want to understand the appendices"
+## Path 3 — "I want to understand the modern codes (LDPC and polar)"
+
+**Goal:** see the two code families used in 5G, measure which one wins at a
+given block length, and see what list decoding and CRC-aided selection buy.
+
+| Step | Do this | What to notice |
+|---:|---|---|
+| 1 | `python examples/ldpc_lab.py` | LDPC(1008,506) min-sum versus the K=3 convolutional code: a steep waterfall and a crossover between 1 and 2 dB. |
+| 2 | Read [`ldpc.md`](ldpc.md) | The quasi-cyclic construction, rank 502, the min-sum update, and the measured gain of roughly 1.5–2 dB at $10^{-3}$. |
+| 3 | `python examples/polar_lab.py` | SC → SCL → CA-SCL at $N=1024$: the list gain, its saturation at 2 dB, and the measured decoder cost per block. |
+| 4 | Read [`polar.md`](polar.md) | Gaussian-approximation construction, the exact check update, the LDPC/polar crossover near 1.2 dB, and block-length/design-point sensitivity. |
+| 5 | Read [`tests/test_ldpc.py`](../tests/test_ldpc.py) | (3,6) regularity, rank 502, and $G H^T = 0$. |
+| 6 | Read [`tests/test_polar_awgn.py`](../tests/test_polar_awgn.py) | GA numerics, agreement with an independent SC decoder, and the $N\log_2 N$ work pin. |
+
+**You should be able to explain:** why LDPC and polar are the two 5G families;
+which one wins at $N \approx 1000$ and rate $1/2$ in this lab (the measured
+crossover is near 1.2 dB); why SCL is roughly a dB better than SC at
+$10^{-3}$; why the list saturates at high SNR; and why none of the codes here
+is 3GPP conformant.
+
+**Checkpoint:** `python -m pytest tests/test_ldpc.py tests/test_polar_awgn.py
+-q` should pass, and `examples/figures/polar.png` (Figure 21 in
+[`figures.md`](figures.md)) should show the crossover, not just one family.
+
+---
+
+## Path 4 — "I want to understand the appendices"
 
 **Goal:** enter one exploratory area through its own note and runnable
 example, without mistaking it for the core.
@@ -106,13 +128,13 @@ read as an appendix.
 ## How the paths relate to the repository
 
 - **Core:** modulation, FEC, AWGN/known-CSI fading, LLRs, decoding, BER, theory
-  overlays.  The core path is Paths 1 and 2.
+  overlays.  The core path is Paths 1, 2, and 3.
 - **Coding extensions:** interleaving, Rayleigh, BCH/RS, TCM, LDPC, and polar.
   These are documented in [`advanced-coding.md`](advanced-coding.md),
   [`ldpc.md`](ldpc.md), and [`polar.md`](polar.md); they are still pedagogical,
   but they are part of the core-facing material.
 - **Appendices:** optical, arrays/QFC, PQC, number theory, CT-IM, phase
-  involution.  These are Path 3 and are not required for the core claims.
+  involution.  These are Path 4 and are not required for the core claims.
 
 The core theory is in [`core-simulator.md`](core-simulator.md); the core
 quickstart is in the [README](../README.md#quickstart).  The figure index is

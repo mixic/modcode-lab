@@ -98,7 +98,7 @@ a dedicated figure; see `examples/explore_cyclic_structures.py`.
 <p align="center">
   <a href="../examples/figures/polar.png"><img src="../examples/figures/polar.png" alt="Polar SC, SCL, and CRC-aided SCL versus LDPC and convolutional coding" width="1000"></a>
 </p>
-<p align="center"><sub><b>Figure 21.</b> Polar(1024,512): successive cancellation, list decoding, and CRC-aided list decoding, with the measured decoder time per block on the right.</sub></p>
+<p align="center"><sub><b>Figure 21.</b> Polar(1024,512) against LDPC(1008,506) and the convolutional baseline: successive cancellation, list decoding, and CRC-aided list decoding, with the measured decoder time per block on the right.</sub></p>
 
 <p align="center">
   <a href="../examples/figures/tau_invariant.png"><img src="../examples/figures/tau_invariant.png" alt="Cyclic Hamming versus tau-invariant RM(1,3)" width="900"></a>

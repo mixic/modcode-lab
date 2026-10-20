@@ -91,6 +91,10 @@ optimization or density evolution was performed.
 The zeros at 3–5 dB are zero-error runs at this sample size, not an error-floor
 claim.  A proper floor study needs much larger blocks and many more bits.
 
+The companion note [`polar.md`](polar.md) adds the other 5G family on the same
+`Link` pipeline; the two-family BER and decoding-cost comparison is Figure 21 in
+[`figures.md`](figures.md).
+
 ---
 
 ## 4. Complexity and latency
