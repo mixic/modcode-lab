@@ -6,6 +6,8 @@
 
 *Bits → FEC → modulation → channel → LLR or hard decision → FEC decode → BER.*
 
+> **A tested reference implementation of the link-level signal chain — theory-pinned BER, correct LLR handling, and a clearly separated exploratory appendix.**
+
 [![CI](https://github.com/mixic/modcode-lab/actions/workflows/ci.yml/badge.svg)](https://github.com/mixic/modcode-lab/actions/workflows/ci.yml)
 [![Python](https://img.shields.io/badge/python-3.10%20%7C%203.11%20%7C%203.12-blue.svg)](https://www.python.org/)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
