@@ -10,5 +10,6 @@
 """Communication channels."""
 
 from modcode.channel.awgn import AWGNChannel
+from modcode.channel.phase_imbalance import PhaseImbalanceChannel
 
-__all__ = ["AWGNChannel"]
+__all__ = ["AWGNChannel", "PhaseImbalanceChannel"]

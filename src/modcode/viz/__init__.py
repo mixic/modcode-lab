@@ -26,6 +26,12 @@ from modcode.viz.number_theory import (
     plot_residual_index_density,
     plot_residual_index_histogram,
 )
+from modcode.viz.phase_imbalance import (
+    plot_channel_determinant,
+    plot_phase_imbalance_ber,
+    plot_phase_imbalance_constellation,
+    plot_tau_llr,
+)
 from modcode.viz.phasedarray import (
     plot_pattern,
     plot_pattern_family,
@@ -69,6 +75,9 @@ __all__ = [
     "plot_pattern",
     "plot_pattern_family",
     "plot_phase_ramp",
+    "plot_channel_determinant",
+    "plot_phase_imbalance_ber",
+    "plot_phase_imbalance_constellation",
     "plot_residual_index_convergence",
     "plot_residual_index_density",
     "plot_residual_index_histogram",
@@ -77,6 +86,7 @@ __all__ = [
     "plot_squeezing_survival",
     "plot_squint",
     "plot_syndrome_history",
+    "plot_tau_llr",
     "plot_thermal_occupation",
     "plot_transport_budget",
     "plot_wavefront",

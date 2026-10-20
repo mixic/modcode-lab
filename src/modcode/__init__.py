@@ -10,6 +10,7 @@
 """Digital modulation and forward-error-correction simulation tools."""
 
 from modcode.channel.awgn import AWGNChannel
+from modcode.channel.phase_imbalance import PhaseImbalanceChannel
 from modcode.fec.hamming import Hamming74
 from modcode.modulation.bpsk import BPSK
 from modcode.modulation.qam import QAM
@@ -22,6 +23,7 @@ __all__ = [
     "Hamming74",
     "Link",
     "LinkResult",
+    "PhaseImbalanceChannel",
     "QAM",
     "QPSK",
     "run_link",

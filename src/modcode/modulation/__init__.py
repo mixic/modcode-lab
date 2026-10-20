@@ -14,6 +14,12 @@ from modcode.modulation.base import Modulation
 from modcode.modulation.bpsk import BPSK
 from modcode.modulation.ct_im import CTIM, ConstantWeightCyclicCode
 from modcode.modulation.cyclic_tcm import TailBitingTCM8PSK
+from modcode.modulation.involution import (
+    block_tau_hypothesis,
+    correct_tau,
+    pilot_tau_hypothesis,
+    tau_log_likelihood_ratio,
+)
 from modcode.modulation.qam import QAM
 from modcode.modulation.qpsk import QPSK
 
@@ -26,4 +32,8 @@ __all__ = [
     "QAM",
     "QPSK",
     "TailBitingTCM8PSK",
+    "block_tau_hypothesis",
+    "correct_tau",
+    "pilot_tau_hypothesis",
+    "tau_log_likelihood_ratio",
 ]
