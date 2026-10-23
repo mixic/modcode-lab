@@ -185,7 +185,7 @@ supplies the space–time codewords.
 A simple example with two transmit antennas is
 
 $$
-G = \operatorname{diag}(1, \zeta_M),
+G = \mathrm{diag}(1, \zeta_M),
 \qquad
 \mathcal{G} = \langle G \rangle = \{I, G, G^2, \dots, G^{M-1}\}.
 $$

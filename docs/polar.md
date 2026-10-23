@@ -79,7 +79,7 @@ already-decoded left partial-sum bit.  The check update is evaluated in the
 Jacobian-logarithm form
 
 $$
-L_{\text{left}} = \operatorname{sgn}(a)\operatorname{sgn}(b)\min(|a|,|b|) +
+L_{\text{left}} = \mathrm{sgn}(a)\mathrm{sgn}(b)\min(|a|,|b|) +
 \log\!\left(1+e^{-|a+b|}\right) - \log\!\left(1+e^{-|a-b|}\right),
 $$
 

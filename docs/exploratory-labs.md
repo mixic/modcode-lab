@@ -158,8 +158,8 @@ See [`ct-im.md`](ct-im.md), `examples/ct_im_lab.py`, and
 
 ## 8. The I/Q phase-shift involution
 
-The DSIN relative-phase flip $\tau=\operatorname{diag}(I,-I)$ and the I/Q
-phase error at $\phi=\pi$ share the real matrix $\operatorname{diag}(1,-1)$.
+The DSIN relative-phase flip $\tau=\mathrm{diag}(I,-I)$ and the I/Q
+phase error at $\phi=\pi$ share the real matrix $\mathrm{diag}(1,-1)$.
 The correspondence is basis-dependent and is not an identity between the two
 models.
 

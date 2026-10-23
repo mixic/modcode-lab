@@ -56,7 +56,7 @@ a monoid of sequences.
 
 In `modcode-lab`, involutions appear in:
 
-- `phase-shift-involution.md`: $\tau=\operatorname{diag}(I,-I)$ on a graded
+- `phase-shift-involution.md`: $\tau=\mathrm{diag}(I,-I)$ on a graded
   Hilbert space;
 - the dimension-shift note: $\sigma(s)=1-\overline{s}$;
 - coordinate flips of a code, as below.

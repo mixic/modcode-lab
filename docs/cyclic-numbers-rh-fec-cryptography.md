@@ -109,7 +109,7 @@ This generalises. Let $b \ge 2$ be a base, let $p$ be a prime with $p \nmid b$,
 and let
 
 $$
-L = \operatorname{ord}_p(b)
+L = \mathrm{ord}_p(b)
 $$
 
 be the multiplicative order of $b$ modulo $p$. Then $1/p$ is purely periodic
@@ -399,7 +399,7 @@ two.
 For a prime $p \nmid 10$, the residual index is
 
 $$
-c_p = \frac{p-1}{\operatorname{ord}_p(10)}.
+c_p = \frac{p-1}{\mathrm{ord}_p(10)}.
 $$
 
 Artin's conjecture is the case $c_p=1$ (full period). The case $c_p=m$ is a
@@ -710,7 +710,7 @@ is a response to Shor, not to the Riemann Hypothesis.
 | Expression | Object | Group or ring | Status |
 |---|---|---|---|
 | Cyclic number $142857$ | decimal repetend of $1/7$ | $(\mathbb{Z}/7\mathbb{Z})^{\times}$ | theorem |
-| Full reptend primes | primes with $\operatorname{ord}_p(10)=p-1$ | $(\mathbb{Z}/p\mathbb{Z})^{\times}$ | infinitude open |
+| Full reptend primes | primes with $\mathrm{ord}_p(10)=p-1$ | $(\mathbb{Z}/p\mathbb{Z})^{\times}$ | infinitude open |
 | Cyclic code | shift-invariant linear code | $C_n$ acting on $\mathbb{F}_q^n$; ideal in $\mathbb{F}_q[x]/(x^n-1)$ | theorem |
 | DLP-based cryptography | discrete log in a cyclic group | $\langle g \rangle$ of prime order | hardness assumption |
 
@@ -861,7 +861,7 @@ assert dh.shared_secret(alice, dh.public_key(bob)) == dh.shared_secret(
 |---|---|---|
 | $142857$ is the repeating part of $1/7$ | true | $1/7 = 0.\overline{142857}$ |
 | Its rotations are its first six multiples | true | theorem in §1.2 |
-| $10$ is a primitive root modulo $7$ | true | $\operatorname{ord}_7(10)=6$ |
+| $10$ is a primitive root modulo $7$ | true | $\mathrm{ord}_7(10)=6$ |
 | Full reptend primes are those with $10$ a primitive root | true | for $p \nmid 10$ |
 | "Deciding whether a given prime is full reptend is deep" | misleading | finite check; the infinitude is deep |
 | Artin's conjecture is open for every specific $a$ | true | including $a=10$ |

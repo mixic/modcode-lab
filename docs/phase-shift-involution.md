@@ -25,7 +25,7 @@ $\sigma$, and its fixed locus is not the equal-weight subspace. The
 equal-weight symmetric states are the fixed locus of $\sigma$.
 
 At $\phi=\pi$, an I/Q phase imbalance produces the same real $2\times2$
-matrix, $\operatorname{diag}(1,-1)$, after the two sectors are identified
+matrix, $\mathrm{diag}(1,-1)$, after the two sectors are identified
 with the I and Q axes. That is a genuine structural correspondence, but it is
 not an identity of the two models. The logical action of the matrix depends on
 the encoding basis. In DSIN's $\sigma$-eigenbasis, $\tau$ flips the encoded
@@ -82,7 +82,7 @@ $$
 The fixed subspace is
 
 $$
-\operatorname{Fix}(\sigma)
+\mathrm{Fix}(\sigma)
 = \{(u,u)/\sqrt2 : u \in \mathcal H_b\},
 $$
 
@@ -115,7 +115,7 @@ It is a unitary involution, and it is Hermitian, so it is also an observable
 with eigenvalues $\pm1$. Its fixed subspace is the bosonic sector,
 
 $$
-\operatorname{Fix}(\tau)
+\mathrm{Fix}(\tau)
 = \{(u,0) : u \in \mathcal H_b\},
 $$
 
@@ -181,7 +181,7 @@ commute, and their fixed loci are different. A phase flip is not a swap.
 The functional equation acts on the complex variable as
 $s \mapsto 1-s$, and the completed zeta function is invariant under it. The
 prototype dimension-shift involution is
-$\sigma(s)=1-\overline{s}$, whose fixed locus is $\operatorname{Re}s=1/2$.
+$\sigma(s)=1-\overline{s}$, whose fixed locus is $\mathrm{Re}s=1/2$.
 Neither map is the relative phase between two quantum sectors. They are
 structural analogues, not the same object.
 
@@ -261,9 +261,9 @@ impairment rather than a separate gain control.
 
 | $\phi$ | $R(\phi)$ | Action | Invertible? |
 |:---:|:---|:---|:---:|
-| $0$ | $\operatorname{diag}(1,1)$ | identity | yes |
+| $0$ | $\mathrm{diag}(1,1)$ | identity | yes |
 | $\pi/2$ | `[[1, -1], [0, 0]]` | Q collapses onto I | **no** |
-| $\pi$ | $\operatorname{diag}(1,-1)$ | $y=\overline{x}$, Q reflection | yes |
+| $\pi$ | $\mathrm{diag}(1,-1)$ | $y=\overline{x}$, Q reflection | yes |
 
 At $\phi=\pi$,
 
@@ -317,7 +317,7 @@ If the bosonic and fermionic sectors are identified with the I and Q axes,
 then
 
 $$
-\tau = \operatorname{diag}(1,-1) = R(\pi).
+\tau = \mathrm{diag}(1,-1) = R(\pi).
 $$
 
 This is the precise algebraic correspondence: the same real $2\times2$
@@ -330,7 +330,7 @@ choice of real basis.
 The logical action depends on the code:
 
 - **DSIN encoding:** logical states are the $\sigma$ eigenstates
-  $|+\rangle,|-\rangle$. The matrix $\operatorname{diag}(1,-1)$ swaps them,
+  $|+\rangle,|-\rangle$. The matrix $\mathrm{diag}(1,-1)$ swaps them,
   so the logical bit flips with probability one.
 - **Standard QPSK:** logical states are the four I/Q sign combinations. The
   same matrix flips the Q bit only.

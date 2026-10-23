@@ -32,6 +32,21 @@ BLOCK_START = re.compile(
 )
 FENCE = re.compile(r"^\s*(`{3,}|~{3,})")
 
+# Macros that renderers may refuse outright.  \operatorname is rejected by the
+# renderer used for these notes ("The following macros are not allowed:
+# operatorname"); \mathrm{...} is portable and typesets the same upright shape.
+NON_PORTABLE = {r"\operatorname": r"write \mathrm{...} instead"}
+
+
+def check_macros(path: Path, lines: list[str]) -> list[str]:
+    """Report macros that some renderers refuse to typeset."""
+    problems: list[str] = []
+    for number, line in enumerate(lines, start=1):
+        for macro, hint in NON_PORTABLE.items():
+            if macro in line:
+                problems.append(f"{path}:{number}: {macro} is not portable; {hint}")
+    return problems
+
 
 def mask_inline_code(line: str) -> str:
     """Blank out backtick spans, keeping the length of the line."""
@@ -163,6 +178,7 @@ def check_file(path: Path) -> list[str]:
         problems.extend(check_inline(path, number, line))
     if in_display:
         problems.append(f"{path}:{opened_at}: $$ block is never closed")
+    problems.extend(check_macros(path, lines))
     return problems
 
 

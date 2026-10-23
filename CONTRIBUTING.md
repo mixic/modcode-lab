@@ -257,6 +257,24 @@ Use precise language:
 Do not describe a finite-length simulation as an asymptotic threshold.  Do not
 describe a toy code as a standard.
 
+### Math
+
+Math is typeset on github.com, but the delimiters are parsed by CommonMark
+first and the macros by KaTeX second.  Both stages can fail without an error in
+the rendered page, so keep to these rules; `python scripts/check_md_math.py`
+enforces them in CI.
+
+- Inline math opens after a space, the start of the line, or `(`.  Write
+  `base $b$`, not `base-$b$` or `"$a$`.
+- Inline math closes before a space or punctuation, never before a letter,
+  digit, or underscore.
+- Display math puts `$$` alone at column 0, separated from the text by blank
+  lines.  No body line may start with `-`, `+`, `*`, `1.`, `#`, or `>`, because
+  CommonMark reads it as a new block and the math block collapses.  Keep a
+  continuation operator at the end of the previous line.
+- Prefer `\mathrm{ord}` to `\operatorname{ord}`: some renderers refuse
+  `\operatorname` with “The following macros are not allowed”.
+
 ---
 
 ## 7. Adding a FEC code
