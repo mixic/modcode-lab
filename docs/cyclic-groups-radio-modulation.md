@@ -4,6 +4,11 @@
 
 *Companion note to [Cyclic Numbers, the Riemann Hypothesis, Cyclic Codes, and Cryptography](cyclic-numbers-rh-fec-cryptography.md)*
 
+> **Scope:** this is an exploratory appendix, not part of the core
+> modulation/FEC simulator and not a peer-reviewed contribution.  The modelling
+> limits are collected in
+> [`scope-and-limitations.md`](scope-and-limitations.md).
+
 ---
 
 ## Abstract

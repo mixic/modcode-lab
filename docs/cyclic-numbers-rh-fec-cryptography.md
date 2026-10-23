@@ -6,6 +6,11 @@
 
 *Companion note on radio: [Cyclic groups in radio](cyclic-groups-radio-modulation.md).*
 
+> **Scope:** this is an exploratory appendix, not part of the core
+> modulation/FEC simulator and not a peer-reviewed contribution.  The modelling
+> limits are collected in
+> [`scope-and-limitations.md`](scope-and-limitations.md).
+
 ---
 
 ## Abstract

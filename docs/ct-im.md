@@ -8,7 +8,9 @@
 > modulation/FEC simulator and not a paper-level result. It is kept because
 > the codebook and its limits are tested; the open milestones are marked in
 > §10. See [`exploratory-labs.md`](exploratory-labs.md) for the project-level
-> separation between the core and the appendices.
+> separation between the core and the appendices, and
+> [`scope-and-limitations.md`](scope-and-limitations.md) for the modelling
+> limits.
 
 ---
 

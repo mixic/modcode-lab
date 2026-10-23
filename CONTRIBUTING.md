@@ -163,6 +163,15 @@ after encoding and before modulation, and inverted before decoding.
 
 A focused test suite is the main review criterion.
 
+### Documented parameters are pinned
+
+If a note quotes a construction or a parameter — a block length, a degree, a
+decoding factor, a pilot spacing — pin it in
+`tests/test_documented_parameters.py` and add a row to the traceability table in
+[`docs/scope-and-limitations.md`](docs/scope-and-limitations.md) §5.  A note is
+allowed to describe a limited implementation; it is not allowed to describe code
+that does not exist.
+
 ### One property per test
 
 Name the property and assert it directly.  Prefer

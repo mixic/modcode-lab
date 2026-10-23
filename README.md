@@ -53,6 +53,20 @@ If you want the theory behind the core, read
 path to a BER curve, read the quickstart below.  If you are new to the
 repository, pick one of the [learning paths](docs/learning-paths.md).
 
+### Who this is for, and who it is not for
+
+It is for readers who want to *see* the mechanism: why soft decoding beats hard
+decoding by about 2 dB, how a Viterbi search works, and what LDPC and polar BER
+curves look like at short block lengths.
+
+It is **not** a source of benchmark numbers.  The modern codes here are
+LDPC(1008,506) and polar(1024,512), against 8448-bit information blocks in 5G
+NR and 64800-bit frames in DVB-S2X; the channel models are AWGN, block fading
+with **known CSI**, and an OFDM path with **least-squares estimation and
+zero-forcing equalisation only** — no MMSE, no iterative detection.  Every such
+limit, with the number attached and what would have to change, is listed in
+[`docs/scope-and-limitations.md`](docs/scope-and-limitations.md).
+
 ---
 
 ## Features
@@ -264,6 +278,7 @@ The full API and derivations are in [`docs/core-simulator.md`](docs/core-simulat
 | Document | Contents |
 |---|---|
 | [`learning-paths.md`](docs/learning-paths.md) | Four guided routes: soft decoding, modulation, modern codes (LDPC and polar), and the appendices |
+| [`scope-and-limitations.md`](docs/scope-and-limitations.md) | The review-driven limits: code scale, channel assumptions, appendix status, and doc-to-code traceability |
 | [`core-simulator.md`](docs/core-simulator.md) | Signal model, LLR convention, Hamming hard/soft, convolutional trellis/Viterbi, pipeline modes, theoretical BER |
 | [`advanced-coding.md`](docs/advanced-coding.md) | Interleaving, block Rayleigh, BCH/RS, TCM, and their limits |
 | [`ldpc.md`](docs/ldpc.md) | LDPC(1008,506) construction, min-sum decoding, and finite-length comparison |
@@ -287,6 +302,7 @@ The full API and derivations are in [`docs/core-simulator.md`](docs/core-simulat
 modcode-lab/
 ├── docs/
 │   ├── learning-paths.md
+│   ├── scope-and-limitations.md
 │   ├── core-simulator.md
 │   ├── advanced-coding.md
 │   ├── ldpc.md
@@ -403,7 +419,9 @@ No paper-level novelty claim is made for either appendix.
 ## Scope boundaries
 
 - **Pedagogical, not production.** The codes are small; the channel models are
-  simple.  This is a lab, not a modem.
+  simple.  This is a lab, not a modem.  The code-length and channel-assumption
+  gap against 5G NR and DVB-S2X is quantified in
+  [`docs/scope-and-limitations.md`](docs/scope-and-limitations.md).
 - **Toy post-quantum code.** `QCMDPC` is a structure demonstration, not
   cryptography.
 - **No security proof.** The QC-MDPC and phase-involution notes describe toy

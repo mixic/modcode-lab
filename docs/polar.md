@@ -12,6 +12,12 @@ list (SCL) decoding, and by CRC-aided SCL.  All three run through the same
 The block length is $N = 1024 = 2^{10}$ with $k = 512$ message bits at rate
 $0.5$, chosen to sit next to `LDPC36` ($N = 1008$, rate $0.502$).
 
+Both blocks are short relative to deployment: 5G NR carries LDPC information
+blocks of up to $8448$ bits and DVB-S2X frames of $64800$, so every comparison
+here is a short-block comparison.  The finite-length sensitivity is measured in
+§4 and the limits are stated in
+[`scope-and-limitations.md`](scope-and-limitations.md) §2.
+
 ---
 
 ## 1. Construction
@@ -188,6 +194,12 @@ better as the block grows, with diminishing returns by $N=1024$.  A comparison
 against `LDPC36` at a *different* block length (for example $N=256$) would
 confound code family with block length, which is why the main table uses
 $N=1024$.
+
+The same table is the reason the LDPC/polar crossing point must not be quoted as
+a family ranking.  A factor of $6.5$ in BER comes from block length alone at
+fixed rate and decoder, so the crossing between `LDPC36` and this code is a
+property of that pair at $N \approx 1000$; see
+[`scope-and-limitations.md`](scope-and-limitations.md) §2.
 
 **Construction.**  SCL $L=4$, $N=1024$, 50,000 bits at 1.5 dB, with the
 information set designed at three different $E_b/N_0$:

@@ -67,6 +67,15 @@ coefficients = channel.last_coefficients
 The receiver is assumed to know the channel state.  This is a **known-CSI**
 model, not channel estimation.
 
+**What this assumes, and what it costs.** Perfect CSI, a fade constant across
+each codeword, zero-forcing equalisation, and hard decisions (the last because
+the post-equalisation variance is per symbol).  `last_coefficients` holds one
+entry per transmitted symbol, that is, the block coefficient repeated.  A
+receiver that must estimate the channel pays for pilots and for estimation
+error; for the OFDM path in this repository the measured estimation loss is
+1.5–2 dB against genie CSI.  The full assumption table is in
+[`scope-and-limitations.md`](scope-and-limitations.md) §3.
+
 For BPSK/QPSK the uncoded reference is
 
 $$

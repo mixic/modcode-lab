@@ -3,6 +3,11 @@
 *Exploratory appendix. This is not part of the core `Link` pipeline and it is
 not a claim that lattice modulation replaces QAM.*
 
+> **Scope:** this is an exploratory appendix, not part of the core
+> modulation/FEC simulator and not a peer-reviewed contribution.  The modelling
+> limits are collected in
+> [`scope-and-limitations.md`](scope-and-limitations.md).
+
 Multi-dimensional constellations are a real research direction, but the
 comparison has to be dimensionally fair.  This note implements spherical-cut
 D4 and E8 constellations, checks their minimum distances, and reports the BER,

@@ -3,6 +3,11 @@
 *Exploratory appendix. This adds a code whose defining structure is a
 coordinate involution, not polynomial convolution.*
 
+> **Scope:** this is an exploratory appendix, not part of the core
+> modulation/FEC simulator and not a peer-reviewed contribution.  The modelling
+> limits are collected in
+> [`scope-and-limitations.md`](scope-and-limitations.md).
+
 The words sound alike, but they are different operations on different objects.
 This note separates them and then implements the smallest useful example of an
 involution-invariant code: the Reed–Muller code RM(1,3).

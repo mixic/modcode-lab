@@ -42,6 +42,21 @@ $$
 
 which is tested directly.
 
+### 1.1 Scale against the standards
+
+| Code | $N$ | $k$ | Reference |
+|---|---:|---:|---|
+| this repository | 1008 | 506 | — |
+| 5G NR LDPC, base graph 1 | up to 25344 | up to 8448 | 3GPP TS 38.212 |
+| DVB-S2X normal frame | 64800 | up to 58320 | ETSI EN 302 307-2 |
+
+The code is $8.4$ times shorter than a 5G NR information block and $64$ times
+shorter than a DVB-S2X frame, and its degree distribution is a regular $(3,6)$
+construction, not a density-evolved one.  Nothing measured at $N=1008$ transfers
+to those lengths: the waterfall slope, the error floor, and the iteration count
+all depend on $N$.  The extrapolation rule and the block-length evidence for it
+are in [`scope-and-limitations.md`](scope-and-limitations.md) §2.
+
 ---
 
 ## 2. Decoder
@@ -86,7 +101,9 @@ The finite-length LDPC curve crosses the convolutional curve between 1 and
 2 dB and then falls steeply.  The measured gain at $10^{-3}$ is roughly
 1.5–2 dB for this pair, not the 3–4 dB quoted for long standardized LDPC codes.
 That is expected: this code is short, the decoder is min-sum, and no girth
-optimization or density evolution was performed.
+optimization or density evolution was performed.  The crossing point is a
+property of this pair at this length, not a ranking of the two families; §1.1
+and [`scope-and-limitations.md`](scope-and-limitations.md) §2 give the reason.
 
 The zeros at 3–5 dB are zero-error runs at this sample size, not an error-floor
 claim.  A proper floor study needs much larger blocks and many more bits.
@@ -126,6 +143,8 @@ is a reproducible Python implementation of two decoders, not a hardware study.
 **Not claimed**
 
 - a 3–4 dB gain over convolutional coding in general;
+- the crossover point as evidence about the two families at standards-scale
+  block lengths;
 - 5G/Wi-Fi LDPC performance;
 - an error floor;
 - optimal girth, degree distribution, or decoding schedule;

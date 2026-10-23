@@ -6,7 +6,8 @@
 > **Scope:** this is an interpretive appendix, not part of the core
 > modulation/FEC simulator. It records a structural analogy and an
 > identifiability result; it is not a new modulation scheme and not evidence
-> for RH. See [`exploratory-labs.md`](exploratory-labs.md).
+> for RH. See [`exploratory-labs.md`](exploratory-labs.md) and, for the
+> modelling limits, [`scope-and-limitations.md`](scope-and-limitations.md).
 
 ---
 

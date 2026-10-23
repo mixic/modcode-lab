@@ -7,6 +7,11 @@
 *Measurement companion: [Lattice modulation](lattice-modulation.md), which
 holds the BER, PAPR, and complexity tables quoted in §4.*
 
+> **Scope:** this is an analytical note, not a peer-reviewed contribution.  Its
+> numbers are arithmetic on published invariants plus the measured tables of
+> [lattice-modulation.md](lattice-modulation.md); the modelling limits are
+> collected in [`scope-and-limitations.md`](scope-and-limitations.md).
+
 ---
 
 ## Abstract

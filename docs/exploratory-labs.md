@@ -11,6 +11,14 @@ phased arrays, quantum transduction, and index modulation.  Treat them as
 worked examples, not as a claim that all of these topics belong in one
 research programme.
 
+**What "tested" means here.** An appendix test verifies that the implementation
+matches the model its note describes — round trips, distances, energy
+normalisation, closure properties.  It does **not** verify that the model
+matches a standard or a published measurement, and it is not peer review.  The
+per-appendix scope banners say so individually, and
+[`scope-and-limitations.md`](scope-and-limitations.md) §4 states the policy once
+for the whole repository.
+
 ---
 
 ## What is where

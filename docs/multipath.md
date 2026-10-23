@@ -151,6 +151,11 @@ BER; the figure therefore shows the fast-fading case.
 
 - The estimator is $O(N)$ per block (one division per pilot, one interpolation
   pass); the equaliser is $O(N)$.
+- Equalisation is zero forcing, not MMSE, and detection is not iterative: no
+  turbo equalisation, no soft interference cancellation.  At $20$ dB the
+  LS-plus-ZF receiver is 1.5–2 dB behind genie CSI, and the gap widens at
+  low SNR, where zero forcing amplifies noise.  See
+  [`scope-and-limitations.md`](scope-and-limitations.md) §3.
 - The model is frequency-domain: no CP, no time-domain equaliser, no ICI, no
   timing or carrier synchronisation.
 - Taps are drawn per block; there is no continuous-time Jakes process, only its
