@@ -79,8 +79,8 @@ already-decoded left partial-sum bit.  The check update is evaluated in the
 Jacobian-logarithm form
 
 $$
-L_{\text{left}} = \operatorname{sgn}(a)\operatorname{sgn}(b)\min(|a|,|b|)
-+ \log\!\left(1+e^{-|a+b|}\right) - \log\!\left(1+e^{-|a-b|}\right),
+L_{\text{left}} = \operatorname{sgn}(a)\operatorname{sgn}(b)\min(|a|,|b|) +
+\log\!\left(1+e^{-|a+b|}\right) - \log\!\left(1+e^{-|a-b|}\right),
 $$
 
 which is exact, numerically stable, and invariant to a positive rescaling of

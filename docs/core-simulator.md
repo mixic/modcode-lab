@@ -69,8 +69,7 @@ The implementation uses the max-log approximation over the constellation:
 $$
 L_k \approx \frac{1}{2\sigma^2}
 \left(
-\min_{c:\,b_k=1}|y-c|^2
--
+\min_{c:\,b_k=1}|y-c|^2 -
 \min_{c:\,b_k=0}|y-c|^2
 \right).
 $$
@@ -197,18 +196,17 @@ deliberate failure rather than a silent hard-decision fallback.
 `modcode.metrics.theory` supplies closed-form uncoded references:
 
 - BPSK and Gray-coded QPSK:
-  $$
-  P_b=Q\!\left(\sqrt{2E_b/N_0}\right).
-  $$
+
+$$
+P_b=Q\!\left(\sqrt{2E_b/N_0}\right).
+$$
+
 - Square Gray-coded $M$-QAM, nearest-neighbour approximation:
-  $$
-  P_b\approx
-  \frac{4}{\log_2 M}
-  \left(1-\frac{1}{\sqrt M}\right)
-  Q\!\left(
-  \sqrt{\frac{3\log_2 M}{M-1}\frac{E_b}{N_0}}
-  \right).
-  $$
+
+$$
+P_b\approx \frac{4}{\log_2 M}\left(1-\frac{1}{\sqrt M}\right)
+Q\!\left(\sqrt{\frac{3\log_2 M}{M-1}\frac{E_b}{N_0}}\right).
+$$
 
 The QAM expression is an approximation, not an exact bit-error probability.
 `plot_ber(..., theory=...)` draws the references as dashed gray curves; the
