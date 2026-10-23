@@ -20,5 +20,7 @@ jobs:
         run: python -m pip install -e ".[dev]"
       - name: Lint
         run: ruff check .
+      - name: Check markdown math
+        run: python scripts/check_md_math.py docs README.md CONTRIBUTING.md
       - name: Test
         run: pytest

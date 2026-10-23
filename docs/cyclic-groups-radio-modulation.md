@@ -442,7 +442,7 @@ distances $d=3,5,7,9$, the physical-qubit count scales linearly as
 $N=8d-14$, with an iSWAP/SWAP syndrome-extraction circuit and an LSTM decoder
 supported by a lookup-table decoder [Simakov & Besedin 2025]. This is a
 structural cousin of the classical cyclic code, not an instance of the
-ideal-in-$\mathbb{F}_q[C_n]$ construction: the quantum code is a subspace of
+ideal construction in $\mathbb{F}_q[C_n]$: the quantum code is a subspace of
 a tensor-product Hilbert space stabilized by Pauli operators, and “cyclic”
 refers to the ring layout and the cyclic permutation of stabilizer supports.
 

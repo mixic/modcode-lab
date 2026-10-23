@@ -124,7 +124,7 @@ is a cyclic number.
 
 **Theorem (the reptend is cyclic).** Let $p$ be a full reptend prime in base
 $b$, let $L = p-1$, and let $R = (b^L-1)/p$. Then the $L$ cyclic rotations of
-the $L$-digit base-$b$ block of $R$ are precisely
+the $L$-digit base $b$ block of $R$ are precisely
 
 $$
 R,\ 2R,\ 3R,\ \dots,\ (p-1)R,
@@ -141,13 +141,13 @@ $$
 
 Because $0 < m_kR < pR = b^L-1$, the term $m_kR$ is the least nonnegative
 residue of $b^kR$ modulo $b^L-1$. Multiplication by $b$ modulo $b^L-1$ is
-exactly a cyclic shift of the base-$b$ digits, so that residue is the rotation
+exactly a cyclic shift of the base $b$ digits, so that residue is the rotation
 of $R$ by $k$ places. As $k$ runs from $0$ to $L-1$, the residues $m_k$ run
 through $1,\dots,p-1$ because $b$ is a primitive root. $\square$
 
 As a check, $7 \times 142857 = 999999 = 10^6-1$.
 
-The converse is classical: a nontrivial base-$b$ cyclic number of length $L$
+The converse is classical: a nontrivial base $b$ cyclic number of length $L$
 arises only when $L+1$ is a full reptend prime in base $b$ (with the usual
 exclusion of single-digit and repeated-block cases). The cyclic property is
 therefore not a coincidence of the digits of $142857$; it is the shadow of the
@@ -284,7 +284,7 @@ precisely the ones GRH supplies for the relevant Kummer extensions.
 
 ### 2.4 Why GRH is enough
 
-The condition "$a$ is a primitive root modulo $p$" can be checked prime by
+The condition that $a$ is a primitive root modulo $p$ can be checked prime by
 prime: for every prime $q \mid p-1$, $a$ must not be a $q$-th power modulo $p$.
 For fixed $q$, the primes $p$ for which $a$ is a $q$-th power are governed by
 splitting conditions in the Kummer extension $\mathbb{Q}(a^{1/q}, \zeta_q)$.
@@ -366,8 +366,8 @@ There is also a correction to a common shorthand. QRH does not give the
 asymptotic
 
 $$
-P_b(x) = C_b\,\frac{x}{\log x}
-+ O\!\left(x e^{-c\sqrt{\log x}}\right).
+P_b(x) = C_b\,\frac{x}{\log x} +
+O\!\left(x e^{-c\sqrt{\log x}}\right).
 $$
 
 The constant $C_b$ and the asymptotic itself are the content of Artin's
@@ -574,17 +574,17 @@ a lookup-table decoder, and report exponential suppression of the logical
 error rate in a phenomenological noise model [Simakov & Besedin 2025].
 
 This is a structural cousin of the classical cyclic code, not an instance of
-the ideal-in-$\mathbb{F}_q[C_n]$ theorem. The classical code is a subspace
-of $\mathbb{F}_q^n$ invariant under coordinate shifts; the quantum code is a
-subspace of a tensor-product Hilbert space stabilized by Pauli operators, and
-“cyclic” refers to the ring layout and the cyclic permutation of stabilizer
-supports. The shared design principle is symmetry; the algebraic objects and
-the error model are different.
+the theorem that a cyclic code is an ideal in $\mathbb{F}_q[C_n]$. The
+classical code is a subspace of $\mathbb{F}_q^n$ invariant under coordinate
+shifts; the quantum code is a subspace of a tensor-product Hilbert space
+stabilized by Pauli operators, and “cyclic” refers to the ring layout and the
+cyclic permutation of stabilizer supports. The shared design principle is
+symmetry; the algebraic objects and the error model are different.
 
 ### 3.7 CRC and quasi-cyclic codes in post-quantum cryptography
 
 A CRC is a systematic cyclic code used for detection: the parity bits are the
-remainder of $x^r m(x)$ modulo a generator $g(x)$. A degree-$r$ CRC
+remainder of $x^r m(x)$ modulo a generator $g(x)$. A degree $r$ CRC
 detects every single-bit error and every burst whose length does not exceed
 $r$, but it does not correct them [Peterson & Brown 1961].
 
