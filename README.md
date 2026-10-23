@@ -237,6 +237,7 @@ python examples/ct_im_lab.py
 python examples/ct_im_experiments.py
 python examples/phase_imbalance_lab.py
 python examples/lattice_lab.py
+python examples/sphere_packing_lab.py
 python examples/tau_invariant_lab.py
 ```
 
@@ -273,6 +274,7 @@ The full API and derivations are in [`docs/core-simulator.md`](docs/core-simulat
 | [`ct-im.md`](docs/ct-im.md) | CT-IM constant-weight note and milestone status |
 | [`phase-shift-involution.md`](docs/phase-shift-involution.md) | The DSIN τ / I/Q correspondence and its limits |
 | [`lattice-modulation.md`](docs/lattice-modulation.md) | D4/E8 spherical cuts, dimension-matched BER, PAPR diagnostic, and complexity |
+| [`sphere-packing-modulation.md`](docs/sphere-packing-modulation.md) | What packing buys over QAM (at most 1.53 dB), why nominal gains erode, and why the Poincaré conjecture is not in the chain |
 | [`tau-invariant.md`](docs/tau-invariant.md) | Convolution versus involution, RM(1,3), FHT decoding, and the non-cyclic coordinate flip |
 | [`cyclic-groups-radio-modulation.md`](docs/cyclic-groups-radio-modulation.md) | PSK as a cyclic group, space–time codes, ZC sequences |
 | [`cyclic-numbers-rh-fec-cryptography.md`](docs/cyclic-numbers-rh-fec-cryptography.md) | Full-reptend primes, Artin/GRH, cyclic codes, DLP, QC-MDPC, QEC |
@@ -295,6 +297,7 @@ modcode-lab/
 │   ├── ct-im.md
 │   ├── phase-shift-involution.md
 │   ├── lattice-modulation.md
+│   ├── sphere-packing-modulation.md
 │   ├── tau-invariant.md
 │   ├── cyclic-groups-radio-modulation.md
 │   └── cyclic-numbers-rh-fec-cryptography.md
